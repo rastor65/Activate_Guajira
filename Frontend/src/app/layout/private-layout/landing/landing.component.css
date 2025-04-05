@@ -1,0 +1,90 @@
+.container{
+    padding: 30px;
+}
+
+.menu-item {
+    border-radius: 12px;
+    cursor: pointer;
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out, 
+                box-shadow 0.3s ease-in-out, 
+                background 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 🔥 Efecto 3D y elevación con hover */
+.menu-item:hover,
+.menu-item:focus {
+    transform: translateY(-8px) scale(1.07);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+    outline: none;
+}
+
+/* ✨ Resplandor dinámico al pasar el mouse */
+.menu-item::before {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 250%;
+    height: 250%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+    transition: transform 0.6s ease-out;
+}
+
+.menu-item:hover::before {
+    transform: translate(50%, 50%);
+}
+
+/* 🔹 Efecto de rebote en el icono */
+.menu-icon {
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.menu-item:hover .menu-icon {
+    transform: scale(1.2) rotate(8deg);
+}
+
+/* 🎭 Efecto de brillo en el texto con suavizado */
+.menu-title {
+    transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+}
+
+.menu-item:hover .menu-title {
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+}
+
+/* 🌈 Animación de entrada para cada item */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-item {
+    cursor: pointer;
+    transform: scale(1);
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+}
+
+.menu-item:active {
+    transform: scale(0.95);
+}
+
+.menu-item.clicked {
+    transform: scale(0.9);
+    transition: transform 0.15s ease-in-out;
+}

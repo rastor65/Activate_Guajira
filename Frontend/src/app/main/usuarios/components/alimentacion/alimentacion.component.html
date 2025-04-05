@@ -1,0 +1,30 @@
+<div class="container mt-4">
+    <div class="profile-header">
+        <img [src]="profileImage || 'assets/default-avatar.png'" alt="Avatar" class="profile-img">
+        <div class="profile-info">
+            <h2>{{ person?.nombres }} {{ person?.apellidos }}</h2>
+            <p>{{ user.username }}</p>
+        </div>
+    </div>
+
+    <h3 class="section-title">Mi alimentación</h3>
+
+    <div *ngIf="alimentos.length > 0; else noAlimentos">
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4" *ngFor="let alimento of alimentos">
+                <div class="card entrenamiento-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ alimento.nombre }}</h5>
+                        <p class="card-text">{{ alimento.descripcion }}</p>
+                        <p class="duracion"><strong>Calorias diarias:</strong> {{ alimento.calorias_diarias }} </p>
+                        <p class="entrenador"><strong>Entrenador:</strong> {{ alimento.entrenador }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noAlimentos>
+        <p class="text-center text-muted">No tienes planes de alimentación asignados.</p>
+    </ng-template>
+</div>

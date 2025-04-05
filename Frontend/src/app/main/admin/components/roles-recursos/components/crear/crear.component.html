@@ -1,0 +1,84 @@
+<h2 class="recursos-title">Asignar Recursos</h2>
+
+<div class="role-resource-container">
+  <form (submit)="agregarRecursoRol()">
+    <fieldset>
+      <legend>Asignar un recurso a un rol</legend>
+
+      <div class="input-group">
+        <div class="input-container">
+          <label for="selectRole">Seleccionar un Rol:</label>
+          <p-dropdown id="selectRole" name="selectedRole" [options]="roles" [(ngModel)]="selectedRole"
+            placeholder="Seleccione un rol" optionLabel="name" optionValue="id" [filter]="true"></p-dropdown>
+        </div>
+
+        <div class="input-container">
+          <label for="selectResource">Seleccionar un Recurso:</label>
+          <p-dropdown id="selectResource" name="selectResource" [options]="flattenedResources" [(ngModel)]="selectedResource"
+            placeholder="Seleccione un recurso" optionLabel="titulo" optionValue="id" [filter]="true"></p-dropdown>
+        </div>
+      </div>
+
+      <div class="button-container">
+        <button type="submit">
+          <i class="pi pi-check"></i> Asignar
+        </button>
+      </div>
+    </fieldset>
+  </form>
+</div>
+
+
+<div class="table-container">
+  <table class="resource-role-table">
+    <thead>
+      <tr>
+        <th scope="col">RECURSOS</th>
+        <th scope="colgroup" [colSpan]="roles.length">ROLES</th>
+      </tr>
+      <tr>
+        <th scope="col">Título</th>
+        <th *ngFor="let role of roles" scope="col">{{ role.name }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let resource of resources">
+        <tr class="row">
+          <td>{{ resource.titulo }}</td>
+          <td *ngFor="let role of roles">
+            <label class="custom-checkbox">
+              <input type="checkbox" [checked]="hasAccess(role.id, resource.id)">
+              <span class="custom-label"></span>
+            </label>
+          </td>
+        </tr>
+
+        <!-- Recursos Hijos -->
+        <ng-container *ngFor="let childResource of resource.children">
+          <tr class="child-row">
+            <td>↳ {{ childResource.titulo }}</td>
+            <td *ngFor="let role of roles">
+              <label class="custom-checkbox">
+                <input type="checkbox" [checked]="hasAccess(role.id, childResource.id)">
+                <span class="custom-label"></span>
+              </label>
+            </td>
+          </tr>
+
+          <!-- Recursos Nietos -->
+          <ng-container *ngFor="let grandchildResource of childResource.children">
+            <tr class="grandchild-row">
+              <td>↳↳ {{ grandchildResource.titulo }}</td>
+              <td *ngFor="let role of roles">
+                <label class="custom-checkbox">
+                  <input type="checkbox" [checked]="hasAccess(role.id, grandchildResource.id)">
+                  <span class="custom-label"></span>
+                </label>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>

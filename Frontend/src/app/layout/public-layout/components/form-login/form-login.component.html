@@ -1,0 +1,54 @@
+<p-progressBar mode="indeterminate" *ngIf="showProgressBar" class="p-progressbar"></p-progressBar>
+<div class="container" id="container">
+  <div class="form-container sign-up-container">
+    <form (ngSubmit)="onSubmitRegister()" [formGroup]="formRegister" novalidate>
+      <h1>Crear una cuenta</h1>
+      <input type="text" placeholder="Nombres" formControlName="first_name" />
+      <input type="text" placeholder="Apellidos" formControlName="last_name" />
+      <input type="email" placeholder="Correo electronico" formControlName="email1" />
+      <input type="password" placeholder="Contraseña" formControlName="password" />
+      <input type="password" formControlName="password2" placeholder="Confirmar contraseña" minlength="8" maxlength="50">
+      <br>
+      <button pButton pRipple type="submit" label="Crear una cuenta" [disabled]="!formRegister.valid"></button>
+    </form>
+  </div>
+  <div class="form-container sign-in-container">
+    <form (ngSubmit)="onSubmitLogin()" [formGroup]="formLogin" novalidate>
+      <h1>Iniciar sesión</h1>
+      <div class="social-container">
+        <a href="https://instagram.com/clenguasuniguajira?igshid=MzRlODBiNWFlZA==" target="_blank" class="social"><i
+            class="fab pi pi-instagram"></i></a>
+        <a href="https://youtube.com/@RsUniguajira?si=xNZP4FJIYARciqFl" target="_blank" class="social"><i
+            class="fab pi pi-youtube"></i></a>
+        <a href="https://m.facebook.com/profile.php/?id=100064785485916" target="_blank" class="social"><i
+            class="fab pi pi-facebook"></i></a>
+      </div>
+      <span>Utiliza tu cuenta</span>
+      <input type="email" placeholder="Email" formControlName="username" />
+      <input type="password" placeholder="Password" formControlName="password" />
+      <a href="#">Olvidaste tu contraseña?</a>
+
+      <button pButton pRipple type="submit" label="Entrar" [disabled]="!formLogin.valid"></button>
+    </form>
+  </div>
+  <div class="overlay-container">
+    <div class="overlay">
+      <div class="overlay-panel overlay-left">
+        <h1>Bienvenido!</h1>
+        <p>Para conectarse con nosotros, inicie sesión con su información personal</p>
+        <button class="ghost" id="signIn">Entrar</button>
+      </div>
+      <div class="overlay-panel overlay-right">
+        <h1>Hola!</h1>
+        <p>Introduce tus datos personales y comienza tu viaje saludable con nosotros.</p>
+        <button class="ghost" id="signUp">Crear una cuenta</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>
+    Created by <a>RASTOR</a>
+  </p>
+</footer>

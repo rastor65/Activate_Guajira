@@ -1,0 +1,241 @@
+<main>
+  <aside>
+    <ng-template [ngIf]="isLoggedIn === true">
+      <div class="side-menu">
+        <ul>
+          <li>
+            <a>
+              <img src="assets/peakfit.png" style="width: 110%;">
+            </a>
+          </li>
+          <br>
+          <li>
+            <div class="menu-item">
+              <button pButton icon="pi pi-cog" (click)="menu.toggle($event)"></button>
+              <p-menu #menu [popup]="true" [model]="items" appendTo="body" panelStyleClass="custom-menu"></p-menu>
+            </div>
+          </li>
+          <li>
+            <div>
+              <app-menu [menu]="menu1" (funcion)="ocultarMenu($event)"></app-menu>
+            </div>
+          </li>
+          <li>
+            <button pButton icon="pi pi-sign-out" style="width: 100%;" (click)="showConfirm()"></button>
+          </li>
+        </ul>
+      </div>
+    </ng-template>
+  </aside>
+  <section>
+    <div class="titulo">
+      <a [routerLink]="['/landing']">PeakFit</a>
+    </div>
+    <router-outlet></router-outlet>
+  </section>
+  
+</main>
+
+<!-- CERRAR CESION -->
+<p-dialog [(visible)]="Dialog" [style]="{'width': '40vw'}" [resizable]="false" zindex="10000" [showHeader]="false"
+  [closeOnEscape]="false" [closable]="false" [modal]="true">
+  <div class="flex flex-column " style="flex: 1">
+    <div class="text-center">
+      <i class="pi pi-exclamation-triangle" style="font-size: 3rem"></i>
+      <h4>Esta seguro de Cerrar la Sesion?</h4>
+      <p>Si para continuar</p>
+    </div>
+  </div>
+  <ng-template pTemplate="footer" class="titleCard">
+    <div style="text-align: center;">
+      <button pButton pRipple label="No" icon="pi pi-times" style="color: rgb(31, 45, 64);" class="p-button-text"
+        (click)="hideDialog()"></button>
+      <button pButton pRipple label="Si" style="background: #222222; border-color: #222222;"
+        class=" p-button-raised p-button-rounded" icon="pi pi-check" (click)="cerrarSesion()"></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- CAMBIAR CONTRASEÑA -->
+<p-dialog [(visible)]="DialogContra" [style]="{'width': '40vw'}" [resizable]="false" zindex="10000" [showHeader]="false"
+  [closeOnEscape]="false" [closable]="false" [modal]="true">
+  <div class="flex flex-column " style="flex: 1">
+    <div class="text-center">
+      <i class="pi pi-key" style="font-size: 3rem"></i>
+    </div>
+    <form (ngSubmit)="cambiarContrasena()" [formGroup]="formCambioContrasena" class="p-fluid">
+      <div class="p-field">
+        <label for="contrasenaActual">Contraseña Actual</label>
+        <input id="contrasenaActual" type="password" formControlName="contrasenaActual" class="p-inputtext" required>
+      </div>
+      <div class="p-field">
+        <label for="nuevaContrasena">Nueva Contraseña</label>
+        <input id="nuevaContrasena" type="password" formControlName="nuevaContrasena" class="p-inputtext" required>
+      </div>
+      <div class="p-field">
+        <label for="confirmarContrasena">Confirmar Contraseña</label>
+        <input id="confirmarContrasena" type="password" formControlName="confirmarContrasena" class="p-inputtext"
+          required>
+      </div>
+      <br>
+      <div style="text-align: center;">
+        <button pButton pRipple label="Guardar" class="p-button p-button-outlined" icon="pi pi-check"></button>
+        <button pButton pRipple label="Cancelar" class="p-button-secondary p-button-outlined" icon="pi pi-times"
+          (click)="cerrarEditarContra()"></button>
+      </div>
+    </form>
+  </div>
+</p-dialog>
+
+<!-- EDITAR DATOS BASICOS -->
+<p-dialog [(visible)]="Dialog2" [style]="{'width': '80vw', 'top': '10px', 'background': '#090909', 'color': '#fafafa'}"
+  [resizable]="false" zindex="10000" [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true"
+  class="custom-dialog">
+
+  <div class="p-grid p-nogutter p-align-center header-container">
+    <h3 class="p-text-2xl font-weight-bold"><i class="pi pi-pencil"></i> Editar perfil</h3>
+    <h3>{{ usuario.nombres }} {{ usuario.apellidos }}</h3>
+  </div>
+  <br>
+  <div>
+    <div class="p-grid p-fluid">
+      <div class="form-container">
+        <div class="form-group">
+          <label for="document_type">Tipo de documento</label>
+          <p-dropdown id="document_type" [options]="documentTypes" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.document_type" placeholder="Seleccione un tipo de documento" class="custom-dropdown"
+            [filter]="true"></p-dropdown>
+        </div>
+
+        <div class="form-group">
+          <label for="identificacion">Número de documento</label>
+          <input type="text" id="identificacion" placeholder="Número de documento" pInputText
+            class="p-inputtext custom-input" [(ngModel)]="usuario.identificacion">
+        </div>
+      </div>
+
+      <div class="form-container">
+        <div class="form-group">
+          <label for="fecha_nacimiento">Ciudad de nacimiento</label>
+          <p-dropdown id="ciudad_nacimiento" [options]="ciudad" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.ciudad_nacimiento" placeholder="Ciudad de nacimiento" class="custom-dropdown"
+            [filter]="true"></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label for="fecha_nacimiento">Fecha de nacimiento</label>
+          <p-calendar id="fecha_nacimiento" [(ngModel)]="usuario.fecha_nacimiento" dateFormat="yy-mm-dd"
+            (onSelect)="formatFechaNacimiento()" placeholder="Selecciona tu fecha de nacimiento" [showIcon]="true"
+            class="p-inputtext custom-input">
+          </p-calendar>
+        </div>
+        <div class="form-group">
+          <label for="edad">Edad</label>
+          <input [readOnly]="true" type="text" placeholder="Edad" id="edad" pInputText class="p-inputtext custom-input"
+            [(ngModel)]="usuario.edad">
+        </div>
+      </div>
+
+      <div class="form-container">
+        <div class="form-group">
+          <label for="nivelFormacion">Nivel de formación</label>
+          <p-dropdown id="nivelFormacion" [options]="niveles_formacion" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.nivelFormacion" placeholder="Nivel de formacion" class="custom-dropdown"
+            [filter]="true"></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label for="estrato">Estrato</label>
+          <p-dropdown id="estrato" [options]="estrato" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.estrato" placeholder="Estrato" class="custom-dropdown" [filter]="true"></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label for="situacion_laboral">Situación laboral</label>
+          <p-dropdown id="situacion_laboral" [options]="situacionLaboral" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.situacion_laboral" placeholder="Situación laboral" class="custom-dropdown"
+            [filter]="true"></p-dropdown>
+        </div>
+      </div>
+
+      <div class="form-container">
+        <div class="form-group">
+          <label for="departamento">Departamento</label>
+          <p-dropdown id="departamento" [options]="departamento" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.departamento" placeholder="Departamento" class="custom-dropdown"
+            [filter]="true"></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label for="ciudad_nacimiento">Ciudad de residencia</label>
+          <p-dropdown id="ciudad_nacimiento" [options]="ciudad" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.ciudad_residencia" placeholder="Ciudad de residencia" class="custom-dropdown"
+            [filter]="true"></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label for="barrio">Barrio de residencia</label>
+          <p-dropdown id="barrio" [options]="barrio" optionLabel="nombre" optionValue="id" [(ngModel)]="usuario.barrio"
+            placeholder="Barrio de residencia" class="custom-dropdown" [filter]="true"></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input type="text" id="telefono" placeholder="Telefono" pInputText class="p-inputtext custom-input"
+            [(ngModel)]="usuario.telefono">
+        </div>
+      </div>
+
+      <div class="form-container">
+        <div class="form-group">
+          <label for="estado_civil">Estado civil</label>
+          <p-dropdown id="estado_civil" [options]="estadoCivil" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.estado_civil" placeholder="Estado civil" class="custom-dropdown"
+            [filter]="true"></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label for="grupoEtnico">Grupo étnico</label>
+          <p-dropdown id="grupoEtnico" [options]="grupoEtnico" optionLabel="nombre" optionValue="id"
+            [(ngModel)]="usuario.grupoEtnico" placeholder="Grupo etnico" class="custom-dropdown"
+            [filter]="true"></p-dropdown>
+        </div>
+        <div class="form-group">
+          <label for="genero">Genero</label>
+          <p-dropdown id="genero" [options]="genero" optionLabel="nombre" optionValue="id" [(ngModel)]="usuario.genero"
+            placeholder="Genero" class="custom-dropdown" [filter]="true"></p-dropdown>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid p-nogutter p-align-center header-container"></div>
+  <div class="button-container-imagen">
+    <button class="btn btn-primary" (click)="guardarDatos()">
+      <i class="pi pi-check"></i> Guardar Cambios</button>
+    <button class="btn btn-secondary" (click)="cerrarEditarPerfil()">
+      <i class="pi pi-times"></i> Cancelar</button>
+  </div>
+
+</p-dialog>
+
+<!-- EDITAR IMAGEN DE PERFIL -->
+<p-dialog [visible]="displayDialog2" [modal]="true" [style]="{ width: '50%'}" [showHeader]="false">
+  <div class="edit-profile-dialog">
+    <h3>Editar Imagen de Perfil</h3>
+    <form (ngSubmit)="guardarImagenPerfil()">
+      <div class="form-group">
+        <div class="profile-image-container">
+          <img [src]="profileImage" alt="Imagen de perfil" class="profile-image">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="newImage">Seleccionar nueva imagen:</label>
+        <label class="file-input-label">
+          <i class="pi pi-upload file-input-icon"></i> Seleccionar archivo
+          <input type="file" id="newImage" (change)="onFileSelected($event)" accept="image/*" class="input-file">
+        </label>
+      </div>
+      <div class="button-container-imagen">
+        <button type="submit" class="btn btn-primary">
+          <i class="pi pi-check"></i> Guardar Cambios
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="cerrarEditarImagen()">
+          <i class="pi pi-times"></i> Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</p-dialog>

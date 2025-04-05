@@ -1,0 +1,163 @@
+<!-- Botón para abrir el diálogo de categorías -->
+<div style="display: flex; width: 100%; justify-content: center; align-items: center; margin: auto;">
+    <button type="button" icon="pi pi-list" class="btn" style="width: 60%;" (click)="abrirCategorias()">📂 Administrar
+        categorías</button>
+</div>
+
+<!-- Diálogo de Categorías -->
+<p-dialog [(visible)]="dialogCategoria" [modal]="true" [style]="{ 'width': '50vw' }" [showHeader]="false">
+
+    <ng-template pTemplate="content">
+        <div class="p-3">
+            <h3 class="text-lg font-semibold text-gray-700">📂 Listado de Categorías</h3>
+            <p-table [value]="categorias" [paginator]="true" [rows]="5" [loading]="loading" responsiveLayout="scroll"
+                class="p-datatable-sm custom-table">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th>Nombre de la Categoría</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-categoria let-index="rowIndex">
+                    <tr>
+                        <td class="text-center">{{ index + 1 }}</td>
+                        <td>{{ categoria.nombre }}</td>
+                        <td class="text-center">
+                            <button pButton type="button" icon="pi pi-pencil"
+                                class="p-button-rounded p-button-text p-button-warning"
+                                (click)="editarCategoria(categoria)"></button>
+                            <button pButton type="button" icon="pi pi-trash"
+                                class="p-button-rounded p-button-text p-button-danger"
+                                (click)="confirmarEliminar(categoria)"></button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <p *ngIf="categorias.length === 0 && !loading" class="text-center text-gray-500 mt-3">⚠ No hay categorías
+                disponibles.</p>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton type="button" label="Agregar Categoría" icon="pi pi-plus" class="p-button-success"
+            (click)="nuevaCategoria()">
+        </button>
+        <div class="text-right">
+            <button pButton type="button" label="Cerrar" class="p-button-text p-button-secondary"
+                (click)="cerrarCategorias()"></button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<p-dialog [(visible)]="dialogEditCategoria" [modal]="true" [style]="{ 'width': '40vw' }" [showHeader]="false">
+    <ng-template pTemplate="content">
+        <h3 class="text-lg font-semibold text-gray-700">
+            {{ selectedCategoria?.id ? '✏ Editar Categoría' : '➕ Nueva Categoría' }}
+        </h3>
+        <div class="p-3">
+            <div class="p-fluid">
+                <div class="field">
+                    <label for="nombreCategoria">Nombre de la Categoría: </label>
+                    <input id="nombreCategoria" type="text" pInputText [(ngModel)]="selectedCategoria.nombre" />
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="text-right">
+            <button pButton type="button" label="Guardar" class="p-button-success" (click)="guardarCategoria()">
+            </button>
+            <button pButton type="button" label="Cancelar" class="p-button-text p-button-secondary"
+                (click)="cerrarDialogEditCategoria()">
+            </button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+
+<!-- Confirmación para eliminar -->
+
+<p-confirmDialog icon="pi pi-exclamation-triangle" class="custom-confirm-dialog"></p-confirmDialog>
+
+<div class="card">
+    <!-- Botón para agregar nuevo registro -->
+    <div style="display: flex; width: 100%; justify-content: center; align-items: center; margin: auto; margin: 20px;">
+        <button class="btn" style="width: 50%;" (click)="abrirDialogMaestra()">Agregar Registro</button>
+    </div>
+
+    <div class="p-personas-controls">
+        <div class="p-personas-search">
+            <span class="search-icon-container">
+                <i class="pi pi-search search-icon"></i>
+            </span>
+            <input type="text" pInputText [(ngModel)]="searchTabla" (input)="filtrarTablas()" class="search-box"
+                placeholder="Buscar categoría..." />
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-container">
+        <p-table [value]="tablasFiltradas" [paginator]="true" [rows]="100000000" [loading]="loading"
+            responsiveLayout="scroll" class="p-datatable-sm custom-table">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Categoría</th>
+                    <th>Acciones</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item>
+                <tr>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ getCategoriaNombre(item.categoria) }}</td>
+                    <td>
+                        <button pButton type="button" icon="pi pi-pencil" class="p-button-warning p-mr-2"
+                            (click)="abrirDialogMaestra(item)"></button>
+                        <button pButton type="button" icon="pi pi-trash" class="p-button-danger"
+                            (click)="eliminarMaestra(item.id)"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-dialog [(visible)]="dialogMaestra" [modal]="true" [style]="{ 'width': '50vw' }" [draggable]="false"
+        class="custom-dialog" [showHeader]="false">
+        <!-- Formulario para agregar/editar -->
+        <div *ngIf="dialogMaestra" class="form-container">
+            <h3>{{ selectedRegistro?.id ? 'Editar Registro' : 'Nuevo Registro' }}</h3>
+
+
+            <div class="form-container">
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <label for="nombre">Nombre</label>
+                        <input pInputText id="nombre" [(ngModel)]="selectedRegistro.nombre" class="custom-input" required />
+                    </div>
+
+                    <div class="p-field">
+                        <label for="categoria">Categoría</label>
+                        <p-dropdown [options]="categorias" optionLabel="nombre" optionValue="id"
+                            [(ngModel)]="selectedRegistro.categoria" placeholder="Seleccionar..."
+                            [filter]="true"></p-dropdown>
+                    </div>
+
+                    <div class="p-field">
+                        <label for="codigo">Código</label>
+                        <input pInputText id="codigo" type="text" [(ngModel)]="selectedRegistro.codigo" class="custom-input" required />
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-grid p-nogutter p-align-center header-container"></div>
+            <div class="button-container">
+                <button class="btn" (click)="guardarMaestra()">
+                    <i class="pi pi-check"></i> Guardar Cambios</button>
+                <button class="btn" (click)="cerrarDialogMaestra()">
+                    <i class="pi pi-times"></i> Cancelar</button>
+            </div>
+        </div>
+    </p-dialog>
+</div>

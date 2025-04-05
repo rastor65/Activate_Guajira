@@ -1,0 +1,272 @@
+/* Reset básico */
+body, html {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f7fa;
+}
+
+/* Título */
+.roles-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    color: #2c3e50;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+/* Contenedor principal */
+.roles-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Botón de Crear Rol */
+.create-button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.create-role-button {
+    width: 250px;
+    font-size: 16px;
+}
+
+/* Lista de roles */
+.roles-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 20px;
+}
+
+/* Tarjeta de Rol */
+.role-card {
+    flex: 1 1 calc(33.333% - 20px);
+    max-width: 300px;
+}
+
+.p-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.p-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Encabezado de la tarjeta */
+.role-header {
+    font-size: 18px;
+    font-weight: bold;
+    color: #34495e;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Información del rol */
+.role-info {
+    font-size: 14px;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+/* Íconos en la información */
+.role-info i {
+    color: #3498db;
+    margin-right: 5px;
+}
+
+/* Botones de acción */
+.role-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.p-button-rounded {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo del diálogo */
+.custom-dialog {
+    max-width: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenido del diálogo */
+.dialog-content {
+    padding: 1.5rem;
+    background: #fff;
+    text-align: center;
+}
+
+/* Botones en el diálogo */
+.dialog-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Inputs */
+.p-inputtext {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.p-input-with-icon {
+    padding-left: 2.5rem;
+}
+/* Reset básico */
+body, html {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f7fa;
+}
+
+/* Título */
+.roles-title {
+    font-size: 28px;
+    font-weight: bold;
+    text-align: center;
+    color: #2c3e50;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+/* Contenedor principal */
+.roles-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Botón de Crear Rol */
+.create-button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.create-role-button {
+    width: 250px;
+    font-size: 16px;
+}
+
+/* Lista de roles */
+.roles-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 20px;
+}
+
+/* Tarjeta de Rol */
+.role-card {
+    flex: 1 1 calc(33.333% - 20px);
+    max-width: 300px;
+}
+
+.p-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.p-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Encabezado de la tarjeta */
+.role-header {
+    font-size: 18px;
+    font-weight: bold;
+    color: #34495e;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Información del rol */
+.role-info {
+    font-size: 14px;
+    color: #7f8c8d;
+    text-align: center;
+}
+
+/* Íconos en la información */
+.role-info i {
+    color: #3498db;
+    margin-right: 5px;
+}
+
+/* Botones de acción */
+.role-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.p-button-rounded {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo del diálogo */
+.custom-dialog {
+    max-width: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenido del diálogo */
+.dialog-content {
+    padding: 1.5rem;
+    background: #fff;
+    text-align: center;
+}
+
+/* Botones en el diálogo */
+.dialog-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Inputs */
+.p-inputtext {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.p-input-with-icon {
+    padding-left: 2.5rem;
+}

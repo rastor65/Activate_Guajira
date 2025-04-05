@@ -1,0 +1,150 @@
+/* ============================= */
+/*  ESTILOS GENERALES            */
+/* ============================= */
+
+:root {
+  --primary-color: #1686e8;
+  --secondary-color: #222222;
+  --hover-bg: #f0f0f0;
+  --text-color: #fafafa;
+}
+
+/* ============================= */
+/*  ESTILOS DEL MENÚ PRINCIPAL   */
+/* ============================= */
+
+.padre {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+  position: relative;
+  color: #f0f0f0 !important;
+  border-radius: 20px;
+}
+
+.padre:hover,
+.padre:focus {
+  background-color: var(--hover-bg);
+  text-decoration-color: var(--primary-color);
+}
+
+/* ============================= */
+/*  ESTILOS DEL ICONO PRINCIPAL  */
+/* ============================= */
+
+.centered-span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: fit-content;
+  padding: 10px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+}
+
+/* ============================= */
+/*  ESTILOS DEL LOGO             */
+/* ============================= */
+
+.logo {
+  display: block;
+  padding: 20px 20px 0 20px;
+  margin-top: 5px;
+  background-color: transparent;
+  width: 240px;
+}
+
+.logo img {
+  width: 95%;
+  height: 95%;
+  object-fit: cover;
+}
+
+.logo hr {
+  width: 100%;
+  height: 1px;
+  background-color: var(--primary-color);
+  border-width: 0;
+}
+
+/* ============================= */
+/*  SUBMENÚ FLOTANTE             */
+/* ============================= */
+
+
+
+/* ============================= */
+/*  ESTILOS DE LOS ÍTEMS DEL MENÚ */
+/* ============================= */
+
+.hijo {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.hijo:hover {
+  background-color: var(--hover-bg);
+  color: var(--text-color);
+}
+
+.hijo:hover,
+.nieto:hover,
+.padre:hover {
+  background-color: #f0f0f0;
+  color: #222222;
+  text-decoration-color: var(--primary-color);
+  cursor: pointer;
+}
+
+/* ============================= */
+/*  PROFUNDIDAD DEL MENÚ (ANIDADO) */
+/* ============================= */
+
+.deep-1 {
+  margin-left: 20px;
+}
+
+.deep-2 {
+  margin-left: 40px;
+}
+
+/* ============================= */
+/*  MEJORAS DE MATERIAL DESIGN   */
+/* ============================= */
+
+.mat-list-base .mat-list-item .mat-list-item-content,
+.mat-list-base .mat-list-option .mat-list-item-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 16px;
+  height: inherit;
+}
+
+.mat-list-base .mat-list-item .mat-list-item-ripple,
+.mat-list-base .mat-list-option .mat-list-item-ripple {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.mat-list-base .mat-list-item .mat-list-icon,
+.mat-list-base .mat-list-option .mat-list-icon {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  box-sizing: content-box;
+  border-radius: 50%;
+  padding: 4px;
+}

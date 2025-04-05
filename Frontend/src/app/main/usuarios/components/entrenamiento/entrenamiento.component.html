@@ -1,0 +1,30 @@
+<div class="container mt-4">
+    <div class="profile-header">
+        <img [src]="profileImage || 'assets/default-avatar.png'" alt="Avatar" class="profile-img">
+        <div class="profile-info">
+            <h2>{{ person?.nombres }} {{ person?.apellidos }}</h2>
+            <p>{{ user.username }}</p>
+        </div>
+    </div>
+
+    <h3 class="section-title">Mis Entrenamientos</h3>
+
+    <div *ngIf="entrenamientos.length > 0; else noEntrenamientos">
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4" *ngFor="let entrenamiento of entrenamientos">
+                <div class="card entrenamiento-card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ entrenamiento.nombre }}</h5>
+                        <p class="card-text">{{ entrenamiento.descripcion }}</p>
+                        <p class="duracion"><strong>Duración:</strong> {{ entrenamiento.duracion_semanas }} semanas</p>
+                        <p class="entrenador"><strong>Entrenador:</strong> {{ entrenamiento.entrenador }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noEntrenamientos>
+        <p class="text-center text-muted">No tienes entrenamientos asignados.</p>
+    </ng-template>
+</div>

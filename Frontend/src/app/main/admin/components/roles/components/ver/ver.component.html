@@ -1,0 +1,67 @@
+<div class="roles-container">
+    <h2 class="roles-title">Gestión de Roles</h2>
+</div>
+
+<div class="create-button-container">
+    <button pButton type="button" icon="pi pi-plus" label="Crear Rol"
+        class="p-button-success create-role-button" (click)="showCreateDialog()">
+    </button>
+</div>
+
+<div class="roles-list">
+    <div *ngFor="let role of roles" class="role-card">
+        <div class="p-card">
+            <div class="role-header">
+                <b>{{ role.name }}</b>
+            </div>
+            <div class="role-info">
+                <p><i class="pi pi-calendar"></i> Creado: {{ role.createdAt | date:'dd/MM/yyyy' }}</p>
+                <p><i class="pi pi-refresh"></i> Actualizado: {{ role.updateAt | date:'dd/MM/yyyy' }}</p>
+            </div>
+            <div class="role-actions">
+                <button pButton type="button" icon="pi pi-pencil"
+                    class="p-button-rounded p-button-secondary" (click)="showEditDialog(role)">
+                </button>
+                <button pButton type="button" icon="pi pi-trash"
+                    class="p-button-rounded p-button-danger" (click)="showDeleteDialog(role)">
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p-dialog [(visible)]="dialogVisible" [modal]="true" [responsive]="true"
+    [style]="{width: '30vw'}" [showHeader]="false" [closable]="false" [dismissableMask]="false"
+    class="custom-dialog">
+    
+    <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
+        <div class="dialog-content">
+            <label for="roleName"><b>Nombre del Rol:</b></label><br>
+            <span class="p-input-icon-left">
+                <i class="pi pi-user"></i>
+                <input id="roleName" [(ngModel)]="selectedRole.name" placeholder="Ingrese el nombre"
+                    class="p-inputtext p-input-with-icon">
+            </span>
+            <div class="dialog-buttons">
+                <button pButton icon="pi pi-check" label="Guardar" class="p-button-success" (click)="saveRole()">
+                </button>
+                <button pButton icon="pi pi-times" label="Cancelar" class="p-button-danger" (click)="cancelEdit()">
+                </button>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="dialogType === 'delete'">
+        <div class="dialog-content">
+            <p><i class="pi pi-exclamation-triangle"></i> ¿Deseas eliminar este rol?</p>
+            <div class="dialog-buttons">
+                <button pButton icon="pi pi-check" label="Confirmar" class="p-button-danger"
+                    (click)="deleteRole(selectedRole.id)">
+                </button>
+                <button pButton icon="pi pi-times" label="Cancelar" class="p-button-secondary"
+                    (click)="cancelDelete()">
+                </button>
+            </div>
+        </div>
+    </ng-container>
+</p-dialog>

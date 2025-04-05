@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkAppTuristica=self.webpackChunkAppTuristica||[]).push([[30],{5030:(s,d,u)=>{u.r(d),u.d(d,{AdminModule:()=>m});var l=u(9808),a=u(8749),o=u(7587);let m=(()=>{class n{}return n.\u0275fac=function(i){return new(i||n)},n.\u0275mod=o.oAB({type:n}),n.\u0275inj=o.cJS({imports:[[l.ez,a.c]]}),n})()}}]);

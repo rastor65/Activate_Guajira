@@ -1,0 +1,487 @@
+/* Estilos generales del menú lateral */
+main {
+  display: flex;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-areas:
+    "aside  section section section section section section section";
+  row-gap: 0;
+  column-gap: 0;
+  grid-template-rows: 20% 70% 10%;
+  height: 98vh;
+  overflow: auto;
+}
+
+.titulo {
+  background-color: white;
+  /* Fondo blanco */
+  width: 300px;
+  /* Ajusta el ancho según el diseño */
+  height: 62px;
+  /* Altura para mostrar bien la curva */
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  color: #1e3c72;
+  /* Azul oscuro */
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  top: -15px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+  /* Sombra sutil */
+  border: 2px solid #dcdcdc;
+  /* Borde gris claro */
+  overflow: hidden;
+  /* Importante para aplicar el recorte */
+
+  /* Curva en la parte superior y parte plana en el centro inferior */
+  clip-path: polygon(
+  0% 0%, 100% 0%, /* Parte superior recta */
+
+  /* Lado derecho con puntos suavizados */
+  100% 0%, 99% 12%, 98% 18%, 97% 24%, 96% 30%, 95% 35%, 
+  94% 40%, 93% 44%, 92% 48%, 91% 52%, 90% 55%, 89% 58%, 
+  88% 61%, 87% 64%, 86% 67%, 85% 69.5%, 84% 72%, 83% 74%, 
+  82% 76%, 81% 78%, 80% 80%, 79% 81.5%, 78% 83%, 77% 84.5%, 
+  76% 86%, 75% 87%, 74% 88%, 73% 89%, 72% 90%, 71% 91%, 
+  70% 92%, 69% 93%, 68% 93.7%, 67% 94.3%, 66% 95%, 65% 95.5%, 
+  64% 96%, 63% 96.5%, 62% 97%, 61% 97.4%, 60% 97.8%, 59% 98.2%, 
+  58% 98.5%, 57% 98.7%, 56% 98.9%, 55% 99%, 50% 99%,
+
+  /* Lado izquierdo reflejado */
+  45% 99%, 44% 98.9%, 43% 98.7%, 42% 98.5%, 41% 98.2%,
+  40% 97.8%, 39% 97.4%, 38% 97%, 37% 96.5%, 36% 96%, 
+  35% 95.5%, 34% 95%, 33% 94.3%, 32% 93.7%, 31% 93%, 
+  30% 92%, 29% 91%, 28% 90%, 27% 89%, 26% 88%, 
+  25% 87%, 24% 86%, 23% 84.5%, 22% 83%, 21% 81.5%, 
+  20% 80%, 19% 78%, 18% 76%, 17% 74%, 16% 72%, 
+  15% 69.5%, 14% 67%, 13% 64%, 12% 61%, 11% 58%, 
+  10% 55%, 9% 52%, 8% 48%, 7% 44%, 6% 40%, 
+  5% 35%, 4% 30%, 3% 24%, 2% 18%, 1% 12%, 0% 0%
+);
+
+
+}
+
+/* Efecto hover */
+.titulo:hover {
+  transform: scale(1.03);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Enlace dentro del título */
+.titulo a {
+  color: #090909;
+  /* Azul oscuro */
+  text-decoration: none;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.3s ease-in-out;
+}
+
+.titulo a:hover {
+  color: #2a5298;
+}
+
+
+section {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #c2c2c2;
+  width: calc(100% - 11%);
+  height: 95%;
+  padding: 10px;
+  border-radius: 20px;
+  position: fixed;
+  top: 2%;
+  left: 10%;
+  box-shadow: 4px 0 4px rgba(255, 255, 255, 0.2);
+  transition: width 0.3s ease-in-out;
+}
+
+/* Estilos del scrollbar */
+section::-webkit-scrollbar {
+  width: 10px;
+  /* Ancho del scrollbar */
+}
+
+section::-webkit-scrollbar-track {
+  background: #c2c2c2;
+  /* Color del fondo del scrollbar */
+  border-radius: 4px;
+}
+
+section::-webkit-scrollbar-thumb {
+  background: #888;
+  /* Color del "thumb" del scrollbar */
+  border-radius: 4px;
+}
+
+section::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  /* Color al pasar el mouse */
+}
+
+aside {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  width: 9%;
+  height: 100vh;
+  padding: 5px;
+  box-sizing: border-box;
+  color: #fff;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Estilos del scrollbar */
+aside::-webkit-scrollbar {
+  width: 8px;
+}
+
+aside::-webkit-scrollbar-track {
+  background: #c2c2c2;
+  border-radius: 4px;
+}
+
+aside::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+aside::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+.side-menu {
+  width: 8%;
+  height: 95%;
+  max-height: 95vh;
+  border-radius: 15px;
+  background-color: #c2c2c2;
+  color: white;
+  position: fixed;
+  left: 1%;
+  top: 2%;
+  bottom: 2%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 4px 0 4px rgba(255, 255, 255, 0.2);
+  transition: width 0.3s ease-in-out;
+  overflow-y: auto;
+}
+
+router-outlet+* {
+  flex-grow: 1;
+  overflow-y: auto;
+  /* Permite el scroll solo dentro de esta área */
+  padding: 20px;
+}
+
+/* Estilos para la imagen/avatar */
+.centered-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.p-avatar {
+  border: 2px solid white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.p-avatar:hover {
+  transform: scale(1.1);
+}
+
+/* Estilos para el título o nombre en el menú */
+.menu-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Lista de opciones del menú */
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.side-menu ul li {
+  width: 100%;
+  margin: 10px 0;
+  text-align: center;
+}
+
+/* Botones del menú */
+.side-menu ul li button {
+  width: 100%;
+  background-color: #c2c2c2;
+  border: none;
+  color: #090909;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 20px;
+  transition: background 0.3s ease;
+  cursor: pointer;
+}
+
+.side-menu ul li button:hover {
+  background-color: #fafafa;
+  color: #090909;
+  font-weight: bold;
+}
+
+/* Efecto de colapso del menú */
+.side-menu.collapsed {
+  width: 70px;
+}
+
+.side-menu.collapsed .menu-title,
+.side-menu.collapsed ul li button {
+  display: none;
+}
+
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.avatar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.avatar-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+::ng-deep .custom-menu {
+  position: absolute !important;
+  transform: translateX(10px) !important;
+  /* Mueve el menú un poco a la derecha */
+  z-index: 9999 !important;
+  background: #c2c2c2 !important;
+  border: 1px solid #ddd;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos del diálogo de edición de imagen de perfil */
+.edit-profile-dialog {
+  text-align: center;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  border-radius: 10px;
+}
+
+.edit-profile-dialog h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Contenedor de la imagen de perfil */
+.profile-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #ddd;
+  transition: transform 0.3s ease-in-out;
+}
+
+.profile-image:hover {
+  transform: scale(1.05);
+}
+
+label {
+  font-weight: bold;
+}
+
+/* Estilos del input de archivo */
+.file-input-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border: 2px solid #0076df;
+  color: #0076df;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+
+
+.file-input-label:hover {
+  background: #0056b3;
+  color: #fafafa;
+}
+
+.file-input-label .file-input-icon {
+  margin-right: 8px;
+}
+
+.input-file {
+  display: none;
+}
+
+/* Contenedor de botones */
+.button-container-imagen {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* Botones */
+.btn {
+  padding: 10px 15px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease-in-out;
+  border: none;
+}
+
+.btn-primary {
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: #fafafa;
+  color: #090909;
+  border: 1px solid #090909;
+}
+
+.btn-primary:hover {
+  background: #090909;
+  color: #fafafa;
+}
+
+.btn-secondary {
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: #fafafa;
+  color: #090909;
+  border: 1px solid #090909;
+}
+
+.btn-secondary:hover {
+  background: #090909;
+  color: #fafafa;
+}
+
+::ng-deep .p-dialog {
+  border-radius: 15px;
+  /* Bordes redondeados */
+  max-height: 80%;
+  overflow: hidden;
+  /* Evita que el contenido sobresalga */
+}
+
+::ng-deep .p-dropdown {
+  display: flex;
+  min-height: 60px;
+  max-height: 60px;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  border: 1px solid #0076df;
+  color: #0076df;
+  padding: 3px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+::ng-deep .custom-dialog {
+  border-radius: 15px !important;
+  background: #090909 !important;
+  color: #fafafa !important;
+}
+
+/* Estilos del encabezado */
+.header-container {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 2px solid #0076df;
+}
+
+/* Estilos para los inputs */
+::ng-deep .custom-input {
+  width: 100%;
+  min-height: 60px;
+  max-height: 60px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #0076df;
+  background: #fafafa;
+  color: #090909;
+  outline: none;
+}
+
+.footer-buttons {
+  display: flex;
+  justify-content: space-between;
+  /* Separa los botones */
+  gap: 15px;
+  /* Agrega espacio entre los botones */
+  padding: 15px;
+}
+
+.form-container {
+  display: flex;
+  gap: 20px;
+  /* Espacio entre los campos */
+  justify-content: space-between;
+  width: 100%;
+  padding: 7px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 80px;
+}

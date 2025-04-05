@@ -1,0 +1,118 @@
+<div class="csv-container">
+    <h2>📂 Carga masiva de usuarios (CSV)</h2>
+
+    <label class="custom-file-upload">
+        <input type="file" (change)="onFileChange($event)" accept=".csv">
+        📥 Seleccionar Archivo CSV
+    </label>
+
+    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+    <div class="table-wrapper" *ngIf="data.length > 0">
+        <table class="csv-table">
+            <thead>
+                <tr>
+                    <th *ngFor="let header of headers">{{ header }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of data">
+                    <td *ngFor="let header of headers">{{ row[header] }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Botón para crear usuarios -->
+    <button *ngIf="data.length > 0" (click)="crearUsuarios()" class="btn-crear">
+        🆕 Crear Usuarios
+    </button>
+
+    <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
+    <p *ngIf="errorCrearMessage" class="error-message">{{ errorCrearMessage }}</p>
+</div>
+
+<p-dialog header="Procesando usuarios" [(visible)]="isLoading" [modal]="true" [closable]="false" [showHeader]="false">
+    <div class="text-center">
+        <p-progressSpinner></p-progressSpinner>
+        <p>Por favor, espera mientras se crean los usuarios...</p>
+        <strong>No te salgas...</strong>
+    </div>
+</p-dialog>
+
+<div class="error-container" *ngIf="failedUsers.length > 0">
+    <h2>⚠️ Errores al cargar usuarios</h2>
+    <p-table [value]="failedUsers" class="csv-table">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Contraseña</th>
+                <th>Error</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-userData>
+            <tr>
+                <td>{{ userData.first_name }} {{ userData.last_name }}</td>
+                <td>{{ userData.email }}</td>
+                <td>{{ userData.password }}</td>
+                <td style="color: red;">{{ userData.error.error.error }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+<div class="p-personas-controls">
+    <div class="p-personas-search">
+        <span class="search-icon-container">
+            <i class="pi pi-search search-icon"></i>
+        </span>
+        <input type="text" pInputText [(ngModel)]="searchValue" (input)="filtrarUsuarios()" class="search-box"
+            placeholder="Buscar usuario..." />
+    </div>
+</div>
+
+<div class="user-list">
+    <div *ngIf="cargando" class="loading-container">
+        <p-progressSpinner styleClass="spinner"></p-progressSpinner>
+        <span class="loading-text">Cargando usuarios...</span>
+    </div>
+
+    <table *ngIf="!cargando">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Rol (roles)</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let item of usuariosFiltrados | keyvalue">
+                <tr>
+                    <td>{{ item.key }}</td>
+                    <td>{{ item.value.join(', ') }}</td>
+                    <td>
+                        <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUsuario(item)"></button>
+                        <button pButton icon="pi pi-pencil" class="btn-editar" (click)="editarUsuario(item)"></button>
+                        <button pButton icon="pi pi-trash" class="btn-eliminar"
+                            (click)="eliminarUsuario(item)"></button>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>
+
+
+<p-dialog [(visible)]="dialogUsuario" [style]="{'width': '60vw'}" [resizable]="false" zindex="10000"
+    [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
+
+
+    <div class="p-grid p-nogutter p-align-center header-container"></div>
+    <div class="button-container">
+        <button class="btn" (click)="cerrarUsuario()">
+            <i class="pi pi-times"></i> Cerrar</button>
+    </div>
+
+</p-dialog>

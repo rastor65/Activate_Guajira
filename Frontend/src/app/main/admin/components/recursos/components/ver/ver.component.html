@@ -1,0 +1,89 @@
+<h2 class="recursos-title">Recursos</h2>
+
+<div class="resources-header">
+    <button pButton type="button" icon="pi pi-plus" label="Crear Recurso" class="p-button p-button-success"
+        (click)="showCreateDialog()"></button>
+</div>
+
+<p-table [value]="resources" dataKey="id" [paginator]="true" [rows]="10" responsiveLayout="scroll" [sortMode]="'single'"
+    class="custom-table">
+    <ng-template pTemplate="header">
+        <tr>
+            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="titulo">Título <p-sortIcon field="titulo"></p-sortIcon></th>
+            <th pSortableColumn="path">Path <p-sortIcon field="path"></p-sortIcon></th>
+            <th pSortableColumn="id_padre">ID Padre <p-sortIcon field="id_padre"></p-sortIcon></th>
+            <th pSortableColumn="method">Método <p-sortIcon field="method"></p-sortIcon></th>
+            <th pSortableColumn="icono">Ícono</th>
+            <th pSortableColumn="link">Enlace</th>
+            <th>Acciones</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-resource>
+        <tr>
+            <td>{{ resource.id }}</td>
+            <td>{{ resource.titulo }}</td>
+            <td>{{ resource.path }}</td>
+            <td>{{ resource.id_padre }}</td>
+            <td>{{ resource.method }}</td>
+            <td><i [ngClass]="resource.icono" class="text-xl"></i></td>
+            <td>
+                <a *ngIf="resource.link" [routerLink]="resource.link" target="_blank" class="p-button-link">
+                    <i class="pi pi-link"></i> Abrir
+                </a>
+            </td>
+            <td class="action-buttons">
+                <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-warning"
+                    (click)="showEditDialog(resource)" style="margin: 2px;"></button>
+                <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                    (click)="showDeleteDialog(resource)" style="margin: 2px;"></button>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+<p-dialog [(visible)]="dialogVisible" [modal]="true" [showHeader]="false" [dismissableMask]="true"
+    [style]="{width: '50%', maxWidth: '600px'}">
+    <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
+        <h2 class="dialog-header">{{ dialogType === 'create' ? 'Crear Recurso' : 'Editar Recurso' }}</h2>
+        <div class="dialog-content">
+            <label for="titulo">Título</label>
+            <input type="text" id="titulo" [(ngModel)]="selectedResource.titulo" class="p-inputtext" />
+
+            <label for="path">Path</label>
+            <input type="text" id="path" [(ngModel)]="selectedResource.path" class="p-inputtext" />
+
+            <label for="id_padre">ID Padre</label>
+            <input type="number" id="id_padre" [(ngModel)]="selectedResource.id_padre" class="p-inputtext" />
+
+            <label for="method">Método</label>
+            <input type="text" id="method" [(ngModel)]="selectedResource.method" class="p-inputtext" />
+
+            <label for="icono">Ícono</label>
+            <input type="text" id="icono" [(ngModel)]="selectedResource.icono" class="p-inputtext" />
+
+            <label for="link">Enlace</label>
+            <input type="text" id="link" [(ngModel)]="selectedResource.link" class="p-inputtext" />
+        </div>
+        <div class="dialog-footer">
+            <button pButton type="button" icon="pi pi-check" label="Guardar" class="p-button-success"
+                (click)="saveResource()"></button>
+            <button pButton type="button" icon="pi pi-times" label="Cancelar" class="p-button-secondary"
+                (click)="cancelEdit()"></button>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="dialogType === 'delete'">
+        <h2 class="dialog-header">Eliminar Recurso</h2>
+        <div class="dialog-content">
+            <p>¿Estás seguro de que deseas eliminar este recurso?</p>
+        </div>
+        <div class="dialog-footer">
+            <button pButton type="button" icon="pi pi-check" label="Confirmar" class="p-button-danger"
+                (click)="deleteResource(selectedResource.id)"></button>
+            <button pButton type="button" icon="pi pi-times" label="Cancelar" class="p-button-secondary"
+                (click)="cancelEdit()"></button>
+        </div>
+    </ng-container>
+</p-dialog>

@@ -1,0 +1,18 @@
+<div class="container">
+    <div class="grid">
+        <div *ngFor="let item of menu1; let i = index" class="col-12 md:col-6 lg:col-3 p-3">
+            <div class="menu-item p-3 text-center transition-transform duration-300 ease-in-out"
+                 [ngClass]="getBgColor(i)"
+                 tabindex="0"
+                 (click)="navigateWithDelay(item.link, $event)">
+                 
+                <span class="inline-flex justify-content-center align-items-center border-circle mb-3 p-3 transition-all duration-300 ease-in-out"
+                      [ngClass]="getIconBgColor(i)">
+                    <i [ngClass]="item.icono" class="text-xl text-white"></i>
+                </span>
+                <div class="text-2xl font-medium text-white mb-2">{{ item.titulo }}</div>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>

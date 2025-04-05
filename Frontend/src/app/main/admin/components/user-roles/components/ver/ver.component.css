@@ -1,0 +1,162 @@
+/* Estilos globales */
+:root {
+    --primary-color: #0056b3;
+    --primary-hover: #003d80;
+    --background-light: #f8f9fa;
+    --text-dark: #333;
+    --border-color: #ddd;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--background-light);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 500px;
+    margin: 30px auto;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px var(--shadow-light);
+    transition: transform 0.2s ease-in-out;
+}
+
+.container:hover {
+    transform: translateY(-2px);
+}
+
+/* Título */
+.roles-title {
+    text-align: center;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Formulario */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Etiquetas */
+label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-dark);
+}
+
+/* Lista de roles */
+.roles-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Elementos de roles */
+.role-item {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.role-item:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+}
+
+/* Lista de usuarios */
+.user-list {
+    max-width: 700px;
+    margin: 30px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px var(--shadow-light);
+}
+
+/* Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    box-shadow: 0 6px 12px var(--shadow-medium);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Cabecera de la tabla */
+th {
+    background: var(--primary-color);
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+    text-align: left;
+}
+
+/* Filas de la tabla */
+td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Alternar colores en filas */
+tbody tr:nth-child(odd) {
+    background: #f2f2f2;
+}
+
+/* Efecto hover en filas */
+tbody tr:hover {
+    background: #e0e0e0;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Botón estilizado */
+button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+button:hover {
+    background: var(--primary-hover);
+}
+
+/* Diseño responsivo */
+@media (max-width: 768px) {
+    .container, .user-list {
+        width: 90%;
+        max-width: 100%;
+    }
+
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    th, td {
+        white-space: nowrap;
+    }
+}
