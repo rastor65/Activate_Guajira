@@ -33,6 +33,7 @@ export class FormLoginComponent implements OnInit {
   public bandera: boolean = false
   public showProgressBar: boolean = false;
   formularioActivo: 'login' | 'register' = 'login';
+  mostrarContrasena: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -78,6 +79,10 @@ export class FormLoginComponent implements OnInit {
       this.router.navigateByUrl('/welcome');
     } else { }
     this.buildForm();
+  }
+
+  toggleMostrarContrasena() {
+    this.mostrarContrasena = !this.mostrarContrasena;
   }
 
   activarFormulario(formulario: 'login' | 'register') {

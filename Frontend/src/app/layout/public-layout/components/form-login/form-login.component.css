@@ -27,6 +27,21 @@ footer {
 	position: relative;
 }
 
+
+.password-wrapper {
+	position: relative;
+}
+
+.toggle-password {
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	background: transparent;
+	border: none;
+	cursor: pointer;
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -321,20 +336,21 @@ footer a {
 /* ==== VERSION RESPONSIVE ==== */
 @media screen and (max-width: 768px) {
 
-	html, body {
+	html,
+	body {
 		height: 100%;
 		margin: 0;
 		padding: 0;
-	  }
-	  
-	  body {
+	}
+
+	body {
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 		min-height: 100vh;
 		font-family: 'Montserrat', sans-serif;
 		background-color: #f8f8f8;
-	  }
+	}
 
 	.container {
 		flex-direction: column;
@@ -405,9 +421,9 @@ footer a {
 		text-align: center;
 		z-index: 100;
 		padding: 10px 0;
-		box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-	  }
-	  
+		box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+	}
+
 }
 
 @media screen and (max-width: 768px) {
