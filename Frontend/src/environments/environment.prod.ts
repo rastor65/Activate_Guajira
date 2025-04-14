@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  API_URI: 'https://peakfit-production.up.railway.app'
+  API_URI: 'https://activate-guajira.up.railway.app'
 };
