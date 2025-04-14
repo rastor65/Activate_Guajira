@@ -175,7 +175,7 @@ PASSWORD_HASHERS = [
      }
  }
 
-DATABASES = {
+# DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'peakfit',
