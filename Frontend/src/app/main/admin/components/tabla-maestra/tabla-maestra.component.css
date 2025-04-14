@@ -1,324 +1,390 @@
-.custom-table thead th {
-    background-color: #f8f9fa;
-    color: #495057;
+/* ===== BOTÓN ADMINISTRAR CATEGORÍAS ===== */
+.admin-categorias-btn-container {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.admin-categorias-btn-container button {
+    width: 60%;
+    max-width: 400px;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.admin-categorias-btn-container button:hover {
+    transform: scale(1.03);
+    background: linear-gradient(135deg, #0056b3, #003f7f);
+}
+
+/* ===== MODALES ===== */
+::ng-deep .p-dialog {
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+::ng-deep .p-dialog .p-dialog-content {
+    padding: 1.5rem;
+}
+
+::ng-deep .p-dialog .p-dialog-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+/* ===== TABLAS ===== */
+::ng-deep .custom-table {
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+::ng-deep .custom-table .p-datatable-thead>tr>th {
+    background-color: #007bff;
+    color: white;
     font-weight: bold;
-    padding: 10px;
-    text-align: left;
-    border-bottom: 2px solid #dee2e6;
+    text-align: center;
+    padding: 0.75rem;
+    border-bottom: 3px solid #0056b3;
 }
 
-.custom-table tbody tr {
-    transition: background-color 0.2s;
+::ng-deep .custom-table .p-datatable-tbody>tr:hover {
+    background-color: #eef5ff;
 }
 
-.custom-table tbody tr:hover {
-    background-color: #f1f3f5;
-}
-
-.custom-table td {
-    padding: 8px;
+::ng-deep .custom-table .p-datatable-tbody>tr>td {
+    padding: 0.75rem;
+    text-align: center;
     border-bottom: 1px solid #dee2e6;
 }
 
-::ng-deep .custom-confirm-dialog .p-dialog-header {
-    display: none !important;
+/* ===== BOTONES DE ACCIÓN EN TABLA ===== */
+::ng-deep .p-button {
+    margin: 0 5px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
 }
 
-
+/* ===== FORMULARIO DE BÚSQUEDA ===== */
 .p-personas-controls {
-    margin-top: 25px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
 }
 
 .p-personas-search {
-    position: relative;
     display: flex;
     align-items: center;
     width: 100%;
     max-width: 450px;
     background: #fff;
-    border-radius: 25px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease-in-out;
-}
-
-.p-personas-search:hover,
-.p-personas-search:focus-within {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 0 1rem;
 }
 
 .search-icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
+    font-size: 1.2rem;
     color: #007ad9;
-    font-size: 1.3rem;
 }
 
 .search-box {
     flex: 1;
-    width: 100%;
-    padding: 12px 15px;
     border: none;
-    outline: none;
+    padding: 0.75rem 1rem;
     font-size: 1rem;
-    color: #333;
-    background: transparent;
-    border-radius: 25px;
+    outline: none;
 }
 
-::ng-deep .table-container {
-    max-width: 100%;
-    overflow-x: auto;
-    padding: 20px;
-    border-radius: 10px;
-    background: #f8f9fa;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-::ng-deep .custom-table {
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-::ng-deep .custom-table .p-datatable-thead > tr > th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-    text-align: center;
-    padding: 12px;
-    border-bottom: 3px solid #0056b3;
-}
-
-::ng-deep .custom-table .p-datatable-tbody > tr {
-    transition: background-color 0.3s ease;
-}
-
-::ng-deep .custom-table .p-datatable-tbody > tr:nth-child(even) {
-    background-color: #f1f3f5;
-}
-
-::ng-deep .custom-table .p-datatable-tbody > tr:hover {
-    background-color: #d9e2f1;
-}
-
-::ng-deep .custom-table .p-datatable-tbody > tr > td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
-}
-
-::ng-deep .custom-table .p-datatable-tbody > tr:last-child > td {
-    border-bottom: none;
-}
-
-::ng-deep .custom-table .p-datatable-footer {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-    text-align: center;
-    padding: 10px;
-}
-
-::ng-deep .custom-table .p-paginator {
-    background-color: #f8f9fa;
-    border-top: 2px solid #ddd;
-    padding: 10px;
-    border-radius: 0 0 10px 10px;
-}
-
-::ng-deep .custom-table .p-paginator .p-paginator-pages .p-paginator-page {
-    color: #007bff;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-::ng-deep .custom-table .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-    background-color: #007bff;
-    color: white;
-}
-
-/* Botones de acción */
-::ng-deep .p-button {
-    border-radius: 5px;
-    margin: 0 4px;
-    transition: background-color 0.3s ease;
-}
-
-::ng-deep .p-button.p-button-info {
-    background-color: #17a2b8;
-    border: none;
-}
-
-::ng-deep .p-button.p-button-info:hover {
-    background-color: #138496;
-}
-
-::ng-deep .p-button.p-button-warning {
-    background-color: #ffc107;
-    border: none;
-    color: black;
-}
-
-::ng-deep .p-button.p-button-warning:hover {
-    background-color: #e0a800;
-}
-
-::ng-deep .p-button.p-button-danger {
-    background-color: #dc3545;
-    border: none;
-}
-
-::ng-deep .p-button.p-button-danger:hover {
-    background-color: #c82333;
-}
-
-/* Mensaje cuando no hay datos */
-::ng-deep .empty-message {
-    text-align: center;
-    font-weight: bold;
-    color: #6c757d;
-    padding: 15px;
-}
-
-::ng-deep .custom-dialog .p-dialog {
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-::ng-deep .custom-dialog .p-dialog-header {
-    background: #f8f9fa;
-    border-bottom: 1px solid #ddd;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-::ng-deep .custom-dialog .p-dialog-close {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-::ng-deep .custom-dialog .p-dialog-close:hover {
-    color: #dc3545;
-}
-
-::ng-deep .dialog-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 0;
-}
-
+/* ===== FORMULARIO DE AGREGAR/EDITAR REGISTRO ===== */
 ::ng-deep .form-container {
     padding: 1.5rem;
-}
-
-::ng-deep .p-field {
-    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
 }
 
 ::ng-deep .p-field label {
     font-weight: 600;
-    display: block;
-    margin-bottom: 0.5rem;
     color: #333;
+    margin-bottom: 0.5rem;
 }
 
-::ng-deep .button-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
-
-::ng-deep .custom-dialog .p-dialog {
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-::ng-deep .custom-dialog .p-dialog-header {
-    background: #f8f9fa;
-    border-bottom: 1px solid #ddd;
-    padding: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-::ng-deep .custom-dialog .p-dialog-close {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: color 0.3s;
-}
-
-::ng-deep .custom-dialog .p-dialog-close:hover {
-    color: #dc3545;
-}
-
-::ng-deep .dialog-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin: 0;
-}
-
-/* Mejora en los Inputs */
 ::ng-deep .custom-input {
     width: 100%;
-    padding: 10px;
+    padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.2s ease-in-out;
 }
 
 ::ng-deep .custom-input:focus {
     border-color: #007ad9;
-    box-shadow: 0 0 5px rgba(0, 122, 217, 0.5);
-    outline: none;
+    box-shadow: 0 0 5px rgba(0, 122, 217, 0.4);
 }
 
-/* Mejora en el Dropdown */
-::ng-deep .custom-dropdown .p-dropdown {
+/* Dropdown */
+::ng-deep .p-dropdown {
     width: 100%;
     border-radius: 8px;
     border: 1px solid #ccc;
+    padding: 0.5rem;
+}
+
+/* ===== BOTONES GUARDAR / CANCELAR ===== */
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 1.5rem;
+}
+
+.btn {
+    background-color: #007bff;
+    color: white;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
     transition: all 0.3s ease-in-out;
 }
 
-::ng-deep .custom-dropdown .p-dropdown:focus-within {
-    border-color: #007ad9;
-    box-shadow: 0 0 5px rgba(0, 122, 217, 0.5);
+.btn:hover {
+    background-color: #0056b3;
 }
 
-/* Espaciado del formulario */
-::ng-deep .form-container {
-    padding: 1.5rem;
+/* Cancelar */
+.btn-cancelar {
+    background-color: #6c757d;
 }
 
-::ng-deep .p-field {
-    margin-bottom: 1.2rem;
+.btn-cancelar:hover {
+    background-color: #5a6268;
 }
 
-::ng-deep .p-field label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 0.5rem;
+/* ConfirmDialog sin header */
+::ng-deep .custom-confirm-dialog .p-dialog-header {
+    display: none !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media screen and (max-width: 768px) {
+
+    .admin-categorias-btn-container button,
+    .button-container .btn {
+        width: 100%;
+    }
+
+    ::ng-deep .p-dialog {
+        width: 95vw !important;
+    }
+
+    .p-personas-controls {
+        flex-direction: column;
+        padding: 0 1rem;
+    }
+
+    .p-personas-search {
+        width: 100%;
+    }
+
+    .button-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 🎨 Estilos para Diálogo de Categorías */
+
+::ng-deep .p-dialog {
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    animation: fadeIn 0.3s ease-in-out;
+    overflow: hidden;
+}
+
+/* Contenido */
+::ng-deep .p-dialog-content {
+    padding: 2rem;
+    background-color: #fdfdfd;
+}
+
+::ng-deep .p-dialog-footer {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Título */
+::ng-deep .p-dialog-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
     color: #333;
+    margin-bottom: 1rem;
+    text-align: center;
+    position: relative;
+}
+
+::ng-deep .p-dialog-content h3::after {
+    content: "";
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(to right, #007bff, #0056b3);
+    display: block;
+    margin: 10px auto 0;
+    border-radius: 4px;
+}
+
+/* Tabla */
+::ng-deep .custom-table {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    background: #fff;
+}
+
+::ng-deep .custom-table .p-datatable-thead>tr>th {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    padding: 0.75rem;
+    border-bottom: 3px solid #0056b3;
+}
+
+::ng-deep .custom-table .p-datatable-tbody>tr {
+    transition: background-color 0.3s ease;
+}
+
+::ng-deep .custom-table .p-datatable-tbody>tr:hover {
+    background-color: #e8f0ff;
+}
+
+::ng-deep .custom-table .p-datatable-tbody>tr>td {
+    padding: 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
 }
 
 /* Botones */
-::ng-deep .button-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+::ng-deep .p-button-rounded {
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 4px;
+}
+
+::ng-deep .p-button-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+::ng-deep .p-button-warning:hover {
+    background-color: #e0a800;
+}
+
+::ng-deep .p-button-danger {
+    background-color: #dc3545;
+}
+
+::ng-deep .p-button-danger:hover {
+    background-color: #c82333;
+}
+
+/* Botones Footer */
+::ng-deep .p-dialog-footer .p-button-success {
+    background: linear-gradient(to right, #28a745, #218838);
+    border: none;
+    color: #fff;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+::ng-deep .p-dialog-footer .p-button-success:hover {
+    background: linear-gradient(to right, #218838, #1e7e34);
+}
+
+::ng-deep .p-dialog-footer .p-button-secondary {
+    background: #6c757d;
+    color: #fff;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    transition: background 0.3s ease-in-out;
+}
+
+::ng-deep .p-dialog-footer .p-button-secondary:hover {
+    background: #5a6268;
+}
+
+/* Sin categorías */
+::ng-deep .p-dialog-content p.text-center {
+    margin-top: 1rem;
+    font-style: italic;
+    color: #6c757d;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+    ::ng-deep .p-dialog {
+        width: 95vw !important;
+    }
+
+    ::ng-deep .p-dialog-footer {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    ::ng-deep .p-dialog-footer button {
+        width: 100%;
+    }
+}
+
+/* Animación */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

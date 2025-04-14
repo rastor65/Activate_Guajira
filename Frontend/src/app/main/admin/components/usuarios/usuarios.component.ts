@@ -10,7 +10,7 @@ import { RoleI } from 'src/app/models/authorization/usr_roles';
 import { UsuariosService } from 'src/app/core/services/dashboard/usuarios.service';
 import { HttpHeaders } from '@angular/common/http';
 import { Person } from 'src/app/models/user/person';
-import { switchMap } from 'rxjs/operators';
+import { first, last, switchMap } from 'rxjs/operators';
 import { catchError } from 'rxjs/operators';
 import { Observable, of, forkJoin } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
@@ -31,16 +31,18 @@ export class UsuariosComponent implements OnInit {
   isLoading: boolean = false;
   failedUsers: any[] = [];
   usuarioRolesMap: Map<string, string[]> = new Map<string, string[]>();
-  usuariosFiltrados: Map<string, string[]> = new Map<string, string[]>(); 
+  usuariosFiltrados: Usuario[] = [];
   searchValue: string = '';
   AllRoles: any[] = [];
   usuarios: Usuario[] = [];
   roles: Rol[] = [];
   dialogUsuario: boolean = false;
   cargando: boolean = true;
+  formUsuario: FormGroup = new FormGroup({});
+  usuarioSeleccionado: any = null;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
     private messageService: MessageService,
@@ -51,28 +53,48 @@ export class UsuariosComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.usuariosService.getUsers().subscribe(data => {
-      this.usuarios = data as Usuario[];
+    this.formUsuario = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      username: ['', Validators.required],
+      first_name: ['', Validators.required],
+      last_name: ['', Validators.required],
+      roles: [[]]
     });
-
-    this.usuariosService.getRoles().subscribe(data => {
-      this.roles = data as Rol[];
-    });
-    this.procesarRoles();
-    this.getRol();
-
+  
+    this.cargarDatos();
   }
 
-  verUsuario(usuario: any) {
-    this.dialogUsuario = true
+  cargarDatos(){
+    this.cargando = true;
+    forkJoin({
+      usuarios: this.usuariosService.getUsers(),
+      roles: this.usuariosService.getRoles(),
+      allRoles: this.usuariosService.getAllRoles()
+    }).subscribe(({ usuarios, roles, allRoles }) => {
+      this.usuarios = usuarios as Usuario[];
+      this.roles = roles as Rol[];
+      this.AllRoles = allRoles;
+      this.procesarRoles(); // Llamar aquí, después de tener los datos
+    });
   }
+  
 
-  cerrarUsuario() {
+  vereditarUsuario(usuario: any) {
+    this.usuarioSeleccionado = usuario;
+  
+    this.formUsuario.setValue({
+      email: usuario.email || '',
+      username: usuario.username || '',
+      first_name: usuario.first_name || '',
+      last_name: usuario.last_name || '',
+      roles: usuario.roles || []
+    });
+  
+    this.dialogUsuario = true;
+  }
+  
+  cerrareditarUsuario() {
     this.dialogUsuario = false
-  }
-
-  editarUsuario(usuario: any) {
-
   }
 
   eliminarUsuario(usuario: any) {
@@ -111,45 +133,42 @@ export class UsuariosComponent implements OnInit {
       this.errorMessage = 'Error al leer el archivo. Verifica la codificación.';
     };
   }
-
-  getRol() {
-    this.usuariosService.getAllRoles().subscribe(response => {
-      this.AllRoles = response;
-      this.procesarRoles();
-    });
-  }
-
+  
   procesarRoles() {
+
     this.cargando = true;
-    this.usuarioRolesMap.clear();
-    this.AllRoles.forEach((userRole) => {
-      const usuario = userRole.userId.username;
-
-      const roles = Array.isArray(userRole.rolesId)
-        ? userRole.rolesId.map((rol: any) => rol.name)
-        : [userRole.rolesId.name];
-
-      if (this.usuarioRolesMap.has(usuario)) {
-        const rolesExistente = this.usuarioRolesMap.get(usuario) || [];
-        rolesExistente.push(...roles);
-        this.usuarioRolesMap.set(usuario, Array.from(new Set(rolesExistente)));
-        this.cargando = false; 
-      } else {
-        this.usuarioRolesMap.set(usuario, Array.from(new Set(roles)));
-      }
+    this.usuarios.forEach(usuario => {
+      
+      usuario.roles = this.AllRoles
+        .filter(role => role.userId?.username === usuario.username)
+        .map(role => role.rolesId?.name)
+        .filter(roleName => roleName);
+        const rolesUsuario = this.AllRoles.filter(role => role.userId?.username === usuario.username);
+        if (rolesUsuario.length > 0) {
+          usuario.first_name = rolesUsuario[0].userId?.first_name || usuario.first_name;
+          usuario.last_name = rolesUsuario[0].userId?.last_name || usuario.last_name;
+        }
+  
+      usuario.roles = [...new Set(rolesUsuario.map(role => role.rolesId?.name).filter(roleName => roleName))];
     });
-    this.usuariosFiltrados = new Map(this.usuarioRolesMap);
+  
+    this.filtrarUsuarios();
+    this.cargando = false;
   }
-
+  
+  
   filtrarUsuarios() {
+    this.cargando = true;
     const filtro = this.searchValue.toLowerCase();
-    this.usuariosFiltrados = new Map(
-      [...this.usuarioRolesMap].filter(([usuario, roles]) =>
-        usuario.toLowerCase().includes(filtro) ||
-        roles.some(rol => rol.toLowerCase().includes(filtro))
-      )
+    this.usuariosFiltrados = this.usuarios.filter(usuario =>
+      usuario.username.toLowerCase().includes(filtro) ||
+      usuario.first_name.toLowerCase().includes(filtro) ||  // Agregar first_name
+      usuario.last_name.toLowerCase().includes(filtro) ||   // Agregar last_name
+      usuario.roles.some(rol => String(rol).toLowerCase().includes(filtro))
     );
+    this.cargando = false;
   }
+  
 
   processCSV(csvData: string) {
     const lines = csvData.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -201,7 +220,6 @@ export class UsuariosComponent implements OnInit {
     forkJoin(batchRequests).subscribe(
       () => {
         if (failedUsers.length > 0) {
-          console.log(this.failedUsers)
           this.retryFailedUsers(failedUsers);
         } else {
           this.isLoading = false;
@@ -214,6 +232,39 @@ export class UsuariosComponent implements OnInit {
       }
     );
   }
+
+  guardarUsuario() {
+    if (this.formUsuario.invalid) {
+        this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Por favor, complete todos los campos correctamente.' });
+        return;
+    }
+
+    if (!this.usuarioSeleccionado || !this.usuarioSeleccionado.id) {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se ha seleccionado un usuario válido.' });
+        return;
+    }
+
+    const datosActualizados = {
+        first_name: this.formUsuario.value.first_name?.trim(),
+        last_name: this.formUsuario.value.last_name?.trim(),
+        username: this.formUsuario.value.username?.trim() || this.usuarioSeleccionado.username, // Evita null
+        email: this.formUsuario.value.email?.trim(),
+        roles: Array.isArray(this.formUsuario.value.roles) ? this.formUsuario.value.roles : []
+    };
+
+    this.usuariosService.editarUsuario(this.usuarioSeleccionado.id, datosActualizados).subscribe({
+        next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Usuario actualizado correctamente.' });
+            this.dialogUsuario = false;
+            this.cargarDatos();
+        },
+        error: (err) => {
+            console.error('Error al actualizar usuario:', err);
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el usuario. Inténtelo de nuevo.' });
+        }
+    });
+}
+
 
   /**
    * Función para crear las solicitudes de usuario
@@ -274,7 +325,6 @@ export class UsuariosComponent implements OnInit {
         }),
         catchError((error: any) => {
           this.failedUsers.push({ ...userData, error: error || 'Error desconocido' });
-          console.log("usuario fallido: ", this.failedUsers)
           return of(null); // Retornar un valor neutral para que forkJoin continúe
         })
       );
@@ -346,7 +396,6 @@ export class UsuariosComponent implements OnInit {
       this.isLoading = false;
       if (finalFailedUsers.length > 0) {
         this.failedUsers = [...finalFailedUsers];
-        console.log(this.failedUsers)
         setTimeout(() => this.failedUsers = [...finalFailedUsers]); // Forzar actualización de Angular
         this.messageService.add({ severity: 'warn', summary: 'Atención', detail: 'Algunos usuarios no se registraron correctamente en el reintento.' });
       } else {

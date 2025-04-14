@@ -20,7 +20,7 @@ export class EntrenadorService {
   getEntrenamientos(): Observable<any> {
     return this.http.get<any>(this.base_entrenamiento);
   }
-  
+
   getEntrenamientosPorUsuario(usuarioId: number): Observable<any> {
     return this.http.get<any>(`${this.base_entrenamiento}usuario/${usuarioId}/`);
   }
@@ -35,6 +35,11 @@ export class EntrenadorService {
 
   deleteEntrenamiento(id: number): Observable<any> {
     return this.http.delete<any>(`${this.base_entrenamiento}${id}/`);
+  }
+
+  editarSugerencia(tipo: string, dia: string) {
+    return this.http.post<{ sugerencias: string[] }>(`
+      ${this.API_URI}/ia/sugerencia/editar/`, { tipo, dia });
   }
 
   getAlimentaciones(): Observable<any> {

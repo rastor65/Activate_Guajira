@@ -10,7 +10,8 @@ import { ConfirmationService } from 'primeng/api';
 import { UserService } from 'src/app/core/services/usuarios/user.service';
 import { Observable } from 'rxjs';
 import { Person } from 'src/app/models/user/person';
-
+import { tablaMaestra } from 'src/app/models/user/person';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-entrenador',
@@ -23,7 +24,8 @@ export class EntrenadorComponent implements OnInit {
   API_URI = environment.API_URI;
   base_user = `${this.API_URI}/api/user/`;
 
-
+  personas: Person[] = [];
+  personasFiltradas: Person[] = [];
   formData: any = {};
   estadoIMC: string = '';
   alimentacion: any[] = [];
@@ -36,22 +38,27 @@ export class EntrenadorComponent implements OnInit {
   public trainers: any[] = [];
   public mediciones: any[] = [];
   usuarioId: number | undefined;
-  public dialogMediciones: boolean = false;
   dialogMedicion: boolean = false;
   public searchValue: string = '';
   public filterOptions: any[] = [];
   selectedAlimentacion: any = null;
+  ciudad: tablaMaestra[] = [];
   selectedEntrenamiento: any = null;
   medicionesUsuario: Medicion[] = [];
   dialogAlimentacion: boolean = false;
   public filteredTrainers: any[] = [];
+  public filteredTrainers2: any[] = [];
   dialogEntrenamiento: boolean = false;
+  dialogVerAlimentacion: boolean = false;
   esEdicionAlimentacion: boolean = false;
   esEdicionEntrenamiento: boolean = false;
-  dialogVerAlimentacion: boolean = false;
   dialogVerEntrenamiento: boolean = false;
+  public dialogMediciones: boolean = false;
+  dialogAlimentacionRegion: boolean = false;
+  dialogEntrenamientoRegion: boolean = false;
   dialogFormularioEntrenamiento: boolean = false;
   dialogFormularioAlimentacion: boolean = false;
+  public cargandoEntrenamiento: boolean = false;
   formAlimentacion = {
     id: 0,
     nombre: '',
@@ -60,13 +67,25 @@ export class EntrenadorComponent implements OnInit {
     entrenador: '',
     usuario: ''
   };
+
+  tiposEjercicio = [
+    'RESISTENCIA',
+    'CARDIOVASCULAR',
+    'EJERCICIOS FORTALECIMIENTO',
+    'EJERCICIOS DE EQUILIBRIO',
+    'FLEXIBILIDAD'
+  ];
+
+  diasSemana = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'];
+
   formEntrenamiento = {
-    id: 0,
+    id: null,
+    usuario: null,
     nombre: '',
-    descripcion: '',
     duracion_semanas: 0,
-    entrenador: '',
-    usuario: ''
+    entrenador: null,
+    descripcion: '',
+    semanas: [] as any[]
   };
 
   constructor(
@@ -77,12 +96,81 @@ export class EntrenadorComponent implements OnInit {
     private fb: FormBuilder,
     private confirmationService: ConfirmationService,
     private userService: UserService,
+    private http: HttpClient
   ) { }
 
   ngOnInit(): void {
     this.getTrainers();
     this.getFilterOptions();
     this.getMediciones();
+    this.obtenerTipos();
+  }
+
+  generarSemanas() {
+    this.formEntrenamiento.semanas = [];
+    for (let i = 0; i < this.formEntrenamiento.duracion_semanas; i++) {
+      const semana = {
+        numero: i + 1,
+        ejercicios: this.tiposEjercicio.map(tipo => ({
+          tipo,
+          dias: this.diasSemana.map(() => false) // Array de booleanos para los días
+        }))
+      };
+      this.formEntrenamiento.semanas.push(semana);
+    }
+  }
+
+  editarSugerenciaDesdeFrontend(ejercicio: any, dia: string) {
+    this.entrenadorService.editarSugerencia(ejercicio.tipo, dia).subscribe((res) => {
+      if (!ejercicio.sugerencias) {
+        ejercicio.sugerencias = {};
+      }
+      ejercicio.sugerencias[dia] = res.sugerencias; this.messageService.add({ severity: 'success', summary: 'Actualizado', detail: 'Sugerencias actualizada' });
+    }, (error) => {
+      console.error('Error al editar sugerencia:', error);
+      this.messageService.add({
+        severity: 'error', summary: 'Error', detail: 'No se pudo editar la sugerencia.'
+
+      });
+    });
+  }
+
+  onCheckboxChange(ejercicio: any, dia: string, activo: boolean) {
+    if (activo) {
+      if (this.esEdicionEntrenamiento) {
+        this.editarSugerenciaDesdeFrontend(ejercicio, dia);
+      } else { // Si estás en modo creación, simplemente inicializa las sugerencias localmente 
+        if (!ejercicio.sugerencias) {
+          ejercicio.sugerencias = {};
+        }
+        ejercicio.sugerencias[dia] = []; // vacío o deja para que el backend las genere al guardar
+      }
+    } else if (ejercicio.sugerencias) {
+      delete ejercicio.sugerencias[dia];
+    }
+  }
+
+  public obtenerTipos(): void {
+    this.userService.obtenerTipoCategoria().subscribe(
+      (categorias: any[]) => {
+        const categoriaMap = categorias.reduce((acc, categoria) => {
+          acc[categoria.id] = categoria.nombre;
+          return acc;
+        }, {} as Record<number, string>);
+
+        this.userService.obtenerTipo().subscribe(
+          (tipos: any[]) => {
+            this.ciudad = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Ciudad");
+          },
+          (error: any) => {
+            console.error(error);
+          }
+        );
+      },
+      (error: any) => {
+        console.error(error);
+      }
+    );
   }
 
   getTrainers(): void {
@@ -98,6 +186,9 @@ export class EntrenadorComponent implements OnInit {
         });
         this.trainers = Array.from(unique.values());
         this.filteredTrainers = this.trainers;
+        console.log(this.filteredTrainers)
+        this.filteredTrainers2 = this.trainers.filter(trainer => trainer.userId?.roles?.includes(3))
+        console.log("entrendaores: ", this.filteredTrainers2)
         this.cargando = false;
       },
       (error: any) => {
@@ -123,7 +214,7 @@ export class EntrenadorComponent implements OnInit {
         this.dialogAlimentacion = true;
         this.alimentaciones.forEach((alimentacion: any) => {
           if (alimentacion.entrenador) {
-            this.getNombre(alimentacion.entrenador).subscribe((persona:any) => {
+            this.getNombre(alimentacion.entrenador).subscribe((persona: any) => {
               if (persona.length > 0) {
                 alimentacion.entrenador = `${persona[0].nombres} ${persona[0].apellidos}`;
               } else {
@@ -132,7 +223,7 @@ export class EntrenadorComponent implements OnInit {
             });
           }
           if (alimentacion.usuario) {
-            this.getNombre(alimentacion.usuario).subscribe((persona:any) => {
+            this.getNombre(alimentacion.usuario).subscribe((persona: any) => {
               if (persona.length > 0) {
                 alimentacion.usuario = `${persona[0].nombres} ${persona[0].apellidos}`;
               } else {
@@ -208,20 +299,66 @@ export class EntrenadorComponent implements OnInit {
 
   abrirFormularioEntrenamiento(entrenamiento?: any) {
     if (entrenamiento) {
-      this.formEntrenamiento = { ...entrenamiento };
+      this.formEntrenamiento = {
+        ...entrenamiento,
+        entrenador: typeof entrenamiento.entrenador === 'object' ? entrenamiento.entrenador.id : entrenamiento.entrenador,
+        usuario: typeof entrenamiento.usuario === 'object' ? entrenamiento.usuario.id : entrenamiento.usuario
+      };
+
+      // Reprocesar sugerencias basadas en los días activos
+      this.formEntrenamiento.semanas.forEach((semana: any) => {
+        semana.ejercicios.forEach((ejercicio: any) => {
+          const nuevasSugerencias: { [key: string]: string[] } = {};
+          ejercicio.dias.forEach((activo: boolean, index: number) => {
+            const dia = this.diasSemana[index];
+            if (activo) {
+              if (ejercicio.sugerencias && ejercicio.sugerencias[dia]) {
+                // Mantener sugerencia existente si ya estaba
+                nuevasSugerencias[dia] = ejercicio.sugerencias[dia];
+              } else {
+                // Generar nueva sugerencia
+                nuevasSugerencias[dia] = this.generarSugerencia(ejercicio.tipo, dia);
+              }
+            }
+          });
+          ejercicio.sugerencias = nuevasSugerencias;
+        });
+      });
+
       this.esEdicionEntrenamiento = true;
     } else {
       this.formEntrenamiento = {
-        id: 0,
+        id: null,
         nombre: '',
         descripcion: '',
         duracion_semanas: 0,
-        entrenador: '',
-        usuario: ''
+        entrenador: null,
+        usuario: null,
+        semanas: [],
       };
       this.esEdicionEntrenamiento = false;
     }
+
     this.dialogFormularioEntrenamiento = true;
+  }
+
+  actualizarSugerencias(ejercicio: any, diaIndex: number) {
+    const dia = this.diasSemana[diaIndex];
+    if (ejercicio.dias[diaIndex]) {
+      if (!ejercicio.sugerencias) ejercicio.sugerencias = {};
+      if (!ejercicio.sugerencias[dia]) {
+        ejercicio.sugerencias[dia] = ["(pendiente sugerencia IA)"];
+      }
+    } else {
+      if (ejercicio.sugerencias && ejercicio.sugerencias[dia]) {
+        delete ejercicio.sugerencias[dia];
+      }
+    }
+  }
+
+  generarSugerencia(tipo: string, dia: string): string[] {
+    // Simula generación de sugerencias, reemplaza con llamada real si lo deseas
+    return [`Sugerencia para ${tipo} el ${dia}`];
   }
 
   guardarAlimentacion() {
@@ -252,33 +389,85 @@ export class EntrenadorComponent implements OnInit {
     this.verAlimentacion(this.selectedTrainer)
   }
 
-  guardarEntrenamiento() {
-    if (this.esEdicionEntrenamiento) {
-      this.formEntrenamiento.usuario = this.selectedTrainer?.userId?.id;
+  guardarEntrenamiento(): void {
+    this.formEntrenamiento.usuario = this.selectedTrainer?.userId?.id;
+
+    if (!this.formEntrenamiento.usuario || !this.formEntrenamiento.nombre) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Validación',
+        detail: 'Debe completar todos los campos obligatorios.'
+      });
+      return;
+    }
+
+    this.cargandoEntrenamiento = true;
+
+    const finalizar = () => {
+      this.cargandoEntrenamiento = false;
+      this.dialogFormularioEntrenamiento = false;
+      this.verEntrenamiento(this.selectedTrainer);
+    };
+
+    if (this.esEdicionEntrenamiento && this.formEntrenamiento.id !== null) {
       this.entrenadorService.updateEntrenamiento(this.formEntrenamiento.id, this.formEntrenamiento).subscribe(
         (data) => {
-          const index = this.entrenamientos.findIndex(a => a.id === this.formEntrenamiento.id);
+          const index = this.entrenamientos.findIndex(e => e.id === data.id);
           if (index !== -1) {
             this.entrenamientos[index] = data;
           }
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Entrenamiento actualizado' });
-          this.dialogFormularioEntrenamiento = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Entrenamiento actualizado'
+          });
+          finalizar();
         },
-        (error) => console.error(error)
+        (error) => {
+          console.error(error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al actualizar el entrenamiento'
+          });
+          this.cargandoEntrenamiento = false;
+        }
       );
     } else {
-      this.formEntrenamiento.usuario = this.selectedTrainer?.userId?.id;
       this.entrenadorService.createEntrenamiento(this.formEntrenamiento).subscribe(
         (data) => {
           this.entrenamientos.push(data);
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Alimentación añadida' });
-          this.dialogFormularioEntrenamiento = false;
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Entrenamiento creado'
+          });
+
+          this.formEntrenamiento = {
+            id: null,
+            usuario: null,
+            nombre: '',
+            duracion_semanas: 1,
+            entrenador: null,
+            descripcion: '',
+            semanas: []
+          };
+
+          finalizar();
         },
-        (error) => console.error(error)
+        (error) => {
+          console.error(error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al crear el entrenamiento'
+          });
+          this.cargandoEntrenamiento = false;
+        }
       );
     }
-    this.verEntrenamiento(this.selectedTrainer)
   }
+
 
   eliminarAlimentacion(id: number) {
     this.confirmationService.confirm({
@@ -321,7 +510,7 @@ export class EntrenadorComponent implements OnInit {
         this.entrenamientos = data;
         this.entrenamientos.forEach((entrenamiento: any) => {
           if (entrenamiento.entrenador) {
-            this.getNombre(entrenamiento.entrenador).subscribe((persona:any) => {
+            this.getNombre(entrenamiento.entrenador).subscribe((persona: any) => {
               if (persona.length > 0) {
                 entrenamiento.entrenador = `${persona[0].nombres} ${persona[0].apellidos}`;
               } else {
@@ -330,7 +519,7 @@ export class EntrenadorComponent implements OnInit {
             });
           }
           if (entrenamiento.usuario) {
-            this.getNombre(entrenamiento.usuario).subscribe((persona:any) => {
+            this.getNombre(entrenamiento.usuario).subscribe((persona: any) => {
               if (persona.length > 0) {
                 entrenamiento.usuario = `${persona[0].nombres} ${persona[0].apellidos}`;
               } else {
@@ -519,4 +708,169 @@ export class EntrenadorComponent implements OnInit {
     }
   }
 
+  cargarPersonas() {
+    this.usuariosService.getAllUsuarios().subscribe(
+      (response: Person[]) => {
+        this.personas = response.map(persona => ({ ...persona, seleccionado: true }));
+      },
+      (error: any) => console.error(error)
+    );
+  }
+
+  seleccionarTodos(event: any) {
+    const seleccionado = event.target.checked;
+    this.personasFiltradas.forEach(persona => persona.seleccionado = seleccionado);
+  }
+
+  filtrarPorCiudad(ciudad: any) {
+    this.personasFiltradas = ciudad ?
+      this.personas.filter(persona => persona.ciudad_residencia === ciudad) :
+      [...this.personas];
+  }
+
+
+  verEntrenamientosMasivos() {
+    this.dialogEntrenamientoRegion = true;
+    this.cargarPersonas();
+  }
+
+  verAlimentacionesMasivas() {
+    this.dialogAlimentacionRegion = true;
+    this.cargarPersonas();
+  }
+
+  cerrarEntrenamientosMasivos() {
+    this.dialogEntrenamientoRegion = false;
+    this.formEntrenamiento = {
+      id: null,
+      usuario: null,
+      nombre: '',
+      duracion_semanas: 0,
+      entrenador: null,
+      descripcion: '',
+      semanas: [] as any[]
+    };
+  }
+
+  cerrarAlimentacionesMasivas() {
+    this.dialogAlimentacionRegion = false;
+  }
+
+  guardarAlimentacionRegion() {
+    const usuariosSeleccionados = this.personasFiltradas.filter(p => p.seleccionado).map(p => p.user);
+    if (usuariosSeleccionados.length === 0) {
+      this.messageService.add({ severity: 'warn', summary: 'Validación', detail: 'Debe seleccionar al menos un usuario.' });
+      return;
+    }
+
+    if (!this.formAlimentacion.nombre || !this.formAlimentacion.entrenador || !this.formAlimentacion.calorias_diarias) {
+      this.messageService.add({
+        severity: 'warn', summary: 'Validación', detail: 'Debe completar todos los campos del formulario.'
+      }); return;
+    }
+
+    this.cargandoEntrenamiento = true;
+
+    const alimentacionBase = {
+      nombre: this.formAlimentacion.nombre,
+      descripcion: this.formAlimentacion.descripcion,
+      calorias_diarias: this.formAlimentacion.calorias_diarias,
+      entrenador: this.formAlimentacion.entrenador
+    };
+
+    const peticiones = usuariosSeleccionados.map(usuario_id => {
+      const alimentacion = {
+        ...alimentacionBase,
+        usuario: usuario_id
+      };
+      return this.entrenadorService.createAlimentacion(alimentacion).toPromise();
+    });
+
+    Promise.all(peticiones).then(respuestas => {
+      this.messageService.add({
+        severity: 'success', summary: 'Éxito', detail: `Se asignó el plan a ${respuestas.length} usuarios correctamente.`
+      });
+      this.dialogAlimentacionRegion = false;
+      this.cargandoEntrenamiento = false;
+      this.formAlimentacion = {
+        id: 0,
+        nombre: '',
+        descripcion: '',
+        calorias_diarias: 0,
+        entrenador: '',
+        usuario: ''
+      };
+    }).catch(error => {
+      console.error('Error al asignar planes de alimentación:', error);
+      this.messageService.add({
+        severity: 'error', summary: 'Error', detail: 'Ocurrió un error al asignar los planes.'
+      });
+      this.cargandoEntrenamiento = false;
+    });
+  }
+
+  guardarEntrenamientoRegion() {
+    const usuariosSeleccionados = this.personasFiltradas.filter(p => p.seleccionado).map(p => p.user);
+
+    if (usuariosSeleccionados.length === 0) {
+      this.messageService.add({ severity: 'warn', summary: 'Validación', detail: 'Debe seleccionar al menos un usuario.' }); return;
+    }
+
+    if (!this.formEntrenamiento.nombre || !this.formEntrenamiento.entrenador || !this.formEntrenamiento.duracion_semanas) {
+      this.messageService.add({ severity: 'warn', summary: 'Validación', detail: 'Debe completar todos los campos del formulario.' }); return;
+    }
+
+    this.cargandoEntrenamiento = true;
+
+    const entrenamientoBase = {
+      nombre: this.formEntrenamiento.nombre,
+      descripcion: this.formEntrenamiento.descripcion,
+      duracion_semanas: this.formEntrenamiento.duracion_semanas,
+      entrenador: this.formEntrenamiento.entrenador,
+      semanas: this.formEntrenamiento.semanas
+    };
+
+    const peticiones = usuariosSeleccionados.map(usuario_id => {
+      const entrenamiento = {
+        ...entrenamientoBase,
+        usuario: usuario_id
+      }; return this.entrenadorService.createEntrenamiento(entrenamiento).toPromise();
+    });
+
+    Promise.all(peticiones).then(respuestas => {
+      this.messageService.add({
+        severity: 'success', summary: 'Éxito', detail: `Se asignó el plan a ${respuestas.length} usuarios correctamente.`
+      });
+      this.dialogEntrenamientoRegion = false;
+      this.cargandoEntrenamiento = false;
+      this.formEntrenamiento = {
+        id: null,
+        usuario: null,
+        nombre: '',
+        duracion_semanas: 1,
+        entrenador: null,
+        descripcion: '',
+        semanas: []
+      };
+    }).catch(error => {
+      console.error('Error al asignar entrenamientos:', error);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Ocurrió un error al asignar los planes.' });
+      this.cargandoEntrenamiento = false;
+    });
+  }
+
+  hasEjerciciosParaDia(dia: string): boolean {
+    if (!this.selectedEntrenamiento?.semanas)
+      return false;
+    const diaIndex = this.diasSemana.indexOf(dia);
+    return this.selectedEntrenamiento.semanas.some(
+      (semana: any) => semana.ejercicios.some(
+        (ejercicio: any) => ejercicio.dias[diaIndex]));
+  }
+}
+
+interface Ejercicio {
+  tipo: string;
+  dias: boolean[];
+  sugerencias?: { [key: string]: string[] };
 }

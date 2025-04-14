@@ -4,7 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 from .models import *
 
 from django.contrib.auth.models import Group  
-
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
 admin.site.register(Rol)
 admin.site.register(Person)
@@ -16,6 +16,8 @@ admin.site.register(Alimentacion)
 admin.site.register(tablaMaestra)
 admin.site.register(Entrenamiento)
 admin.site.register(categoriaTipo)
+# admin.site.register(PeriodicTask)
+# admin.site.register(IntervalSchedule)
 
 @admin.register(get_user_model())
 class CustomUserAdmin(UserAdmin):

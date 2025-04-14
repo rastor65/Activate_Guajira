@@ -1,272 +1,170 @@
-/* Reset básico */
+/* Reset general */
 body, html {
     margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background-color: #f5f7fa;
-}
-
-/* Título */
-.roles-title {
-    font-size: 28px;
-    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fc;
+    color: #333;
+  }
+  
+  /* Título de sección */
+  .roles-title {
+    font-size: 2rem;
     text-align: center;
-    color: #2c3e50;
+    font-weight: 800;
+    color: #1a1a1a;
     text-transform: uppercase;
-    margin-bottom: 20px;
-}
-
-/* Contenedor principal */
-.roles-container {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Botón de Crear Rol */
-.create-button-container {
+    margin: 1rem 0 1.5rem;
+  }
+  
+  /* Contenedor del botón */
+  .create-button-container {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
-}
-
-.create-role-button {
-    width: 250px;
-    font-size: 16px;
-}
-
-/* Lista de roles */
-.roles-list {
+    margin-bottom: 2rem;
+  }
+  
+  .create-role-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+  }
+  
+  /* Listado de roles */
+  .roles-list {
     display: flex;
     flex-wrap: wrap;
+    gap: 1.5rem;
     justify-content: center;
-    gap: 20px;
-    padding: 0 20px;
-}
-
-/* Tarjeta de Rol */
-.role-card {
-    flex: 1 1 calc(33.333% - 20px);
-    max-width: 300px;
-}
-
-.p-card {
+    padding: 0 1rem 2rem;
+  }
+  
+  .role-card {
+    flex: 1 1 300px;
+    max-width: 320px;
+  }
+  
+  .p-card {
+    background: #fff;
     padding: 1.5rem;
-    border-radius: 10px;
-    background: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.p-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Encabezado de la tarjeta */
-.role-header {
-    font-size: 18px;
-    font-weight: bold;
-    color: #34495e;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .p-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  }
+  
+  .role-header {
+    font-size: 1.2rem;
+    font-weight: 700;
     text-align: center;
-    margin-bottom: 10px;
-}
-
-/* Información del rol */
-.role-info {
-    font-size: 14px;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .role-info {
+    font-size: 0.95rem;
+    text-align: center;
     color: #7f8c8d;
-    text-align: center;
-}
-
-/* Íconos en la información */
-.role-info i {
+    line-height: 1.5;
+  }
+  
+  .role-info i {
+    margin-right: 6px;
     color: #3498db;
-    margin-right: 5px;
-}
-
-/* Botones de acción */
-.role-actions {
+  }
+  
+  /* Botones de acción */
+  .role-actions {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.p-button-rounded {
+    gap: 12px;
+    margin-top: 1rem;
+  }
+  
+  .p-button-rounded {
     width: 40px;
     height: 40px;
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-/* Estilo del diálogo */
-.custom-dialog {
-    max-width: 400px;
-    border-radius: 10px;
+  }
+  
+  /* Diálogo modal */
+  .custom-dialog {
+    max-width: 450px;
+    width: 90%;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Contenido del diálogo */
-.dialog-content {
-    padding: 1.5rem;
-    background: #fff;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  .dialog-content {
+    padding: 2rem;
     text-align: center;
-}
-
-/* Botones en el diálogo */
-.dialog-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-/* Inputs */
-.p-inputtext {
+    background-color: #fff;
+  }
+  
+  .dialog-content label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .p-inputtext {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.p-input-with-icon {
+    padding: 0.75rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+  }
+  
+  .p-input-with-icon {
     padding-left: 2.5rem;
-}
-/* Reset básico */
-body, html {
-    margin: 0;
-    font-family: 'Roboto', sans-serif;
-    background-color: #f5f7fa;
-}
-
-/* Título */
-.roles-title {
-    font-size: 28px;
-    font-weight: bold;
-    text-align: center;
-    color: #2c3e50;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-}
-
-/* Contenedor principal */
-.roles-container {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-/* Botón de Crear Rol */
-.create-button-container {
+  }
+  
+  .dialog-buttons {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
-}
-
-.create-role-button {
-    width: 250px;
-    font-size: 16px;
-}
-
-/* Lista de roles */
-.roles-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    padding: 0 20px;
-}
-
-/* Tarjeta de Rol */
-.role-card {
-    flex: 1 1 calc(33.333% - 20px);
-    max-width: 300px;
-}
-
-.p-card {
-    padding: 1.5rem;
-    border-radius: 10px;
-    background: #ffffff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.p-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Encabezado de la tarjeta */
-.role-header {
-    font-size: 18px;
-    font-weight: bold;
-    color: #34495e;
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-/* Información del rol */
-.role-info {
-    font-size: 14px;
-    color: #7f8c8d;
-    text-align: center;
-}
-
-/* Íconos en la información */
-.role-info i {
-    color: #3498db;
-    margin-right: 5px;
-}
-
-/* Botones de acción */
-.role-actions {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.p-button-rounded {
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Estilo del diálogo */
-.custom-dialog {
-    max-width: 400px;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Contenido del diálogo */
-.dialog-content {
-    padding: 1.5rem;
-    background: #fff;
-    text-align: center;
-}
-
-/* Botones en el diálogo */
-.dialog-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-/* Inputs */
-.p-inputtext {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #bdc3c7;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.p-input-with-icon {
-    padding-left: 2.5rem;
-}
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  
+  /* Íconos */
+  .p-input-icon-left i {
+    position: absolute;
+    margin-left: 1rem;
+    margin-top: 0.75rem;
+    color: #888;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .role-card {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  
+    .roles-title {
+      font-size: 1.5rem;
+    }
+  
+    .create-role-button {
+      width: 90%;
+      font-size: 0.95rem;
+    }
+  
+    .dialog-buttons {
+      flex-direction: column;
+    }
+  
+    .dialog-buttons button {
+      width: 100%;
+    }
+  }
+  

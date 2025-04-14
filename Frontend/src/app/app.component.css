@@ -310,56 +310,6 @@ body {
     font-size: 100;
 }
 
-
-/* CSS PARA PTOAST */
-
-::ng-deep p-toast {
-  position: fixed !important;
-  top: 8px !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  width: 350px !important;
-  max-width: 90% !important;
-  z-index: 9999 !important;
-}
-
-::ng-deep .p-toast {
-  border-radius: 8px !important;
-}
-
-::ng-deep .p-toast-message {
-  font-size: 14px !important;
-  padding: 12px !important;
-  text-align: center;
-}
-
-::ng-deep .p-toast-message-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-::ng-deep .p-toast-enter {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-::ng-deep .p-toast-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-}
-
-::ng-deep .p-toast-exit {
-  opacity: 1;
-}
-
-::ng-deep .p-toast-exit-active {
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
-}
-
 .title {
   font-size: 36px;
   font-weight: bold;
@@ -369,3 +319,4 @@ body {
   color: #222;
   text-transform: uppercase;
 }
+

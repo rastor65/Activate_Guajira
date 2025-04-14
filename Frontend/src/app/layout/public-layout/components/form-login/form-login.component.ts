@@ -32,6 +32,7 @@ export class FormLoginComponent implements OnInit {
   public Roles1: any[] = []
   public bandera: boolean = false
   public showProgressBar: boolean = false;
+  formularioActivo: 'login' | 'register' = 'login';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -44,6 +45,7 @@ export class FormLoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.activarFormulario('login');
     const token: string | null = localStorage.getItem('token');
     const user: string | null = localStorage.getItem('user');
     if (token !== null && user !== null) {
@@ -76,6 +78,28 @@ export class FormLoginComponent implements OnInit {
       this.router.navigateByUrl('/welcome');
     } else { }
     this.buildForm();
+  }
+
+  activarFormulario(formulario: 'login' | 'register') {
+    const container = document.getElementById('container');
+    if (!container) return;
+  
+    this.formularioActivo = formulario;
+  
+    if (formulario === 'register') {
+      container.classList.add('right-panel-active');
+    } else {
+      container.classList.remove('right-panel-active');
+    }
+  
+    // Actualiza clases activas para mostrar u ocultar botones
+    const btnLogin = document.querySelector('.btn-login') as HTMLElement;
+    const btnRegister = document.querySelector('.btn-register') as HTMLElement;
+  
+    if (btnLogin && btnRegister) {
+      btnLogin.style.display = formulario === 'login' ? 'none' : 'inline-flex';
+      btnRegister.style.display = formulario === 'register' ? 'none' : 'inline-flex';
+    }
   }
 
   onSubmitLogin() {
@@ -198,7 +222,7 @@ export class FormLoginComponent implements OnInit {
                         id: null,
                         nombres: formValue.first_name,
                         apellidos: formValue.last_name,
-                        user: userId, 
+                        user: userId,
                         edad: 0,
                         document_type: null,
                         nivelFormacion: null,
@@ -226,7 +250,7 @@ export class FormLoginComponent implements OnInit {
                       const userRoleData = {
                         status: true,
                         userId: userId,
-                        rolesId:2,
+                        rolesId: 2,
                       };
                       const bodyString = JSON.stringify(userRoleData);
                       const httpOptions = {

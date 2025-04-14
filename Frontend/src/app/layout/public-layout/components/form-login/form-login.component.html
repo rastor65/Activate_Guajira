@@ -1,4 +1,5 @@
 <p-progressBar mode="indeterminate" *ngIf="showProgressBar" class="p-progressbar"></p-progressBar>
+
 <div class="container" id="container">
   <div class="form-container sign-up-container">
     <form (ngSubmit)="onSubmitRegister()" [formGroup]="formRegister" novalidate>
@@ -7,7 +8,8 @@
       <input type="text" placeholder="Apellidos" formControlName="last_name" />
       <input type="email" placeholder="Correo electronico" formControlName="email1" />
       <input type="password" placeholder="Contraseña" formControlName="password" />
-      <input type="password" formControlName="password2" placeholder="Confirmar contraseña" minlength="8" maxlength="50">
+      <input type="password" formControlName="password2" placeholder="Confirmar contraseña" minlength="8"
+        maxlength="50">
       <br>
       <button pButton pRipple type="submit" label="Crear una cuenta" [disabled]="!formRegister.valid"></button>
     </form>
@@ -45,10 +47,15 @@
       </div>
     </div>
   </div>
+  <div class="mobile-toggle-buttons">
+    <button class="ghost btn-login" (click)="activarFormulario('login')">Inisiar sesión</button>
+    <button class="ghost btn-register" (click)="activarFormulario('register')">Crear una cuenta</button>
+  </div>
+
 </div>
 
 <footer>
   <p>
-    Created by <a>RASTOR</a>
+    Created by <a>RASTOR.SOFT</a>
   </p>
 </footer>

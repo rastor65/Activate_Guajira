@@ -112,7 +112,8 @@ input:focus {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+  width: 100%;
+  /* Asegura que el contenedor ocupe todo el ancho disponible */
 }
 
 .btn-medicion {
@@ -192,7 +193,9 @@ td {
 }
 
 /* Estilo base de los botones */
-.btn-ver, .btn-editar, .btn-eliminar {
+.btn-ver,
+.btn-editar,
+.btn-eliminar {
   align-items: center;
   justify-content: center;
   margin: 1px;
@@ -208,15 +211,18 @@ td {
 
 /* Estilo específico por acción */
 .btn-ver {
-  background-color: #007bff; /* Azul */
+  background-color: #007bff;
+  /* Azul */
 }
 
 .btn-editar {
-  background-color: #ffc107; /* Amarillo */
+  background-color: #ffc107;
+  /* Amarillo */
 }
 
 .btn-eliminar {
-  background-color: #dc3545; /* Rojo */
+  background-color: #dc3545;
+  /* Rojo */
 }
 
 /* Efectos hover */
@@ -239,7 +245,9 @@ td {
 }
 
 /* Animación de clic */
-.btn-ver:active, .btn-editar:active, .btn-eliminar:active {
+.btn-ver:active,
+.btn-editar:active,
+.btn-eliminar:active {
   transform: scale(0.9);
 }
 
@@ -254,26 +262,34 @@ td {
 
 /* IMC Bajo Peso */
 .bajo-peso {
-  background-color: #b3e5fc; /* Azul claro */
-  color: #01579b; /* Azul oscuro */
+  background-color: #b3e5fc;
+  /* Azul claro */
+  color: #01579b;
+  /* Azul oscuro */
 }
 
 /* IMC Normal */
 .normal {
-  background-color: #a5d6a7; /* Verde claro */
-  color: #1b5e20; /* Verde oscuro */
+  background-color: #a5d6a7;
+  /* Verde claro */
+  color: #1b5e20;
+  /* Verde oscuro */
 }
 
 /* IMC Sobrepeso */
 .sobrepeso {
-  background-color: #ffcc80; /* Naranja suave */
-  color: #e65100; /* Naranja oscuro */
+  background-color: #ffcc80;
+  /* Naranja suave */
+  color: #e65100;
+  /* Naranja oscuro */
 }
 
 /* IMC Obesidad */
 .obesidad {
-  background-color: #ef9a9a; /* Rojo claro */
-  color: #b71c1c; /* Rojo oscuro */
+  background-color: #ef9a9a;
+  /* Rojo claro */
+  color: #b71c1c;
+  /* Rojo oscuro */
 }
 
 .imc-message {
@@ -381,12 +397,13 @@ canvas {
 
 @keyframes fadeIn {
   from {
-      opacity: 0;
-      transform: scale(0.9);
+    opacity: 0;
+    transform: scale(0.9);
   }
+
   to {
-      opacity: 1;
-      transform: scale(1);
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -443,8 +460,281 @@ canvas:hover {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* ================== GLOBAL STYLES ================== */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f6f8;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+h2,
+h3 {
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: #2c3e50;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
+  color: #34495e;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* ================== CONTAINER & HEADER ================== */
+.container {
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  gap: 24px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  margin: 20px auto;
+  max-width: 1000px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  flex-wrap: wrap;
+}
+
+.user-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #3498db;
+}
+
+.btn-medicion {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-medicion:hover {
+  background-color: #2980b9;
+}
+
+/* ================== TABLE ================== */
+.card {
+  background-color: #fff;
+  padding: 24px;
+  margin: 20px auto;
+  border-radius: 16px;
+  max-width: 1000px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.mediciones-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+}
+
+.mediciones-table th,
+.mediciones-table td {
+  padding: 12px;
+  text-align: center;
+}
+
+.mediciones-table thead {
+  background-color: #3498db;
+  color: white;
+  font-weight: 600;
+}
+
+.mediciones-table tbody tr:hover {
+  background-color: #ecf0f1;
+}
+
+/* Estilo responsive para la tabla de mediciones */
+.mediciones-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.mediciones-table {
+  min-width: 800px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  background-color: white;
+}
+
+.mediciones-table thead {
+  background: #007bff;
+  color: #fff;
+}
+
+.mediciones-table th,
+.mediciones-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.mediciones-table tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* ================== BOTONES ================== */
+.btn-ver,
+.btn-editar,
+.btn-eliminar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  color: #fff;
+  font-size: 1rem;
+  margin: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-ver {
+  background-color: #3498db;
+}
+
+.btn-editar {
+  background-color: #f1c40f;
+  color: #000;
+}
+
+.btn-eliminar {
+  background-color: #e74c3c;
+}
+
+.btn-ver:hover,
+.btn-editar:hover,
+.btn-eliminar:hover {
+  transform: scale(1.1);
+}
+
+/* ================== FORM ================== */
+.p-dialog .form-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+.btn {
+  padding: 10px 20px;
+  background-color: #2ecc71;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #27ae60;
+}
+
+.btn-close {
+  background-color: #e74c3c;
+}
+
+/* ================== CHARTS ================== */
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  text-align: center;
+}
+
+canvas {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 12px;
+}
+
+/* ================== RESPONSIVE ================== */
+@media screen and (max-width: 600px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .btn-medicion {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+
+  .mediciones-table {
+    font-size: 0.85rem;
+  }
+
+  .mediciones-table th,
+  .mediciones-table td {
+    padding: 8px;
+  }
+
+  .mediciones-wrapper {
+    margin: 0 auto;
   }
 }

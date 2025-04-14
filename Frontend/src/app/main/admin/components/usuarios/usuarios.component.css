@@ -162,16 +162,6 @@ h2 {
     font-size: 1.2rem;
 }
 
-.user-list {
-    max-width: 700px;
-    margin: 30px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px var(--shadow-light);
-}
-
-
 /* Estilo base de los botones */
 .btn-ver,
 .btn-editar,
@@ -313,5 +303,251 @@ h2 {
 
     100% {
         transform: rotate(360deg);
+    }
+}
+
+/* 🎨 Contenedor Principal con Glassmorphism */
+.user-list {
+    max-width: 85%;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fafafa;
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    overflow-x: auto;
+}
+
+/* 📋 Tabla */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+/* 🏆 Encabezados */
+thead {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+th {
+    padding: 14px;
+    text-align: left;
+    font-weight: bold;
+}
+
+/* 📊 Celdas */
+td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    color: #090909;
+}
+
+/* 🔄 Alternancia de Filas */
+tbody tr:nth-child(even) {
+    background: rgba(0, 0, 0, 0.03);
+}
+
+/* 🖱️ Hover en Filas */
+tbody tr:hover {
+    background: rgba(0, 123, 255, 0.1);
+    transition: background 0.3s;
+}
+
+/* 🔘 Botones de Acción */
+.btn-editar,
+.btn-eliminar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* 🟡 Botón Editar */
+.btn-editar {
+    background-color: #ffc107;
+}
+
+.btn-editar:hover {
+    background-color: #d39e00;
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+/* 🔴 Botón Eliminar */
+.btn-eliminar {
+    background-color: #dc3545;
+}
+
+.btn-eliminar:hover {
+    background-color: #a71d2a;
+    transform: scale(1.1);
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
+}
+
+/* 📱 Modo Responsive */
+@media screen and (max-width: 768px) {
+    .user-list {
+        padding: 15px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    th,
+    td {
+        padding: 10px;
+    }
+
+    .btn-editar,
+    .btn-eliminar {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+}
+
+/* 🔄 Spinner de Carga */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    text-align: center;
+}
+
+.spinner {
+    width: 50px !important;
+    height: 50px !important;
+}
+
+.loading-text {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
+}
+
+/* Estilos generales del diálogo */
+p-dialog {
+    font-family: 'Poppins', sans-serif;
+}
+
+p-dialog .p-dialog-content {
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+/* Contenedor flexible para agrupar "Nombres" y "Apellidos" en la misma fila */
+.row {
+    display: flex;
+    gap: 1rem;
+}
+
+/* Ajuste para que cada campo ocupe el 50% del espacio en una fila */
+.col {
+    flex: 1;
+}
+
+/* Estilizar el formulario */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Estilos de los campos */
+.p-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.p-field label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.p-field input {
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.p-field input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Botones */
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn i {
+    font-size: 1.2rem;
+}
+
+.btn:first-child {
+    background-color: #007bff;
+}
+
+.btn:first-child:hover {
+    background-color: #0056b3;
+}
+
+.btn:last-child {
+    background-color: #dc3545;
+}
+
+.btn:last-child:hover {
+    background-color: #a71d2a;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column; /* En móviles, los campos estarán uno debajo del otro */
+    }
+
+    p-dialog {
+        width: 90vw !important;
+        height: auto !important;
+    }
+
+    .button-container {
+        flex-direction: column;
     }
 }

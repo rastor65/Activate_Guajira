@@ -14,8 +14,10 @@ import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { MessagesModule } from 'primeng/messages';
 import { ToastModule } from 'primeng/toast';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
   declarations: [
@@ -39,9 +41,11 @@ import { ToastModule } from 'primeng/toast';
     TableModule,
     FormsModule,
     ConfirmDialogModule,
-    MessagesModule,
     ToastModule,
+    MultiSelectModule,
+    ReactiveFormsModule,
+    ProgressBarModule,
   ],
-  providers: [ConfirmationService, MessageService], 
+  providers: [ConfirmationService, ], 
 })
 export class AdminModule { }

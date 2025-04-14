@@ -56,6 +56,10 @@ import { RecursosRoutingModule } from './main/admin/components/recursos/recursos
 import { UsuariosModule } from './main/usuarios/usuarios.module';
 import { MedicionesComponent } from './main/mediciones/mediciones.component';
 
+import { ServiceWorkerModule } from '@angular/service-worker';
+
+import { environment } from '../environments/environment';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -100,7 +104,7 @@ import { MedicionesComponent } from './main/mediciones/mediciones.component';
     ConfirmPopupModule,
     ToastModule,
     TreeModule,
-    TableModule, 
+    TableModule,
     KeyFilterModule,
     CarouselModule,
     GalleriaModule,
@@ -112,6 +116,10 @@ import { MedicionesComponent } from './main/mediciones/mediciones.component';
     FileUploadModule,
     InputTextareaModule,
     RecursosRoutingModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      registrationStrategy: 'registerWhenStable:30000'
+    })
 
   ],
   providers: [ConfirmationService, MessageService, CdkVirtualScrollViewport,

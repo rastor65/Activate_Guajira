@@ -60,27 +60,20 @@ class UserSerializersSimpleRegister(ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     roles = RolesSerializers(many=True, read_only=True)
-    email = serializers.EmailField(
-        required=True)
-    username = serializers.CharField(
-        required=True)
-    password = serializers.CharField(
-        min_length=8)
-    avatar = serializers.ImageField(
-        required=False, allow_null=True) 
+    email = serializers.EmailField(required=True)
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(min_length=8)
+    avatar = serializers.ImageField(required=False, allow_null=True)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        try:
-            if (len(representation['roles'])):
-                representation['roles'][0] = representation['roles'][0]['id']
-            return representation
-        except Exception as e:
-            return representation
-        
+        if representation.get('roles'):
+            representation['roles'] = [role['id'] for role in representation['roles']]
+        return representation
+
     class Meta:
         model = get_user_model()
-        fields = ('email', 'username', 'roles', 'password', 'avatar') 
+        fields = ('email', 'username', 'roles', 'password', 'avatar', 'first_name', 'last_name', 'last_login', 'date_joined')
         
 def validate_password(self, value):
     return make_password(value)

@@ -1,129 +1,161 @@
-/* Estilos generales */
-body {
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f4f9;
-  color: #333;
-}
+/* =============================================== */
+/*      🎨 VERSIÓN ELEGANTE Y RESPONSIVE           */
+/* =============================================== */
 
 .recursos-title {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 20px;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
   text-align: center;
-  color: #2c3e50;
   text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .role-resource-container {
-  max-width: 70%;
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 8px;
-  background: white;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 1000px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
 }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+.role-resource-container:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+fieldset {
+  border: none;
+  padding: 1rem 0;
+}
+
+legend {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #007ad9;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .input-group {
   display: flex;
-  gap: 20px; /* Espacio entre los elementos */
-  align-items: flex-start; /* Alinear elementos en la parte superior */
-  justify-content: center; /* Centrar en la pantalla */
-  flex-wrap: wrap; /* Permite que se adapten en pantallas pequeñas */
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .input-container {
+  flex: 1 1 300px;
   display: flex;
-  flex-direction: column; /* Coloca el label arriba del select */
-  flex: 1;
-  min-width: 250px; /* Evita que se encojan demasiado */
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-label {
-  font-weight: bold;
-  margin-bottom: 5px;
+.input-container label {
+  font-weight: 600;
+  color: #333;
+}
+
+::ng-deep .p-dropdown {
+  border-radius: 12px !important;
+  padding: 0.5rem !important;
+  border: 1px solid #ccc !important;
+  background-color: #fdfdfd !important;
+  transition: border-color 0.3s ease;
+}
+
+::ng-deep .p-dropdown:hover {
+  border-color: #007ad9 !important;
 }
 
 .button-container {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 2rem;
 }
 
-button {
-  padding: 12px 24px;
-  width: 50%;
-  font-size: 18px;
+.button-container button {
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #007ad9, #004b93);
   border: none;
-  border-radius: 8px;
-  background-color: #007bff;
   color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease-in-out;
 }
 
-button:hover {
-  background-color: #0056b3;
+.button-container button:hover {
+  background: linear-gradient(135deg, #004b93, #003974);
+  transform: translateY(-2px);
 }
 
-button:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
-}
+/* Tabla responsive moderna */
 
-/* Estilos para la tabla */
 .table-container {
-  margin-top: 20px;
+  margin-top: 2rem;
   overflow-x: auto;
-  padding: 10px;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
 }
 
 .resource-role-table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
+  text-align: center;
+  font-size: 0.95rem;
 }
 
 .resource-role-table th,
 .resource-role-table td {
-  padding: 12px;
-  text-align: center;
-  border: 1px solid #ccc;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
 }
 
-.resource-role-table th {
-  background-color: #34495e;
+.resource-role-table thead th {
+  background-color: #007ad9;
   color: white;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-/* Estilos diferenciados para jerarquía de recursos */
+.resource-role-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.resource-role-table tr:hover {
+  background-color: #eef6ff;
+  transition: 0.2s ease;
+}
+
 .row {
-  background-color: #ecf0f1;
-  font-weight: bold;
+  background-color: #eaf4ff;
+  font-weight: 600;
 }
 
 .child-row {
-  background-color: #d5dbdb;
+  background-color: #f3f9ff;
 }
 
 .grandchild-row {
-  background-color: #bfc9ca;
+  background-color: #f9fcff;
 }
 
-/* Estilos mejorados para los checkboxes */
+/* Checkboxes personalizados */
+
 .custom-checkbox {
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
 }
 
 .custom-checkbox input[type="checkbox"] {
@@ -133,145 +165,61 @@ button:disabled {
 .custom-checkbox .custom-label {
   width: 18px;
   height: 18px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid #2980b9;
+  display: inline-block;
+  border: 2px solid #007ad9;
   border-radius: 4px;
-  background-color: white;
   position: relative;
+  background: #fff;
 }
 
 .custom-checkbox input[type="checkbox"]:checked + .custom-label {
-  background-color: #2980b9;
+  background-color: #007ad9;
 }
 
 .custom-checkbox input[type="checkbox"]:checked + .custom-label::after {
-  content: "\2713";
-  font-size: 14px;
+  content: '✔';
   color: white;
+  font-size: 12px;
   position: absolute;
+  top: 1px;
+  left: 3px;
 }
 
-::ng-deep .role-resource-container {
-  max-width: 600px;
-  margin: 20px auto;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
-}
+/* Responsive optimizado */
 
-::ng-deep .role-resource-container:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
+@media (max-width: 768px) {
+  .recursos-title {
+    font-size: 1.5rem;
+  }
 
-::ng-deep fieldset {
-  border: none;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #f8f9fa, #eef1f5);
-  border-radius: 10px;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
-}
+  .role-resource-container {
+    padding: 1rem;
+  }
 
-::ng-deep legend {
-  font-size: 1.4rem;
-  font-weight: bold;
-  padding: 0.5rem 1rem;
-  color: #007ad9;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  background: rgba(0, 122, 217, 0.1);
-  border-radius: 8px;
-  display: inline-block;
-}
+  .input-group {
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-/* Alineación en dos columnas */
-::ng-deep .input-group {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.8rem;
-}
+  .input-container {
+    min-width: 100%;
+  }
 
-::ng-deep .input-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
+  .button-container button {
+    width: 100%;
+    font-size: 0.95rem;
+  }
 
-/* Estilización de etiquetas */
-::ng-deep .input-container label {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #444;
-  font-size: 0.95rem;
-  transition: color 0.3s ease-in-out;
-}
+  .resource-role-table {
+    font-size: 0.85rem;
+  }
 
-::ng-deep .input-container label:hover {
-  color: #007ad9;
-}
+  .resource-role-table th,
+  .resource-role-table td {
+    padding: 0.5rem;
+  }
 
-/* Mejora de los p-dropdown */
-::ng-deep p-dropdown {
-  width: 100%;
-}
-
-::ng-deep .p-dropdown {
-  border-radius: 10px !important;
-  border: 1px solid #d1d5db !important;
-  background: white !important;
-  transition: all 0.3s ease-in-out;
-  padding: 8px !important;
-}
-
-::ng-deep .p-dropdown:hover,
-::ng-deep .p-dropdown:focus-within {
-  border-color: #007ad9 !important;
-  box-shadow: 0 0 5px rgba(0, 122, 217, 0.3) !important;
-}
-
-/* Botón con animación */
-::ng-deep .button-container {
-  display: flex;
-  justify-content: center;
-}
-
-::ng-deep button {
-  background: linear-gradient(135deg, #007ad9, #005ea6);
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 12px 18px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-::ng-deep button:hover {
-  background: linear-gradient(135deg, #005ea6, #004488);
-  transform: scale(1.05);
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Icono en el botón */
-::ng-deep button i {
-  font-size: 1.2rem;
-}
-
-/* Adaptación a móviles */
-@media (max-width: 600px) {
-  ::ng-deep .input-group {
-      flex-direction: column;
-      gap: 1rem;
+  .table-container {
+    padding: 0.5rem;
   }
 }

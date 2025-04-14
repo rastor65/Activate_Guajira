@@ -4,11 +4,10 @@
       <div class="side-menu">
         <ul>
           <li>
-            <a>
-              <img src="assets/peakfit.png" style="width: 110%;">
+            <a [routerLink]="['/landing']">
+              <img style="width: 110%;" src="assets/peakfit.png">
             </a>
           </li>
-          <br>
           <li>
             <div class="menu-item">
               <button pButton icon="pi pi-cog" (click)="menu.toggle($event)"></button>
@@ -21,7 +20,7 @@
             </div>
           </li>
           <li>
-            <button pButton icon="pi pi-sign-out" style="width: 100%;" (click)="showConfirm()"></button>
+            <button pButton icon="pi pi-sign-out" (click)="showConfirm()"></button>
           </li>
         </ul>
       </div>
@@ -29,11 +28,11 @@
   </aside>
   <section>
     <div class="titulo">
-      <a [routerLink]="['/landing']">PeakFit</a>
+      <a [routerLink]="['/landing']">Activate Guajira</a>
     </div>
     <router-outlet></router-outlet>
   </section>
-  
+
 </main>
 
 <!-- CERRAR CESION -->
@@ -197,6 +196,15 @@
           <label for="genero">Genero</label>
           <p-dropdown id="genero" [options]="genero" optionLabel="nombre" optionValue="id" [(ngModel)]="usuario.genero"
             placeholder="Genero" class="custom-dropdown" [filter]="true"></p-dropdown>
+        </div>
+      </div>
+      <br>
+      <div class="form-container">
+        <div class="form-group consentimiento-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="consentimiento" name="consentimiento" required />
+            <span>He leído y acepto el </span> <a href="assets/Consentimiento_informado.pdf" target="_blank"
+              rel="noopener noreferrer">consentimiento informado.</a> </label>
         </div>
       </div>
     </div>

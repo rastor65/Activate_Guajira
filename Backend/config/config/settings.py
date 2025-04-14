@@ -4,8 +4,10 @@ import environ
 from django.core.mail import send_mail
 import os
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 #BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -25,11 +27,14 @@ SECRET_KEY = 'django-insecure-a#xmneb=v#5y@$2c*sxhl3s2q58i1x8r*7(l8#!(4-4wp37^g&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#IA
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 import os
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
-
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 #### ORIGIN
 
@@ -37,7 +42,16 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:4200",
 )
 
+VAPID_PUBLIC_KEY = "BBhWfccyHHvU-DrbPbbMMOeaQ3_xMZGQhPR1FfwIfeShYsGnUO6J-iP6C-fkfbtIC1DCqOm6KBru77UkBjkmyvA="
+VAPID_PRIVATE_KEY = "7_3QKyXomqhksKU8YWOaYa1GtHuY_UFwh2UFGHM7rwk="
+VAPID_CLAIMS = {
+    "sub": "mailto:rdamianquintero@uniguajira.edu.co"
+}
+
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",  # ajusta si usas otro puerto
+]
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -50,6 +64,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_celery_beat',
+
     
     'drf_yasg',
     'corsheaders',
@@ -66,6 +83,8 @@ INSTALLED_APPS = [
     'apps.authenticacion.apps.AuthenticacionConfig',
     'apps.pqrs.apps.PqrsConfig', 
 ]
+
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -115,8 +134,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587  
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mendozaym01@gmail.com'
-EMAIL_HOST_PASSWORD = 'hekr qohr rvyr homi'
+EMAIL_HOST_USER = 'rdamianquintero@uniguajira.edu.co'
+EMAIL_HOST_PASSWORD = 'squk idys ttag dbck'
 
 TEMPLATES = [
     {
@@ -144,15 +163,27 @@ PASSWORD_HASHERS = [
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'railway',
+#         'USER': 'root',
+#         'PASSWORD': 'TWjPbGXgOxKhvVKlPwMgMhhoOLBMuqAH',
+#         'HOST': 'switchback.proxy.rlwy.net',
+#         'PORT': '51406', 
+#         'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES', 'charset': 'utf8mb4',},
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
+        'NAME': 'peakfit',
         'USER': 'root',
-        'PASSWORD': 'TWjPbGXgOxKhvVKlPwMgMhhoOLBMuqAH',
-        'HOST': 'switchback.proxy.rlwy.net',
-        'PORT': '51406', 
-        'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES', 'charset': 'utf8mb4',},
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306', 
+        'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES'},
     }
 }
 
@@ -232,7 +263,7 @@ CACHES = {
 LANGUAGE_CODE = 'es-es'
 TIME_ZONE = 'America/Bogota'
 USE_I18N = True
-USE_TZ = False
+USE_TZ = True
 DEFAULT_CHARSET = 'utf-8'
 
 

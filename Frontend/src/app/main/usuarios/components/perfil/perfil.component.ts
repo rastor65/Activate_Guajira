@@ -7,6 +7,8 @@ import { forkJoin } from 'rxjs';
 import { MedicionService } from 'src/app/core/services/usuarios/medicion.service';
 import { MessageService } from 'primeng/api';
 import { ChartData } from 'chart.js';
+import { tablaMaestra, categoriaTablaMaestra } from 'src/app/models/user/person';
+import { TablaMaestraService } from 'src/app/core/services/admin/tabla-maestra.service';
 
 declare var Chart: any;
 
@@ -27,7 +29,9 @@ export class PerfilComponent implements OnInit {
   public person: Person | null = null;
   dialogEstadisticas: boolean = false;
   chartLabels: string[] = [];
+  generoPerson: any;
 
+  genero: any;
 
   pesoChart: any;
   imcChart: any;
@@ -44,6 +48,7 @@ export class PerfilComponent implements OnInit {
   constructor(
     private userService: UserService,
     private authService: AuthService,
+    private tablaService: TablaMaestraService,
     private medicionService: MedicionService,
     private messageService: MessageService,) {
   }
@@ -51,7 +56,9 @@ export class PerfilComponent implements OnInit {
   ngOnInit() {
     this.usuarioId = this.authService.getUserId();
     this.loadUser();
+    this.loadPersonGenero();
     this.cargarMediciones();
+
     this.chartLabels = [];
   }
 
@@ -72,6 +79,23 @@ export class PerfilComponent implements OnInit {
       );
     }
   }
+
+  loadPersonGenero() {
+    if (this.usuarioId !== undefined) {
+      this.userService.getPeopleByUserId(this.usuarioId).subscribe(
+        (person) => {
+          this.person = person.length > 0 ? person[0] : null;
+          this.generoPerson = this.person?.genero;
+          this.tablaService.getByIdMaestra(this.generoPerson).subscribe(
+            (data) => {
+              this.genero = data.nombre;
+              console.log(this.genero)
+            }
+          )
+        })
+    }
+  }
+
 
   cargarMediciones(): void {
     if (this.usuarioId !== undefined) {
@@ -245,5 +269,5 @@ export class PerfilComponent implements OnInit {
     }, 3000);
 
   }
-  
+
 }

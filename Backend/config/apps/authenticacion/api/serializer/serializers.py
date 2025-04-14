@@ -3,6 +3,8 @@ from apps.authenticacion.models import *
 from django import forms
 from datetime import date
 
+from decimal import Decimal
+
 from rest_framework.serializers import ModelSerializer, CharField, ValidationError, Serializer, IntegerField
 from django.utils import timezone
 from ...mudules import create_response, menuResources
@@ -192,8 +194,17 @@ class UserSerial(ModelSerializer):
     
 #medicion
 class MedicionSerializer(serializers.ModelSerializer):
+    talla = serializers.DecimalField(max_digits=5, decimal_places=2, allow_null=True, default=None)
+    peso = serializers.DecimalField(max_digits=6, decimal_places=2, allow_null=True, default=None)
     imc = serializers.SerializerMethodField()
     icc = serializers.SerializerMethodField()
+    grasa_corporal = serializers.SerializerMethodField()
+    fuerza_maxima = serializers.SerializerMethodField()
+
+    def validate_talla(self, value):
+        if value is None:
+            return Decimal("0.00")  # O asigna otro valor por defecto
+        return value
 
     class Meta:
         model = Medicion
@@ -220,15 +231,77 @@ class MedicionSerializer(serializers.ModelSerializer):
     def get_grasa_corporal(self, obj):
         """Calcula el porcentaje de grasa corporal usando la ecuación de Jackson & Pollock"""
         try:
-            if obj.imc and obj.edad and obj.genero:
-                if obj.genero.lower() == "Masculino":
-                    grasa = (1.20 * obj.imc) + (0.23 * obj.edad) - 16.2
+            person = Person.objects.filter(user=obj.usuario).first()  
+            if not person:
+                return None
+
+            if person.fecha_nacimiento:
+                today = date.today()
+                edad = today.year - person.fecha_nacimiento.year - ((today.month, today.day) < (person.fecha_nacimiento.month, person.fecha_nacimiento.day))
+            else:
+                return None
+
+            genero = person.genero.nombre if person.genero else None 
+            
+            imc = self.get_imc(obj)
+            if imc is None:
+                return None
+            
+            if edad and genero:
+                if genero.lower() == "masculino":
+                    grasa = (1.20 * imc) + (0.23 * edad) - 16.2
                 else:
-                    grasa = (1.20 * obj.imc) + (0.23 * obj.edad) - 5.4
+                    grasa = (1.20 * imc) + (0.23 * edad) - 5.4
+                    
                 return round(grasa, 2)
-        except:
+
+        except Exception as e:
             return None
         return None
+    
+    def get_fuerza_maxima(self, obj):
+        """Calcula la fuerza máxima de prensión (kg) y la categoriza"""
+        try:
+            # Verificar que haya datos válidos
+            if obj.fuerza_manoderecha is None or obj.fuerza_manoizquierda is None:
+                return None
+
+            # Calcular fuerza máxima
+            fuerza_max = (obj.fuerza_manoderecha + obj.fuerza_manoizquierda) / 2
+            
+            # Obtener datos del usuario
+            person = Person.objects.filter(user=obj.usuario).first()
+            if not person or not person.fecha_nacimiento:
+                return None
+
+            # Calcular edad
+            today = date.today()
+            edad = today.year - person.fecha_nacimiento.year - ((today.month, today.day) < (person.fecha_nacimiento.month, person.fecha_nacimiento.day))
+            genero = person.genero.nombre.lower() if person.genero else None
+
+            # Categorizar la fuerza máxima según tablas de referencia
+            if genero == "masculino":
+                if edad < 30:
+                    categoria = "Alta" if fuerza_max > 50 else "Normal" if fuerza_max >= 30 else "Baja"
+                elif edad < 50:
+                    categoria = "Alta" if fuerza_max > 45 else "Normal" if fuerza_max >= 28 else "Baja"
+                else:
+                    categoria = "Alta" if fuerza_max > 40 else "Normal" if fuerza_max >= 25 else "Baja"
+            elif genero == "femenino":
+                if edad < 30:
+                    categoria = "Alta" if fuerza_max > 35 else "Normal" if fuerza_max >= 20 else "Baja"
+                elif edad < 50:
+                    categoria = "Alta" if fuerza_max > 30 else "Normal" if fuerza_max >= 18 else "Baja"
+                else:
+                    categoria = "Alta" if fuerza_max > 25 else "Normal" if fuerza_max >= 15 else "Baja"
+            else:
+                categoria = "Desconocida"
+
+            return {"valor": round(fuerza_max, 2), "categoria": categoria}
+
+        except Exception as e:
+            return None
+
     
 class EntrenamientoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -6,6 +6,8 @@ from rest_framework import routers
 from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from apps.services import ia
+
 
 # Api router
 router = routers.DefaultRouter()
@@ -30,4 +32,5 @@ urlpatterns = [
     path('', include('apps.authenticacion.api.urls')),
     path('pqrs/', include('apps.pqrs.api.urls')),
     re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('ia/sugerencia/editar/', ia.editar_sugerencia, name='editar_sugerencia'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -44,7 +44,7 @@
 </p-table>
 
 <p-dialog [(visible)]="dialogVisible" [modal]="true" [showHeader]="false" [dismissableMask]="true"
-    [style]="{width: '50%', maxWidth: '600px'}">
+    [style]="{width: '80%', maxWidth: '80%'}">
     <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
         <h2 class="dialog-header">{{ dialogType === 'create' ? 'Crear Recurso' : 'Editar Recurso' }}</h2>
         <div class="dialog-content">

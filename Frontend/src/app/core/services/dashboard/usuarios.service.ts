@@ -54,5 +54,10 @@ export class UsuariosService {
     return this.http.post(url, data);
   }
   
+  editarUsuario(userId: number, userData: any, httpOptions?: { headers: HttpHeaders }): Observable<any> {
+    const url = `${this.base_usuarios}update/${userId}/`;
+    return this.http.put(url, userData, httpOptions);
+  }
+
 }
 

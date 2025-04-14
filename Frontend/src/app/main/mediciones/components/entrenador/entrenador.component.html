@@ -9,6 +9,13 @@
   </div>
 </div>
 
+<div class="button-container">
+  <button class="btn" (click)="verEntrenamientosMasivos()">
+    <i class="pi pi-eject"></i> Entrenamiento por región</button>
+  <button class="btn" (click)="verAlimentacionesMasivas()">
+    <i class="pi pi-heart"></i> Alimentación por región</button>
+</div>
+
 <div *ngIf="cargando" class="loading-container">
   <p-progressSpinner styleClass="spinner"></p-progressSpinner>
   <span class="loading-text">Cargando usuarios...</span>
@@ -51,7 +58,7 @@
 </div>
 
 <!-- MEDICIONES -->
-<p-dialog [(visible)]="dialogMediciones" [style]="{'width': '70vw'}" [resizable]="false" zindex="100" [modal]="true"
+<p-dialog [(visible)]="dialogMediciones" [style]="{'width': '80vw'}" [resizable]="false" zindex="100" [modal]="true"
   [closable]="true" [showHeader]="false">
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
@@ -110,7 +117,7 @@
 </p-dialog>
 
 <!--EDITAR MEDICIONES -->
-<p-dialog [(visible)]="dialogMedicion" [style]="{'width': '40vw'}" [resizable]="false" zindex="1000"
+<p-dialog [(visible)]="dialogMedicion" [style]="{'width': '80vw'}" [resizable]="false" zindex="1000"
   [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
 
   <div class="p-grid p-nogutter p-align-center header-container">
@@ -253,7 +260,7 @@
 </p-dialog>
 
 <!-- ALIMENTACIONES -->
-<p-dialog [(visible)]="dialogAlimentacion" [style]="{'width': '70vw'}" [resizable]="false" zindex="1000" [modal]="true"
+<p-dialog [(visible)]="dialogAlimentacion" [style]="{'width': '80vw'}" [resizable]="false" zindex="1000" [modal]="true"
   [closable]="true" [showHeader]="false">
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
@@ -304,7 +311,7 @@
 </p-dialog>
 
 <!-- VER UNA ALIMENTACION -->
-<p-dialog [(visible)]="dialogVerAlimentacion" [style]="{'width': '70vw'}" [resizable]="false" zindex="10000"
+<p-dialog [(visible)]="dialogVerAlimentacion" [style]="{'width': '80vw'}" [resizable]="false" zindex="10000"
   [modal]="true" [closable]="true" [showHeader]="false" class="custom-dialog">
 
   <ng-template pTemplate="content">
@@ -349,7 +356,7 @@
 </p-dialog>
 
 <!-- EDITAR Y CREAR ALIMENTACION -->
-<p-dialog [(visible)]="dialogFormularioAlimentacion" [style]="{'width': '50vw'}" [modal]="true" [closable]="true"
+<p-dialog [(visible)]="dialogFormularioAlimentacion" [style]="{'width': '80vw'}" [modal]="true" [closable]="true"
   [showHeader]="false">
   <div class="p-grid p-fluid">
     <div class="form-container">
@@ -366,7 +373,7 @@
 
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers" [(ngModel)]="formAlimentacion.entrenador"
+        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
           placeholder="Seleccione un entrenador" optionLabel="userId.first_name" optionValue="userId.id"
           [filter]="true">
         </p-dropdown>
@@ -389,8 +396,8 @@
 </p-dialog>
 
 <!-- ENTRENAMIENTOS -->
-<p-dialog [(visible)]="dialogEntrenamiento" [style]="{'width': '70vw'}" [resizable]="false" zindex="10000"
-  [modal]="true" [closable]="true" [showHeader]="false">
+<p-dialog [(visible)]="dialogEntrenamiento" [style]="{'width': '100%', 'max-width': '80%'}" [modal]="true"
+  [closable]="true" [showHeader]="false" [resizable]="false" zindex="10000">
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
       <div class="profile-header">
@@ -399,51 +406,52 @@
 
       <div class="alimentacion">
         <button class="btn-agregar" (click)="abrirFormularioEntrenamiento()">
-          <i class="pi pi-plus-circle"></i> Nuevo plan</button>
+          <i class="pi pi-plus-circle"></i> Nuevo plan
+        </button>
       </div>
 
-      <table class="styled-table" *ngIf="entrenamientos?.length; else noData">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Duración (semanas)</th>
-            <th>Entrenador</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let entrenamiento of entrenamientos">
-            <td>{{ entrenamiento.nombre }}</td>
-            <td>{{ entrenamiento.duracion_semanas }}</td>
-            <td>{{ entrenamiento.entrenador }}</td>
-            <td>
-              <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUnEntrenamiento(entrenamiento)"></button>
-              <button pButton icon="pi pi-pencil" class="btn-editar"
-                (click)="abrirFormularioEntrenamiento(entrenamiento)"></button>
-              <button pButton icon="pi pi-trash" class="btn-eliminar"
-                (click)="eliminarEntrenamiento(entrenamiento.id)"></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="styled-table" *ngIf="entrenamientos?.length; else noData">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Duración</th>
+              <th>Entrenador</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entrenamiento of entrenamientos">
+              <td>{{ entrenamiento.nombre }}</td>
+              <td>{{ entrenamiento.duracion_semanas }} semanas</td>
+              <td>{{ entrenamiento.entrenador }}</td>
+              <td class="action-btns">
+                <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUnEntrenamiento(entrenamiento)"></button>
+                <button pButton icon="pi pi-pencil" class="btn-editar"
+                  (click)="abrirFormularioEntrenamiento(entrenamiento)"></button>
+                <button pButton icon="pi pi-trash" class="btn-eliminar"
+                  (click)="eliminarEntrenamiento(entrenamiento.id)"></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <!-- Mensaje cuando no hay datos -->
       <ng-template #noData>
-        <p class="no-data">No hay planes de alimentación disponibles.</p>
+        <p class="no-data">No hay planes de entrenamiento disponibles.</p>
       </ng-template>
 
-    </div>
-    <div class="p-grid p-nogutter p-align-center header-container"></div>
-    <div class="button-container">
-      <button class="btn" (click)="cerrarEntrenamiento()">
-        <i class="pi pi-times"></i> Cerrar</button>
+      <div class="button-container mt-4 text-right">
+        <button class="btn" (click)="cerrarEntrenamiento()">
+          <i class="pi pi-times"></i> Cerrar
+        </button>
+      </div>
     </div>
   </ng-template>
 </p-dialog>
 
-
 <!-- VER UN ENTRENAMIENTO -->
-<p-dialog [(visible)]="dialogVerEntrenamiento" [style]="{'width': '70vw'}" [resizable]="false" zindex="10000"
+<p-dialog [(visible)]="dialogVerEntrenamiento" [style]="{ 'width': '90vw' }" [resizable]="false" zindex="10000"
   [modal]="true" [closable]="true" [showHeader]="false" class="custom-dialog">
 
   <ng-template pTemplate="content">
@@ -476,20 +484,166 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="button-container">
-      <button class="btn" (click)="cerrarVerEntrenamiento()">
-        <i class="pi pi-times"></i> Cerrar
-      </button>
+      <div class="resumen-dias" *ngIf="selectedEntrenamiento?.semanas?.length">
+        <div class="dia-resumen" *ngFor="let dia of diasSemana">
+          <h3>{{ dia }}</h3>
+
+          <ng-container *ngFor="let semana of selectedEntrenamiento.semanas">
+            <div class="semana-dia" *ngFor="let ejercicio of semana.ejercicios; let i = index">
+              <ng-container *ngIf="ejercicio.dias[diasSemana.indexOf(dia)]">
+                <div class="ejercicio-dia-card">
+                  <h4>{{ ejercicio.tipo }}</h4>
+                  <ul *ngIf="ejercicio.sugerencias?.[dia] && ejercicio.sugerencias[dia].length">
+                    <li *ngFor="let sug of ejercicio.sugerencias[dia]">
+                      {{ sug }}
+                    </li>
+                  </ul>
+                  <p *ngIf="!ejercicio.sugerencias?.[dia]?.length" class="no-sugerencias">Sin sugerencias disponibles
+                  </p>
+                </div>
+              </ng-container>
+            </div>
+          </ng-container>
+
+          <p *ngIf="!hasEjerciciosParaDia(dia)" class="no-ejercicios">
+            No hay ejercicios asignados para este día.
+          </p>
+        </div>
+      </div>
+
+
+      <div class="button-container mt-4 text-right">
+        <button class="btn" (click)="cerrarVerEntrenamiento()">
+          <i class="pi pi-times"></i> Cerrar
+        </button>
+      </div>
     </div>
   </ng-template>
-
 </p-dialog>
 
+
 <!-- EDITAR Y CREAR ENTRENAMIENTO -->
-<p-dialog [(visible)]="dialogFormularioEntrenamiento" [style]="{'width': '50vw'}" [modal]="true" [closable]="true"
+<p-dialog [(visible)]="dialogFormularioEntrenamiento" [style]="{'width': '90vw'}" [modal]="true" [closable]="true"
   [showHeader]="false">
+  <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
+    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+    <p class="loading-text">Guardando entrenamiento...</p>
+  </div>
+  <div class="p-grid p-fluid">
+    <div class="form-container p-col-12 p-md-6">
+      <div class="form-group">
+        <label for="nombre">Nombre del Plan</label>
+        <input type="text" id="nombre" placeholder="Nombre" pInputText [(ngModel)]="formEntrenamiento.nombre">
+      </div>
+
+      <div class="form-group">
+        <label for="duracion">Duración (semanas)</label>
+        <input type="number" id="duracion" placeholder="Duración (semanas)" pInputText
+          [(ngModel)]="formEntrenamiento.duracion_semanas" (ngModelChange)="generarSemanas()" min="1" />
+      </div>
+
+      <div class="form-group">
+        <label for="entrenador">Entrenador</label>
+        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
+          placeholder="Seleccione un entrenador" optionLabel="userId.first_name" optionValue="userId.id"
+          [filter]="true">
+        </p-dropdown>
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
+          [(ngModel)]="formEntrenamiento.descripcion" rows="4" class="descripcion-textarea"></textarea>
+      </div>
+    </div>
+
+    <!-- Secciones dinámicas por semana -->
+    <div class="p-col-12 mt-4" *ngIf="formEntrenamiento.semanas.length > 0">
+      <div class="semana-container" *ngFor="let semana of formEntrenamiento.semanas">
+        <h4>SEMANA {{ semana.numero }}</h4>
+        <div class="table-responsive">
+          <table class="p-datatable p-component" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr>
+                <th style="padding: 8px; background: #f4f4f4;">TIPO DE EJERCICIO</th>
+                <th *ngFor="let dia of diasSemana" style="padding: 8px; background: #f4f4f4;">{{ dia }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ejercicio of semana.ejercicios; let i = index">
+                <td style="padding: 6px;">{{ ejercicio.tipo }}</td>
+                <td *ngFor="let dia of diasSemana; let j = index" style="text-align: center;">
+                  <input type="checkbox" [(ngModel)]="semana.ejercicios[i].dias[j]"
+                    (change)="onCheckboxChange(semana.ejercicios[i], dia, semana.ejercicios[i].dias[j])"
+                    [name]="'checkbox-' + i + '-' + j" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-dialog-footer">
+    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text"
+      (click)="cerrarDialogoEntrenamiento()"></button>
+    <button pButton label="Guardar" icon="pi pi-check" class="p-button-primary"
+      (click)="guardarEntrenamiento()"></button>
+  </div>
+</p-dialog>
+
+
+<!-- CREAR ENTRENAMIENTO POR REGION -->
+<p-dialog [(visible)]="dialogEntrenamientoRegion" [style]="{'width': '95vw'}" [resizable]="false" zindex="1000"
+  [modal]="true" [closable]="true" [showHeader]="false">
+
+  <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
+    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+    <p class="loading-text">Guardando entrenamiento...</p>
+  </div>
+
+  <div class="contenedor">
+    <div class="filtro-compacto">
+      <label for="ciudad">Filtrar por ciudad:</label>
+      <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
+        placeholder="Seleccionar una ciudad" class="custom-dropdown" [filter]="true"
+        (onChange)="filtrarPorCiudad($event.value)">
+      </p-dropdown>
+    </div>
+
+    <div *ngIf="personasFiltradas.length > 0" class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" (change)="seleccionarTodos($event)" checked />
+            </th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Edad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let persona of personasFiltradas; let i = index">
+            <td>
+              <input type="checkbox" [(ngModel)]="personasFiltradas[i].seleccionado" checked />
+            </td>
+            <td>{{ persona.nombres }}</td>
+            <td>{{ persona.apellidos }}</td>
+            <td>{{ persona.edad }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="personasFiltradas.length === 0" class="mensaje">
+      <p>No hay personas registradas en esta ciudad.</p>
+    </div>
+  </div>
+
+
   <div class="p-grid p-fluid">
     <div class="form-container">
       <div class="form-group">
@@ -498,14 +652,15 @@
       </div>
 
       <div class="form-group">
-        <label for="calorias">Duración (semanas)</label>
-        <input type="number" id="calorias" placeholder="Calorías" pInputText
-          [(ngModel)]="formEntrenamiento.duracion_semanas">
+        <label for="semanas">Duración (semanas)</label>
+        <input type="number" id="semanas" placeholder="Duración (semanas)" pInputText
+          [(ngModel)]="formEntrenamiento.duracion_semanas" (ngModelChange)="generarSemanas()" min="1" />
+
       </div>
 
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers" [(ngModel)]="formAlimentacion.entrenador"
+        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
           placeholder="Seleccione un entrenador" optionLabel="userId.first_name" optionValue="userId.id"
           [filter]="true">
         </p-dropdown>
@@ -519,10 +674,128 @@
     </div>
   </div>
 
-  <div class="p-dialog-footer">
-    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text"
-      (click)="cerrarDialogoEntrenamiento()"></button>
-    <button pButton label="Guardar" icon="pi pi-check" class="p-button-primary"
-      (click)="guardarEntrenamiento()"></button>
+  <!-- Secciones dinámicas por semana para entrenamiento por región -->
+  <div class="p-col-12 mt-4" *ngIf="formEntrenamiento.semanas.length > 0">
+    <div class="semana-container" *ngFor="let semana of formEntrenamiento.semanas">
+      <h4>SEMANA {{ semana.numero }}</h4>
+      <div class="table-responsive">
+        <table class="p-datatable p-component" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th style="padding: 8px; background: #f4f4f4;">TIPO DE EJERCICIO</th>
+              <th *ngFor="let dia of diasSemana" style="padding: 8px; background: #f4f4f4;">{{ dia }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let ejercicio of semana.ejercicios; let i = index">
+              <td style="padding: 6px;">{{ ejercicio.tipo }}</td>
+              <td *ngFor="let dia of diasSemana; let j = index" style="text-align: center;">
+                <div>
+                  <input type="checkbox" [(ngModel)]="semana.ejercicios[i].dias[j]"
+                    (change)="onCheckboxChange(semana.ejercicios[i], dia, semana.ejercicios[i].dias[j])"
+                    [name]="'checkbox-region-' + i + '-' + j" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="p-grid p-nogutter p-align-center header-container"></div>
+  <div class="button-container">
+    <button class="btn" (click)="guardarEntrenamientoRegion()">
+      <i class="pi pi-check"></i> Guardar Cambios</button>
+    <button class="btn" (click)="cerrarEntrenamientosMasivos()">
+      <i class="pi pi-times"></i> Cancelar</button>
+  </div>
+</p-dialog>
+
+<!-- CREAR ALIMENTACION POR REGION -->
+<p-dialog [(visible)]="dialogAlimentacionRegion" [style]="{ 'width': '95vw' }" [resizable]="false" zindex="1000"
+  [modal]="true" [closable]="true" [showHeader]="false">
+
+  <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
+    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+    <p class="loading-text">Guardando alimentaciòn...</p>
+  </div>
+
+  <div class="contenedor">
+    <div class="filtro-compacto">
+      <label for="ciudad">Filtrar por ciudad:</label>
+      <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
+        placeholder="Seleccionar una ciudad" class="custom-dropdown" [filter]="true"
+        (onChange)="filtrarPorCiudad($event.value)">
+      </p-dropdown>
+    </div>
+
+    <div *ngIf="personasFiltradas.length > 0" class="tabla-contenedor">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>
+              <input type="checkbox" (change)="seleccionarTodos($event)" checked />
+            </th>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Edad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let persona of personasFiltradas; let i = index">
+            <td>
+              <input type="checkbox" [(ngModel)]="personasFiltradas[i].seleccionado" checked />
+            </td>
+            <td>{{ persona.nombres }}</td>
+            <td>{{ persona.apellidos }}</td>
+            <td>{{ persona.edad }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="personasFiltradas.length === 0" class="mensaje">
+      <p>No hay personas registradas en esta ciudad.</p>
+    </div>
+
+  </div>
+  <div class="p-grid p-fluid">
+    <div class="form-container">
+      <div class="form-group">
+        <label for="nombre">Nombre del Plan</label>
+        <input type="text" id="nombre" placeholder="Nombre" pInputText [(ngModel)]="formAlimentacion.nombre">
+      </div>
+      <div class="form-group">
+        <label for="calorias">Calorías Diarias</label>
+        <input type="number" id="calorias" placeholder="Calorías" pInputText
+          [(ngModel)]="formAlimentacion.calorias_diarias">
+      </div>
+
+      <div class="form-group">
+        <label for="entrenador">Entrenador</label>
+        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
+          placeholder="Seleccione un entrenador" optionLabel="userId.first_name" optionValue="userId.id"
+          [filter]="true">
+        </p-dropdown>
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
+          [(ngModel)]="formAlimentacion.descripcion" rows="4" class="descripcion-textarea"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="p-grid p-nogutter p-align-center header-container"></div>
+  <div class="button-container">
+    <button class="btn" (click)="guardarAlimentacionRegion()">
+      <i class="pi pi-check"></i>
+      Guardar Cambios
+    </button>
+    <button class="btn" (click)="cerrarAlimentacionesMasivas()">
+      <i class="pi pi-times"></i>
+      Cancelar
+    </button>
   </div>
 </p-dialog>

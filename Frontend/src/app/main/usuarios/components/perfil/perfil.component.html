@@ -1,10 +1,9 @@
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="container" *ngIf="person">
     <img [src]="profileImage" alt="Avatar de usuario" class="user-avatar">
     <h2>{{ person.nombres }} {{ person.apellidos }}
         <button pButton icon="pi pi-chart-bar" label="Estadisticas" class="btn-medicion"
-            style="width: 300px; justify-content: right;" (click)="abrirEstadisticas()"></button>
+            style="width: 250px; justify-content: right;" (click)="abrirEstadisticas()"></button>
     </h2>
 </div>
 <div class="medicion">
@@ -18,38 +17,40 @@
     <div *ngIf="estadoIMC" class="imc-message">
         Estado de indice de masa corporal: <strong>{{ estadoIMC }}</strong>
     </div>
-    <table class="mediciones-table">
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Altura (m)</th>
-                <th>Peso (Kg)</th>
-                <th>IMC</th>
-                <th>ICC</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let medicion of mediciones">
-                <td>{{ medicion.fecha }}</td>
-                <td>{{ medicion.talla }}</td>
-                <td>{{ medicion.peso }}</td>
-                <td [ngClass]="getIMCClass(medicion.imc)" class="imc-cell" (click)="mostrarEstadoIMC(medicion.imc)">
-                    {{ medicion.imc }}
-                </td>
-                <td>{{ medicion.icc }}</td>
-                <td>
-                    <button pButton icon="pi pi-eye" class="btn-ver" (click)="verMedicion(medicion)"></button>
-                    <button pButton icon="pi pi-pencil" class="btn-editar" (click)="editarMedicion(medicion)"></button>
-                    <button pButton icon="pi pi-trash" class="btn-eliminar"
-                        (click)="eliminarMedicion(medicion)"></button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="mediciones-wrapper">
+        <table class="mediciones-table">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Altura (m)</th>
+                    <th>Peso (Kg)</th>
+                    <th>IMC</th>
+                    <th>ICC</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let medicion of mediciones">
+                    <td>{{ medicion.fecha }}</td>
+                    <td>{{ medicion.talla }}</td>
+                    <td>{{ medicion.peso }}</td>
+                    <td [ngClass]="getIMCClass(medicion.imc)" class="imc-cell" (click)="mostrarEstadoIMC(medicion.imc)">
+                        {{ medicion.imc }}
+                    </td>
+                    <td>{{ medicion.icc }}</td>
+                    <td>
+                        <button pButton icon="pi pi-pencil" class="btn-editar"
+                            (click)="editarMedicion(medicion)"></button>
+                        <button pButton icon="pi pi-trash" class="btn-eliminar"
+                            (click)="eliminarMedicion(medicion)"></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<p-dialog [(visible)]="dialogMedicion" [style]="{'width': '40vw'}" [resizable]="false" zindex="10000"
+<p-dialog [(visible)]="dialogMedicion" [style]="{'width': '80vw'}" [resizable]="false" zindex="10000"
     [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
 
     <div class="p-grid p-nogutter p-align-center header-container">
@@ -79,34 +80,34 @@
                     [(ngModel)]="formData.perimetro_cadera">
             </div>
 
-            <div class="form-group">
-                <label for="pliegue_pectoral">Pliegue Pectoral (hombres)</label>
+            <div *ngIf="genero === 'Masculino'" class="form-group">
+                <label for="pliegue_pectoral">Pliegue Pectoral</label>
                 <input type="number" id="pliegue_pectoral" placeholder="Pliegue Pectoral" pInputText
                     [(ngModel)]="formData.pliegue_pectoral">
             </div>
 
-            <div class="form-group">
-                <label for="pliegue_abdominal">Pliegue Abdominal (hombres)</label>
+            <div *ngIf="genero === 'Masculino'" class="form-group">
+                <label for="pliegue_abdominal">Pliegue Abdominal</label>
                 <input type="number" id="pliegue_abdominal" placeholder="Pliegue Abdominal" pInputText
                     [(ngModel)]="formData.pliegue_abdominal">
+            </div>
+
+            <div *ngIf="genero === 'Femenino'" class="form-group">
+                <label for="pliegue_tricipal">Pliegue Tricipal</label>
+                <input type="number" id="pliegue_tricipal" placeholder="Pliegue Tricipal" pInputText
+                    [(ngModel)]="formData.pliegue_tricipal">
+            </div>
+
+            <div *ngIf="genero === 'Femenino'" class="form-group">
+                <label for="pliegue_iliocrestal">Pliegue Iliocrestal</label>
+                <input type="number" id="pliegue_iliocrestal" placeholder="Pliegue Iliocrestal" pInputText
+                    [(ngModel)]="formData.pliegue_iliocrestal">
             </div>
 
             <div class="form-group">
                 <label for="pliegue_antemuslo">Pliegue Antemuslo</label>
                 <input type="number" id="pliegue_antemuslo" placeholder="Pliegue Antemuslo" pInputText
                     [(ngModel)]="formData.pliegue_antemuslo">
-            </div>
-
-            <div class="form-group">
-                <label for="pliegue_tricipal">Pliegue Tricipal (mujeres)</label>
-                <input type="number" id="pliegue_tricipal" placeholder="Pliegue Tricipal" pInputText
-                    [(ngModel)]="formData.pliegue_tricipal">
-            </div>
-
-            <div class="form-group">
-                <label for="pliegue_iliocrestal">Pliegue Iliocrestal (mujeres)</label>
-                <input type="number" id="pliegue_iliocrestal" placeholder="Pliegue Iliocrestal" pInputText
-                    [(ngModel)]="formData.pliegue_iliocrestal">
             </div>
 
             <div class="form-group">
@@ -192,9 +193,8 @@
     </div>
 </p-dialog>
 
-<p-dialog [(visible)]="dialogEstadisticas" [style]="{'width': '80vw'}"
-    [resizable]="false" zindex="10000" [showHeader]="false" [closeOnEscape]="false"
-    [closable]="false" [modal]="true" class="custom-dialog">
+<p-dialog [(visible)]="dialogEstadisticas" [style]="{'width': '80vw'}" [resizable]="false" zindex="10000"
+    [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true" class="custom-dialog">
 
     <div class="dialog-header">
         <h2>📊 Estadísticas de Seguimiento</h2>

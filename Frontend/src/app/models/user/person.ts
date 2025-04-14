@@ -40,6 +40,7 @@ export interface Person {
   status?: boolean;
   createdAt?: string;
   updateAt?: string;
+  seleccionado?: boolean;
 }
 
 
@@ -60,6 +61,8 @@ export interface Person_request {
 
 export interface Usuario {
   id: number;
+  first_name: string;
+  last_name: string;
   email: string;
   username: string;
   password: string;

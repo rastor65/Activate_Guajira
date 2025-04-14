@@ -24,6 +24,11 @@ import bcrypt, logging
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse
 import json
+from django.http import JsonResponse
+from ......telegram_utils import enviar_mensaje_telegram
+
+from .....models import WebPushSubscription
+from django.views.decorators.csrf import csrf_exempt
 
 ##  USER ##
 class CustomUserList(generics.ListCreateAPIView):
@@ -49,10 +54,6 @@ class CustomUserList(generics.ListCreateAPIView):
         }
         return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
 
-# class CustomLogEntryListCreateView(generics.ListCreateAPIView):
-#     queryset = CustomLogEntry.objects.all()
-#     serializer_class = CustomLogEntrySerializer
-
 def descargar_archivo(request, pk):
     contenido = get_object_or_404(CustomUser, pk=pk, is_active=True)
     archivo = contenido.avatar
@@ -64,25 +65,20 @@ class UserDetail(generics.RetrieveAPIView):
     serializer_class = UserSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            if instance.is_active:
-                serializer = self.get_serializer(instance)
-                return Response(serializer.data)
-            else:
-                response_data = {
+        instance = get_object_or_404(CustomUser, pk=kwargs.get("pk"))
+
+        if not instance.is_active:
+            return Response(
+                {
                     "ok": False,
                     "message": "Usuario no encontrado",
                     "errors": {"error": ["Usuario no encontrado"]},
-                }
-                return Response(response_data, status=status.HTTP_404_NOT_FOUND)
-        except CustomUser.DoesNotExist:
-            response_data = {
-                "ok": False,
-                "message": "Usuario no encontrado",
-                "errors": {"error": ["Usuario no encontrado"]},
-            }
-            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
         
 class UserPublic(generics.RetrieveAPIView):
     queryset = CustomUser.objects.all()
@@ -121,46 +117,31 @@ class UserCreate(generics.CreateAPIView):
         }
         return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
     
-class UserUpdate(generics.UpdateAPIView):
+class UserUpdate(generics.RetrieveUpdateAPIView):  # Permite GET y PUT/PATCH
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
     def get_object(self):
-        try:
-            request_user = self.kwargs['pk']
-            user = CustomUser.objects.get(pk=request_user)
-            return user
-        except CustomUser.DoesNotExist:
-            return None
+        return get_object_or_404(CustomUser, pk=self.kwargs['pk'])
 
     def update(self, request, *args, **kwargs):
         user = self.get_object()
 
-        if user is None:
-            response_data = {
-                "ok": False,
-                "message": "Usuario no encontrado",
-                "errors": {"error": ["Usuario no encontrado"]},
-            }
-            return Response(response_data, status=status.HTTP_404_NOT_FOUND)
+        # Permitir actualizaciones parciales (sin requerir todos los campos)
+        user_serializer = UserSerializer(user, data=request.data, partial=True) 
 
-        user_serializer = UserSerializer(
-            user, data=request.data, partial=kwargs.get('partial', False))
-        
         if user_serializer.is_valid():
             user_serializer.save()
-            response_data = {
+            return Response({
                 "ok": True,
-                "message": "Usuario actualizado exitosamente",
-            }
-            return Response(response_data)
+                "message": "Usuario actualizado exitosamente"
+            })
         else:
-            response_data = {
+            return Response({
                 "ok": False,
                 "message": "Error de validación",
                 "errors": user_serializer.errors,
-            }
-            return Response(response_data, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST)
         
 class UserChangePasswordView(UpdateAPIView):
     queryset = CustomUser.objects.all()
@@ -321,3 +302,28 @@ class LogoutView(APIView):
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
     print(f"\nRecupera la contraseña del correo '{reset_password_token.user.email}' usando el token '{reset_password_token.key}' desde la API http://localhost:8000/api/auth/reset/confirm/.")
+
+
+def prueba_mensaje_telegram(request):
+    chat_id = 'TU_CHAT_ID'  # reemplaza con el tuyo (puede ser int o str)
+    mensaje = 'Hola desde Django 👋'
+
+    resultado = enviar_mensaje_telegram(chat_id, mensaje)
+    return JsonResponse(resultado)
+
+
+
+@csrf_exempt
+def save_subscription(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user = request.user  # Asegúrate que esté autenticado si usas sesión
+
+        sub, created = WebPushSubscription.objects.update_or_create(
+            user=user,
+            defaults={
+                'endpoint': data['endpoint'],
+                'keys': data['keys']
+            }
+        )
+        return JsonResponse({'status': 'ok'})

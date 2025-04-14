@@ -1,8 +1,7 @@
 <!-- Botón para abrir el diálogo de categorías -->
-<div style="display: flex; width: 100%; justify-content: center; align-items: center; margin: auto;">
-    <button type="button" icon="pi pi-list" class="btn" style="width: 60%;" (click)="abrirCategorias()">📂 Administrar
-        categorías</button>
-</div>
+<div class="admin-categorias-btn-container">
+    <button class="btn" (click)="abrirCategorias()">📂 Administrar categorías</button>
+  </div>  
 
 <!-- Diálogo de Categorías -->
 <p-dialog [(visible)]="dialogCategoria" [modal]="true" [style]="{ 'width': '50vw' }" [showHeader]="false">

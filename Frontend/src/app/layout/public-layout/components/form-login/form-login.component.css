@@ -1,5 +1,32 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
+html,
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	min-height: 100vh;
+	font-family: 'Montserrat', sans-serif;
+	background-color: #f8f8f8;
+}
+
+footer {
+	background-color: #222;
+	color: #fff;
+	font-size: 14px;
+	padding: 10px 0;
+	text-align: center;
+	width: 100%;
+	margin-top: auto;
+	position: relative;
+}
+
 * {
 	box-sizing: border-box;
 }
@@ -100,39 +127,45 @@ input:focus {
 }
 
 ::ng-deep .p-progressbar {
-    position: fixed !important; /* Fijo en la parte superior */
-    top: 0 !important; /* Se alinea en la parte superior */
-    left: 0 !important;
-    width: 100% !important;
-    height: 6px !important;
-    z-index: 9999 !important; /* Asegura que esté por encima de otros elementos */
-    border-radius: 0 !important;
+	position: fixed !important;
+	/* Fijo en la parte superior */
+	top: 0 !important;
+	/* Se alinea en la parte superior */
+	left: 0 !important;
+	width: 100% !important;
+	height: 6px !important;
+	z-index: 9999 !important;
+	/* Asegura que esté por encima de otros elementos */
+	border-radius: 0 !important;
 	background-color: transparent;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important; /* Sutil sombra para resaltar */
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+	/* Sutil sombra para resaltar */
 }
 
 
 ::ng-deep .p-progressbar .p-progressbar-value {
-    background-color: #007bff !important; /* Color de la barra */
-    height: 100% !important;
+	background-color: #007bff !important;
+	/* Color de la barra */
+	height: 100% !important;
 }
 
 .container {
-    position: absolute; /* Se mantiene centrado */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fafafa;
-    border-radius: 20px;
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
-        0 10px 10px rgba(0, 0, 0, 0.22);
-    width: 55%;
-    max-width: 100%;
-    min-height: 480px;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	position: absolute;
+	/* Se mantiene centrado */
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #fafafa;
+	border-radius: 20px;
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+		0 10px 10px rgba(0, 0, 0, 0.22);
+	width: 55%;
+	max-width: 100%;
+	min-height: 480px;
+	padding: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .form-container {
@@ -271,17 +304,6 @@ input:focus {
 	color: #090909;
 }
 
-footer {
-	background-color: #222;
-	color: #fff;
-	font-size: 14px;
-	bottom: 0;
-	position: fixed;
-	left: 0;
-	right: 0;
-	text-align: center;
-	z-index: 999;
-}
 
 footer p {
 	margin: 10px 0;
@@ -294,4 +316,146 @@ footer i {
 footer a {
 	color: #0076df;
 	text-decoration: none;
+}
+
+/* ==== VERSION RESPONSIVE ==== */
+@media screen and (max-width: 768px) {
+
+	html, body {
+		height: 100%;
+		margin: 0;
+		padding: 0;
+	  }
+	  
+	  body {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		min-height: 100vh;
+		font-family: 'Montserrat', sans-serif;
+		background-color: #f8f8f8;
+	  }
+
+	.container {
+		flex-direction: column;
+		position: relative;
+		width: 90%;
+		height: auto;
+		padding: 20px;
+		transform: translate(-50%, -50%);
+	}
+
+	.form-container {
+		position: relative !important;
+		width: 100% !important;
+		height: auto;
+		opacity: 1 !important;
+		transform: none !important;
+		animation: none !important;
+	}
+
+	.sign-in-container,
+	.sign-up-container {
+		display: none;
+	}
+
+	.container.right-panel-active .sign-in-container {
+		display: none;
+	}
+
+	.container.right-panel-active .sign-up-container {
+		display: block;
+	}
+
+	.container:not(.right-panel-active) .sign-in-container {
+		display: block;
+	}
+
+	.overlay-container {
+		display: none;
+	}
+
+	form {
+		border-radius: 20px;
+		padding: 20px;
+		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+	}
+
+	input {
+		font-size: 0.95rem;
+		padding: 10px;
+	}
+
+	button {
+		width: 100%;
+	}
+
+	.social-container {
+		justify-content: center;
+	}
+
+	footer {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		background-color: #222;
+		color: #fff;
+		font-size: 14px;
+		text-align: center;
+		z-index: 100;
+		padding: 10px 0;
+		box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
+	  }
+	  
+}
+
+@media screen and (max-width: 768px) {
+	.mobile-toggle-buttons {
+		display: flex;
+		justify-content: center;
+		gap: 10px;
+		margin-top: 20px;
+		flex-wrap: wrap;
+	}
+
+	.mobile-toggle-buttons .ghost {
+		padding: 10px 20px;
+		font-size: 14px;
+		background-color: transparent;
+		color: #0076df;
+		border: 2px solid #0076df;
+		border-radius: 20px;
+		transition: all 0.3s ease;
+	}
+
+	.mobile-toggle-buttons .ghost:hover {
+		background-color: #0076df;
+		color: #fff;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.mobile-toggle-buttons {
+		display: flex;
+		justify-content: center;
+		gap: 10px;
+		margin-top: 20px;
+		flex-wrap: wrap;
+	}
+
+	.mobile-toggle-buttons .ghost {
+		padding: 10px 20px;
+		font-size: 14px;
+		background-color: transparent;
+		color: #0076df;
+		border: 2px solid #0076df;
+		border-radius: 20px;
+		transition: all 0.3s ease;
+	}
+
+	.mobile-toggle-buttons .ghost:hover {
+		background-color: #0076df;
+		color: #fff;
+	}
 }

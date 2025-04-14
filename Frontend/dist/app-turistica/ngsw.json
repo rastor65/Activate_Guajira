@@ -1,0 +1,158 @@
+{
+  "configVersion": 1,
+  "timestamp": 1744432718682,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/126.195a1860ce65e2bf.js",
+        "/320.7acacf440586e8c0.js",
+        "/410.5508c96c6b42ca13.js",
+        "/428.aa344e958151c37c.js",
+        "/574.ba189c06c4731026.js",
+        "/662.919f16e913d89844.js",
+        "/837.835db22e6892b922.js",
+        "/929.33acdda3003bcb0e.js",
+        "/common.1940b695d8f3c6db.js",
+        "/favicon.ico",
+        "/index.html",
+        "/main.208ba72b31336f27.js",
+        "/polyfills.4a994e3e536a83e7.js",
+        "/runtime.c7e27e606107984b.js",
+        "/scripts.c7af6774c697f4b0.js",
+        "/styles.35f880048bc029a2.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/assets/Consentimiento_informado.pdf",
+        "/assets/avatars/avataaars-1.png",
+        "/assets/avatars/avataaars-10.png",
+        "/assets/avatars/avataaars-2.png",
+        "/assets/avatars/avataaars-3.png",
+        "/assets/avatars/avataaars-4.png",
+        "/assets/avatars/avataaars-5.png",
+        "/assets/avatars/avataaars-6.png",
+        "/assets/avatars/avataaars-7.png",
+        "/assets/avatars/avataaars-8.png",
+        "/assets/avatars/avataaars-9.png",
+        "/assets/avatars/user.png",
+        "/assets/documentos/normascei2023.pdf",
+        "/assets/documentos/originalidad2023.docx",
+        "/assets/documentos/plantillacei2023.docx",
+        "/assets/logo233.png",
+        "/assets/logos/aura.png",
+        "/assets/logos/base.png",
+        "/assets/logos/dialnet.png",
+        "/assets/logos/erihplus.jpg",
+        "/assets/logos/latindex.jpg",
+        "/assets/logos/latinrev.jpg",
+        "/assets/logos/miar.png",
+        "/assets/logos/redib.jpg",
+        "/assets/logos/worldcat.png",
+        "/assets/logos/zenodo.png",
+        "/assets/peakfit.png",
+        "/color.dae87a04d07ca92b.png",
+        "/hue.8b1818380241e6ac.png",
+        "/primeicons.943ab24c43224d29.svg"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "api-data",
+      "patterns": [
+        "\\/api\\/.*"
+      ],
+      "strategy": "freshness",
+      "maxSize": 50,
+      "maxAge": 3600000,
+      "timeoutMs": 5000,
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "version": 1
+    }
+  ],
+  "hashTable": {
+    "/126.195a1860ce65e2bf.js": "f33b6eeb1bf80f22546090ad55d29c676b5f1f11",
+    "/320.7acacf440586e8c0.js": "13c31b1300cf4f3aef2819440fe16ca450fd9666",
+    "/410.5508c96c6b42ca13.js": "305253b9889aa5608c1c7f684b305b97013a346f",
+    "/428.aa344e958151c37c.js": "ba3b2ec203ea99ec7ad0215272697abf71380a21",
+    "/574.ba189c06c4731026.js": "248e4ec51890f62c60b7a57af368629dec2a09c4",
+    "/662.919f16e913d89844.js": "f5125fe8a1f877296ec20a41e5c01f35797deb15",
+    "/837.835db22e6892b922.js": "30e832ce22fd38a8b7fadc6b85389385ac1e2c73",
+    "/929.33acdda3003bcb0e.js": "4ddaf7d58b879e6d7ad892b385ad939cca379812",
+    "/assets/Consentimiento_informado.pdf": "3f1be9e247ae4c6696e5063d3654ebc246667d15",
+    "/assets/avatars/avataaars-1.png": "dd8badbdb71f9ab9c0b9a93cca7186350e1dafcc",
+    "/assets/avatars/avataaars-10.png": "6f7d62ac49440a03b8d6ebc669491525d617bdee",
+    "/assets/avatars/avataaars-2.png": "f57809a6be5d964d35a660d8d161b6ea1ef12397",
+    "/assets/avatars/avataaars-3.png": "507dd769eb7e4052d65d22d66ef55d9b1108b0c1",
+    "/assets/avatars/avataaars-4.png": "caa1be627c1095e264c91a632a86c896137da402",
+    "/assets/avatars/avataaars-5.png": "75d2d56efd84a460a94907d2a61996d82c564d87",
+    "/assets/avatars/avataaars-6.png": "bb613ce6759050f500fb6bb5e31d410577f8e0eb",
+    "/assets/avatars/avataaars-7.png": "ec8a8120cfcbaa52fa66a2830249836afaeff585",
+    "/assets/avatars/avataaars-8.png": "3360c7fbb690046f90ca9dffcfbf4720e0755792",
+    "/assets/avatars/avataaars-9.png": "975fe69841d84d70a7209763bf0fd2299dcee1c7",
+    "/assets/avatars/user.png": "76fced7ab0bc54871b3e3f952dd26e17dc577ca7",
+    "/assets/documentos/normascei2023.pdf": "303d96d87bc56f97f1e2b85498898704f9b1e310",
+    "/assets/documentos/originalidad2023.docx": "2eee3c060f482a7869f94bb8753376f066d95942",
+    "/assets/documentos/plantillacei2023.docx": "b328515830a3ecc01f18063639801a8f8a9c2f37",
+    "/assets/logo233.png": "1ef772632794b96f974faed450e91e4c7d1c09ba",
+    "/assets/logos/aura.png": "16ff984450b19e2fcaebe1a133295ab19ce78aae",
+    "/assets/logos/base.png": "126c31ec53b4e1333cf4055f04ae1849641ea53a",
+    "/assets/logos/dialnet.png": "1f9277fba56b20c7342173768fc842fc204b8bf7",
+    "/assets/logos/erihplus.jpg": "a7dd9edd8ebed735855c8f3bf402a40a425e8a6b",
+    "/assets/logos/latindex.jpg": "b2105639436fc2dea3c828d5a27df57a2440f787",
+    "/assets/logos/latinrev.jpg": "0916fcbb1239db3b8aaf8d177c572d9936df35d2",
+    "/assets/logos/miar.png": "cc9415499acd23d874dfd2a673d0e5fa793e3614",
+    "/assets/logos/redib.jpg": "4fef85d443382a4266ae22ad57f9e520363f8eae",
+    "/assets/logos/worldcat.png": "1698e5a93da00b255deb282a3bf4c39569a01fa7",
+    "/assets/logos/zenodo.png": "da10cbe1b47fe95d4e313c158882b9ff048b4ee3",
+    "/assets/peakfit.png": "b14133ec2a12d97f7d6cd6f5f5cdf948ad6b8ca4",
+    "/color.dae87a04d07ca92b.png": "ff4c4bcb2207891b292f544edb4da9d2df5d45cf",
+    "/common.1940b695d8f3c6db.js": "54de41a9647c398dfbc58ba9e96263c6b61195dd",
+    "/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
+    "/hue.8b1818380241e6ac.png": "f81ae627637a684614aa726e206c73ce099a01fd",
+    "/index.html": "57a57e5298778447dbd27a512b6c485c8654f56c",
+    "/main.208ba72b31336f27.js": "3cc7d9ce8a1c5ec826282d1952715bc988085474",
+    "/polyfills.4a994e3e536a83e7.js": "6f59d834815b95a945f34c5e948b0e4c6a584cfa",
+    "/primeicons.943ab24c43224d29.svg": "d3332a45242b8f6edbf3f3c7176a280e7edcd961",
+    "/runtime.c7e27e606107984b.js": "92f20f9ef35f8782a6beb82169f159634f83e45c",
+    "/scripts.c7af6774c697f4b0.js": "728ed50262c006777860db6d2d914a4bbecc81fc",
+    "/styles.35f880048bc029a2.css": "91a4936c7832ae009013cd6b2723d05e7d102900"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}

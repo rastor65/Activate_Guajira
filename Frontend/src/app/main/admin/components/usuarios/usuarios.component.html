@@ -83,20 +83,24 @@
         <thead>
             <tr>
                 <th>Usuario</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
                 <th>Rol (roles)</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            <ng-container *ngFor="let item of usuariosFiltrados | keyvalue">
+            <ng-container *ngFor="let usuario of usuariosFiltrados">
                 <tr>
-                    <td>{{ item.key }}</td>
-                    <td>{{ item.value.join(', ') }}</td>
+                    <td>{{ usuario.username }}</td>
+                    <td>{{ usuario.first_name }}</td>
+                    <td>{{ usuario.last_name }}</td>
+                    <td>{{ usuario.roles.join(', ') }}</td>
                     <td>
-                        <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUsuario(item)"></button>
-                        <button pButton icon="pi pi-pencil" class="btn-editar" (click)="editarUsuario(item)"></button>
+                        <button pButton icon="pi pi-pencil" class="btn-editar"
+                            (click)="vereditarUsuario(usuario)"></button>
                         <button pButton icon="pi pi-trash" class="btn-eliminar"
-                            (click)="eliminarUsuario(item)"></button>
+                            (click)="eliminarUsuario(usuario)"></button>
                     </td>
                 </tr>
             </ng-container>
@@ -104,15 +108,40 @@
     </table>
 </div>
 
-
-<p-dialog [(visible)]="dialogUsuario" [style]="{'width': '60vw'}" [resizable]="false" zindex="10000"
-    [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
-
+<p-dialog [(visible)]="dialogUsuario" [style]="{'width': '60vw'}" [modal]="true" [closable]="false"
+    [showHeader]="false">
+    <form [formGroup]="formUsuario">
+        <div class="p-fluid">
+            <div class="row">
+                <div class="p-field col">
+                    <label for="first_name">Nombres</label>
+                    <input id="first_name" type="text" pInputText formControlName="first_name" />
+                </div>
+                <div class="p-field col">
+                    <label for="last_name">Apellidos</label>
+                    <input id="last_name" type="text" pInputText formControlName="last_name" />
+                </div>
+            </div>
+            <div class="p-field">
+                <label for="username">Username</label>
+                <input id="username" type="text" pInputText formControlName="username" />
+            </div>
+            <div class="p-field">
+                <label for="email">Correo</label>
+                <input id="email" type="email" pInputText formControlName="email" />
+            </div>
+            <div class="p-field">
+                <label for="roles">Roles</label>
+                <input id="roles" type="text" pInputText formControlName="roles" [readOnly]="true">
+            </div>
+        </div>
+    </form>
 
     <div class="p-grid p-nogutter p-align-center header-container"></div>
     <div class="button-container">
-        <button class="btn" (click)="cerrarUsuario()">
-            <i class="pi pi-times"></i> Cerrar</button>
+        <button class="btn" (click)="guardarUsuario()">
+            <i class="pi pi-check"></i> Guardar Cambios</button>
+        <button class="btn" (click)="cerrareditarUsuario()">
+            <i class="pi pi-times"></i> Cancelar</button>
     </div>
-
 </p-dialog>
