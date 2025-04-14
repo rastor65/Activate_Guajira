@@ -27,7 +27,12 @@
       </div>
       <span>Utiliza tu cuenta</span>
       <input type="email" placeholder="Email" formControlName="username" />
-      <input type="password" placeholder="Password" formControlName="password" />
+      <div class="password-wrapper">
+        <input [type]="mostrarContrasena ? 'text' : 'password'" formControlName="password"
+          placeholder="Contraseña" />
+        <i class="pi toggle-icon" [ngClass]="mostrarContrasena ? 'pi-eye-slash' : 'pi-eye'"
+          (click)="toggleMostrarContrasena()"></i>
+      </div>
       <a href="#">Olvidaste tu contraseña?</a>
 
       <button pButton pRipple type="submit" label="Entrar" [disabled]="!formLogin.valid"></button>
