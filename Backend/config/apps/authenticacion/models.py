@@ -92,11 +92,18 @@ class Person(BaseModel):
 
     @property
     def nombres(self):
-        return self.user.first_name if self.user else ""
+        try:
+            return self.user.first_name
+        except Exception:
+            return ""
 
     @property
     def apellidos(self):
-        return self.user.last_name if self.user else ""
+        try:
+            return self.user.last_name
+        except Exception:
+            return ""
+
 
     def __str__(self) -> str:
         return f"{self.nombres} {self.apellidos} ({self.identificacion})"
