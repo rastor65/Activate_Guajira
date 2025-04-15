@@ -109,7 +109,6 @@ class Person(BaseModel):
         return f"{self.nombres} {self.apellidos} ({self.identificacion})"
 
     class Meta:
-        unique_together = (('user'),)
         verbose_name = 'Persona'
         verbose_name_plural = 'Personas'
 
