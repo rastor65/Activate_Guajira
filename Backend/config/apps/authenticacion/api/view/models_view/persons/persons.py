@@ -6,15 +6,40 @@ from django.http import Http404
 from rest_framework import generics
 
 class PersonList(generics.ListCreateAPIView):
-    queryset = Person.objects.filter(status=True)
+    queryset = Person.objects.filter(status=True).select_related(
+        'user',
+        'document_type',
+        'nivelFormacion',
+        'estado_civil',
+        'grupoEtnico',
+        'departamento',
+        'ciudad_residencia',
+        'ciudad_nacimiento',
+        'barrio',
+        'situacion_laboral',
+        'estrato',
+        'genero'
+    )
     serializer_class = PersonsSerializers
 
 class PersonDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Person.objects.all()
+    queryset = Person.objects.select_related(
+        'user',
+        'document_type',
+        'nivelFormacion',
+        'estado_civil',
+        'grupoEtnico',
+        'departamento',
+        'ciudad_residencia',
+        'ciudad_nacimiento',
+        'barrio',
+        'situacion_laboral',
+        'estrato',
+        'genero'
+    )
     serializer_class = PersonsSerializers
 
     def perform_destroy(self, instance):
-        # Cambia el estado booleano en lugar de eliminar el objeto
         instance.status = False
         instance.save()
 
@@ -25,7 +50,6 @@ class PersonDetail(generics.RetrieveUpdateDestroyAPIView):
                 status.HTTP_404_NOT_FOUND, 'Error', 'Person not found')
             return Response(response, status=code)
 
-        # Check if status is True before deleting
         if instance.status:
             self.perform_destroy(instance)
             response, code = create_response(
