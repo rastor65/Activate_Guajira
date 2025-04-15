@@ -38,23 +38,18 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 
 #### ORIGIN
 
-CORS_ORIGIN_WHITELIST = (
-    "http://localhost:4200",
-)
-
 VAPID_PUBLIC_KEY = "BBhWfccyHHvU-DrbPbbMMOeaQ3_xMZGQhPR1FfwIfeShYsGnUO6J-iP6C-fkfbtIC1DCqOm6KBru77UkBjkmyvA="
 VAPID_PRIVATE_KEY = "7_3QKyXomqhksKU8YWOaYa1GtHuY_UFwh2UFGHM7rwk="
 VAPID_CLAIMS = {
     "sub": "mailto:rdamianquintero@uniguajira.edu.co"
 }
 
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200", 
      "https://activateguajira.up.railway.app"
 ]
-#CORS_ORIGIN_ALLOW_ALL = True
-
-CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
