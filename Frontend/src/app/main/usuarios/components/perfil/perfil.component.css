@@ -686,22 +686,6 @@ select:focus {
   background-color: #e74c3c;
 }
 
-/* ================== CHARTS ================== */
-.charts-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
-}
-
-.chart-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  text-align: center;
-}
-
 canvas {
   width: 100% !important;
   height: auto !important;
