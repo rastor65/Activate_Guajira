@@ -722,3 +722,84 @@ canvas {
     margin: 0 auto;
   }
 }
+
+.valor-cell {
+  font-weight: bold;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+/* IMC */
+.bajo-peso {
+  background-color: #FFE0B2;
+  color: #E65100;
+}
+
+.normal {
+  background-color: #C8E6C9;
+  color: #2E7D32;
+}
+
+.sobrepeso {
+  background-color: #FFF9C4;
+  color: #FBC02D;
+}
+
+.obesidad {
+  background-color: #FFCDD2;
+  color: #C62828;
+}
+
+/* ICC */
+.icc-bajo {
+  background-color: #C8E6C9;
+  color: #2E7D32;
+}
+
+.icc-moderado {
+  background-color: #FFF59D;
+  color: #FBC02D;
+}
+
+.icc-alto {
+  background-color: #FFCDD2;
+  color: #C62828;
+}
+
+/* Grasa corporal */
+.grasa-bajo {
+  background-color: #BBDEFB;
+  color: #0D47A1;
+}
+
+.grasa-normal {
+  background-color: #C8E6C9;
+  color: #2E7D32;
+}
+
+.grasa-alta {
+  background-color: #FFCDD2;
+  color: #C62828;
+}
+
+.overlay-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-text {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #333;
+}

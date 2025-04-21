@@ -17,6 +17,8 @@ export class EntrenamientoComponent implements OnInit {
   usuarioId: number | undefined;
   public person: Person | null = null;
   public profileImage = '';
+  diasSemana = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'];
+  expandedEntrenamientoId: number | null = null;
 
   public user: User = {
     id: 0,
@@ -38,25 +40,38 @@ export class EntrenamientoComponent implements OnInit {
     this.getEntrenamientos();
   }
 
+  hasEjerciciosParaDia(entrenamiento: any, dia: string): boolean {
+    const diaIndex = this.diasSemana.indexOf(dia);
+    return entrenamiento?.semanas?.some(
+      (semana: any) => semana.ejercicios.some(
+        (ejercicio: any) => ejercicio.dias[diaIndex])
+    );
+  }
+
   getEntrenamientos() {
     if (this.usuarioId != undefined) {
       this.entrenadorService.getEntrenamientosPorUsuario(this.usuarioId).subscribe((data) => {
-        this.entrenamientos = data;
-
+        this.entrenamientos = data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  
         this.entrenamientos.forEach((entrenamiento: any) => {
           if (entrenamiento.entrenador) {
             this.getEntrenadorNombre(entrenamiento.entrenador).subscribe((persona) => {
               if (persona.length > 0) {
                 entrenamiento.entrenador = `${persona[0].nombres} ${persona[0].apellidos}`;
               } else {
-                entrenamiento.entrenador = "Desconocido"; // Si no hay datos
+                entrenamiento.entrenador = "Desconocido";
               }
             });
           }
         });
+  
+        // Expandir solo el primero (que ahora es el más reciente)
+        if (this.entrenamientos.length > 0) {
+          this.expandedEntrenamientoId = this.entrenamientos[0].id;
+        }
       });
     }
-  }
+  }  
 
   getEntrenadorNombre(entrenadorId: number): Observable<Person[]> {
     return this.userService.getPeopleByUserId(entrenadorId);
@@ -79,4 +94,6 @@ export class EntrenamientoComponent implements OnInit {
       );
     }
   }
+  
 }
+

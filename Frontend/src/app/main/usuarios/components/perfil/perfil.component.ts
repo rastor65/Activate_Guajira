@@ -20,7 +20,7 @@ declare var Chart: any;
 export class PerfilComponent implements OnInit {
 
   formData: any = {};
-  estadoIMC: string = '';
+  estado: string = '';
   mediciones: any[] = [];
   public profileImage = '';
   esEdicion: boolean = false;
@@ -30,12 +30,12 @@ export class PerfilComponent implements OnInit {
   dialogEstadisticas: boolean = false;
   chartLabels: string[] = [];
   generoPerson: any;
+  cargando: boolean = false;
 
   genero: any;
 
   pesoChart: any;
   imcChart: any;
-  fuerzaChart: any;
 
   public user: User = {
     id: 0,
@@ -54,6 +54,7 @@ export class PerfilComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.cargando = true;
     this.usuarioId = this.authService.getUserId();
     this.loadUser();
     this.loadPersonGenero();
@@ -81,6 +82,13 @@ export class PerfilComponent implements OnInit {
   }
 
   loadPersonGenero() {
+
+    this.cargando = true;
+
+    const finalizar = () => {
+      this.cargando = false;
+    };
+
     if (this.usuarioId !== undefined) {
       this.userService.getPeopleByUserId(this.usuarioId).subscribe(
         (person) => {
@@ -90,6 +98,7 @@ export class PerfilComponent implements OnInit {
             (data) => {
               this.genero = data.nombre;
               console.log(this.genero)
+              finalizar();
             }
           )
         })
@@ -99,10 +108,11 @@ export class PerfilComponent implements OnInit {
 
   cargarMediciones(): void {
     if (this.usuarioId !== undefined) {
+
       this.medicionService.obtenerMedicionesPorUsuario(this.usuarioId).subscribe({
         next: (data) => {
           this.mediciones = data;
-          this.chartLabels = this.mediciones.map(m => m.fecha ?? 'Sin fecha'); // Evitar undefined
+          this.chartLabels = this.mediciones.map(m => m.fecha ?? 'Sin fecha');
         },
         error: (err) => {
           console.error('Error al cargar mediciones:', err);
@@ -140,13 +150,12 @@ export class PerfilComponent implements OnInit {
 
     if (this.pesoChart) this.pesoChart.destroy();
     if (this.imcChart) this.imcChart.destroy();
-    if (this.fuerzaChart) this.fuerzaChart.destroy();
 
     const pesoCanvas = document.getElementById('pesoChart') as HTMLCanvasElement;
     const imcCanvas = document.getElementById('imcChart') as HTMLCanvasElement;
     const fuerzaCanvas = document.getElementById('fuerzaChart') as HTMLCanvasElement;
 
-    if (!pesoCanvas || !imcCanvas || !fuerzaCanvas) {
+    if (!pesoCanvas || !imcCanvas) {
       console.warn('No se encontraron los elementos canvas.');
       return;
     }
@@ -174,25 +183,6 @@ export class PerfilComponent implements OnInit {
           borderColor: '#FFA726',
           fill: false
         }]
-      }
-    });
-
-    this.fuerzaChart = new Chart(fuerzaCanvas, {
-      type: 'bar',
-      data: {
-        labels: this.chartLabels,
-        datasets: [
-          {
-            data: this.mediciones.map(m => m.fuerza_manoderecha),
-            label: 'Fuerza Mano Derecha',
-            backgroundColor: '#66BB6A'
-          },
-          {
-            data: this.mediciones.map(m => m.fuerza_manoizquierda),
-            label: 'Fuerza Mano Izquierda',
-            backgroundColor: '#FF7043'
-          }
-        ]
       }
     });
   }
@@ -255,19 +245,75 @@ export class PerfilComponent implements OnInit {
 
   mostrarEstadoIMC(imc: number): void {
     if (imc < 18.5) {
-      this.estadoIMC = 'Bajo Peso';
+      this.estado = 'Bajo Peso';
     } else if (imc >= 18.5 && imc <= 24.9) {
-      this.estadoIMC = 'Normal';
+      this.estado = 'Normal';
     } else if (imc >= 25 && imc <= 29.9) {
-      this.estadoIMC = 'Sobrepeso';
+      this.estado = 'Sobrepeso';
     } else {
-      this.estadoIMC = 'Obesidad';
+      this.estado = 'Obesidad';
     }
 
     setTimeout(() => {
-      this.estadoIMC = '';
+      this.estado = '';
     }, 3000);
 
+  }
+
+  getICCClass(icc: number): string {
+    if (this.genero === 'Masculino') {
+      if (icc < 0.90) return 'icc-bajo';
+      else if (icc >= 0.90 && icc < 1.0) return 'icc-moderado';
+      else return 'icc-alto';
+    } else {
+      if (icc < 0.85) return 'icc-bajo';
+      else if (icc >= 0.85 && icc < 0.95) return 'icc-moderado';
+      else return 'icc-alto';
+    }
+  }
+
+  getGrasaClass(grasa: number): string {
+    if (this.genero === 'Masculino') {
+      if (grasa < 10) return 'grasa-bajo';
+      else if (grasa >= 10 && grasa <= 20) return 'grasa-normal';
+      else return 'grasa-alta';
+    } else {
+      if (grasa < 18) return 'grasa-bajo';
+      else if (grasa >= 18 && grasa <= 28) return 'grasa-normal';
+      else return 'grasa-alta';
+    }
+  }
+
+  mostrarEstadoICC(icc: number): void {
+    if (this.genero === 'Masculino') {
+      if (icc < 0.90) this.estado = 'ICC bajo: dentro del rango saludable.';
+      else if (icc >= 0.90 && icc < 1.0) this.estado = 'ICC moderado: precaución.';
+      else this.estado = 'ICC alto: riesgo cardiovascular aumentado.';
+    } else {
+      if (icc < 0.85) this.estado = 'ICC bajo: dentro del rango saludable.';
+      else if (icc >= 0.85 && icc < 0.95) this.estado = 'ICC moderado: precaución.';
+      else this.estado = 'ICC alto: riesgo cardiovascular aumentado.';
+    }
+
+    setTimeout(() => {
+      this.estado = '';
+    }, 3000);
+  }
+
+  mostrarEstadoGrasa(grasa: number): void {
+    if (this.genero === 'Masculino') {
+      if (grasa < 10) this.estado = 'Grasa corporal baja: posible déficit.';
+      else if (grasa >= 10 && grasa <= 20) this.estado = 'Grasa corporal normal.';
+      else this.estado = 'Grasa corporal alta.';
+    } else {
+      if (grasa < 18) this.estado = 'Grasa corporal baja: posible déficit.';
+      else if (grasa >= 18 && grasa <= 28) this.estado = 'Grasa corporal normal.';
+      else this.estado = 'Grasa corporal alta.';
+    }
+
+    setTimeout(() => {
+      this.estado = '';
+    }, 3000);
   }
 
 }

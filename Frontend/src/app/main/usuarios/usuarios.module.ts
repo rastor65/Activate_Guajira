@@ -9,6 +9,7 @@ import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { AlimentacionComponent } from './components/alimentacion/alimentacion.component';
 import { EntrenamientoComponent } from './components/entrenamiento/entrenamiento.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { EntrenamientoComponent } from './components/entrenamiento/entrenamiento
     UsuariosRoutingModule,
     DialogModule,
     ButtonModule,
+    ProgressSpinnerModule,
     FormsModule,
   ]
 })

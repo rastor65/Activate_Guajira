@@ -1,4 +1,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="overlay-spinner" *ngIf="cargando">
+    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+    <p class="loading-text">Cargando...</p>
+</div>
+
 <div class="container" *ngIf="person">
     <img [src]="profileImage" alt="Avatar de usuario" class="user-avatar">
     <h2>{{ person.nombres }} {{ person.apellidos }}
@@ -14,8 +20,8 @@
 
 <div class="card">
     <h2>Mis Mediciones</h2>
-    <div *ngIf="estadoIMC" class="imc-message">
-        Estado de indice de masa corporal: <strong>{{ estadoIMC }}</strong>
+    <div *ngIf="estado" class="imc-message">
+        <strong>{{ estado }}</strong>
     </div>
     <div class="mediciones-wrapper">
         <table class="mediciones-table">
@@ -26,6 +32,7 @@
                     <th>Peso (Kg)</th>
                     <th>IMC</th>
                     <th>ICC</th>
+                    <th>Grasa corporal</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -34,10 +41,18 @@
                     <td>{{ medicion.fecha }}</td>
                     <td>{{ medicion.talla }}</td>
                     <td>{{ medicion.peso }}</td>
-                    <td [ngClass]="getIMCClass(medicion.imc)" class="imc-cell" (click)="mostrarEstadoIMC(medicion.imc)">
+                    <td [ngClass]="getIMCClass(medicion.imc)" class="valor-cell"
+                        (click)="mostrarEstadoIMC(medicion.imc)">
                         {{ medicion.imc }}
                     </td>
-                    <td>{{ medicion.icc }}</td>
+                    <td [ngClass]="getICCClass(medicion.icc)" class="valor-cell"
+                        (click)="mostrarEstadoICC(medicion.icc)">
+                        {{ medicion.icc }}
+                    </td>
+                    <td [ngClass]="getGrasaClass(medicion.grasa_corporal)" class="valor-cell"
+                        (click)="mostrarEstadoGrasa(medicion.grasa_corporal)">
+                        {{ medicion.grasa_corporal }}
+                    </td>
                     <td>
                         <button pButton icon="pi pi-pencil" class="btn-editar"
                             (click)="editarMedicion(medicion)"></button>

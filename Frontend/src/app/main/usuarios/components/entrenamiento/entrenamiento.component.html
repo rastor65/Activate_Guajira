@@ -14,10 +14,48 @@
             <div class="col-md-6 col-lg-4 mb-4" *ngFor="let entrenamiento of entrenamientos">
                 <div class="card entrenamiento-card">
                     <div class="card-body">
-                        <h5 class="card-title">{{ entrenamiento.nombre }}</h5>
+                        <h5 class="card-title d-flex justify-content-between align-items-center">
+                            {{ entrenamiento.nombre }}
+                            <button pButton icon="pi pi-chevron-down" class="p-button-text p-button-sm"
+                                (click)="expandedEntrenamientoId = (expandedEntrenamientoId === entrenamiento.id ? null : entrenamiento.id)">
+                            </button>
+                        </h5>
+
                         <p class="card-text">{{ entrenamiento.descripcion }}</p>
                         <p class="duracion"><strong>Duración:</strong> {{ entrenamiento.duracion_semanas }} semanas</p>
                         <p class="entrenador"><strong>Entrenador:</strong> {{ entrenamiento.entrenador }}</p>
+
+                        <!-- Mostrar solo si está expandido -->
+                        <div *ngIf="expandedEntrenamientoId === entrenamiento.id">
+                            <div class="resumen-dias mt-3" *ngIf="entrenamiento?.semanas?.length">
+                                <div class="dia-resumen" *ngFor="let dia of diasSemana">
+                                    <h6>{{ dia }}</h6>
+                                    <ng-container *ngFor="let semana of entrenamiento.semanas">
+                                        <div class="semana-dia" *ngFor="let ejercicio of semana.ejercicios">
+                                            <ng-container *ngIf="ejercicio.dias[diasSemana.indexOf(dia)]">
+                                                <div class="ejercicio-dia-card">
+                                                    <strong>{{ ejercicio.tipo }}</strong>
+                                                    <ul
+                                                        *ngIf="ejercicio.sugerencias?.[dia] && ejercicio.sugerencias[dia].length">
+                                                        <li *ngFor="let sug of ejercicio.sugerencias[dia]">
+                                                            {{ sug }}
+                                                        </li>
+                                                    </ul>
+                                                    <p *ngIf="!ejercicio.sugerencias?.[dia]?.length"
+                                                        class="no-sugerencias">
+                                                        Sin sugerencias disponibles
+                                                    </p>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+
+                                    <p *ngIf="!hasEjerciciosParaDia(entrenamiento, dia)" class="no-ejercicios">
+                                        No hay ejercicios asignados para este día.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

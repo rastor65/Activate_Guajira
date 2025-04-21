@@ -1,30 +1,28 @@
 <main>
   <aside>
-    <ng-template [ngIf]="isLoggedIn === true">
-      <div class="side-menu">
-        <ul>
-          <li>
-            <a [routerLink]="['/landing']">
-              <img style="width: 110%;" src="assets/peakfit.png">
-            </a>
-          </li>
-          <li>
-            <div class="menu-item">
-              <button pButton icon="pi pi-cog" (click)="menu.toggle($event)"></button>
-              <p-menu #menu [popup]="true" [model]="items" appendTo="body" panelStyleClass="custom-menu"></p-menu>
-            </div>
-          </li>
-          <li>
-            <div>
-              <app-menu [menu]="menu1" (funcion)="ocultarMenu($event)"></app-menu>
-            </div>
-          </li>
-          <li>
-            <button pButton icon="pi pi-sign-out" (click)="showConfirm()"></button>
-          </li>
-        </ul>
-      </div>
-    </ng-template>
+    <div class="side-menu" *ngIf="isLoggedIn === true">
+      <ul>
+        <li>
+          <a [routerLink]="['/landing']">
+            <img style="width: 110%;" src="assets/peakfit.png">
+          </a>
+        </li>
+        <li>
+          <div class="menu-item">
+            <button pButton icon="pi pi-cog" (click)="menu.toggle($event)"></button>
+            <p-menu #menu [popup]="true" [model]="items" appendTo="body" panelStyleClass="custom-menu"></p-menu>
+          </div>
+        </li>
+        <li>
+          <div>
+            <app-menu [menu]="menu1" (funcion)="ocultarMenu($event)"></app-menu>
+          </div>
+        </li>
+        <li>
+          <button pButton icon="pi pi-sign-out" (click)="showConfirm()"></button>
+        </li>
+      </ul>
+    </div>    
   </aside>
   <section>
     <div class="titulo">
@@ -32,7 +30,6 @@
     </div>
     <router-outlet></router-outlet>
   </section>
-
 </main>
 
 <!-- CERRAR CESION -->
