@@ -321,30 +321,28 @@ footer a {
 /* ==== VERSION RESPONSIVE ==== */
 @media screen and (max-width: 768px) {
 
-	html,
-	body {
-		height: 100%;
+	body, html {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100dvh;
 		margin: 0;
-		padding: 0;
-	}
+	  }
+	  
 
 	body {
-		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
-		min-height: 100vh;
 		font-family: 'Montserrat', sans-serif;
 		background-color: #f8f8f8;
 	}
 
 	.container {
-		flex-direction: column;
 		position: relative;
-		width: 90%;
-		height: auto;
-		padding: 20px;
-		transform: translate(-50%, -50%);
-	}
+		margin: auto;
+		top: auto;
+		left: auto;
+		transform: none;
+	  }
 
 	.form-container {
 		position: relative !important;
