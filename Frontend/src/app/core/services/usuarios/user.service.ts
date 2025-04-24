@@ -243,11 +243,14 @@ export class UserService {
   }
 
   getUserDetailsByEmail(email: string): Observable<any> {
-    return this.http.get<any[]>(this.base_usuario).pipe(
-      map((users) => users.find((user) => user.email === email))
+    return this.http.get<any>(this.base_usuario).pipe(
+      map((response) => response.results.find((user: any) => user.email === email))
     );
   }
 
+  getlistusers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URI}/listusers/`);
+  }  
 
   actualzarContraseña(contraseña: CambiarPasswordI): Observable<{ user: CambiarPasswordI }> {
     let token: string | null = localStorage.getItem('token')
@@ -424,18 +427,19 @@ export class UserService {
 
   getPeopleByUserId(userId: number): Observable<Person[]> {
     const url = `${this.base_personas}?user=${userId}`;
-
-    return this.http.get<Person[]>(url).pipe(
+  
+    return this.http.get<any>(url).pipe(  // <-- 'any' para acceder a .results
       catchError(error => {
         console.error("Error in getPeopleByUserId:", error);
         throw error;
       }),
-      map((people: Person[]) => {
-        // Filtrar las personas con el user correcto
-        return people.filter(person => person.user === userId);
+      map((response: any) => {
+        const people = response.results || response;  // si viene directamente o con 'results'
+        return Array.isArray(people) ? people.filter(person => person.user === userId) : [];
       })
     );
   }
+  
 
   obtenerEditores(): Observable<any[]> {
     const url = `${this.base_usuario}`;

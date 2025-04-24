@@ -152,57 +152,51 @@ export class EntrenadorComponent implements OnInit {
 
   public obtenerTipos(): void {
     this.userService.obtenerTipoCategoria().subscribe(
-      (categorias: any[]) => {
-        const categoriaMap = categorias.reduce((acc, categoria) => {
+      (categoriasResponse: any) => {
+        const categorias = categoriasResponse.results || categoriasResponse;
+
+        const categoriaMap = categorias.reduce((acc: any, categoria: any) => {
           acc[categoria.id] = categoria.nombre;
           return acc;
         }, {} as Record<number, string>);
 
         this.userService.obtenerTipo().subscribe(
-          (tipos: any[]) => {
-            this.ciudad = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Ciudad");
+          (tiposResponse: any) => {
+            const tipos = tiposResponse.results || tiposResponse;
+            this.ciudad = tipos.filter((tipo: any) => categoriaMap[tipo.categoria] === "Ciudad");
           },
-          (error: any) => {
-            console.error(error);
-          }
+          (error: any) => console.error(error)
         );
       },
-      (error: any) => {
-        console.error(error);
-      }
+      (error: any) => console.error(error)
     );
   }
 
   getTrainers(): void {
     this.cargando = true;
-    this.usuariosService.getAllRoles().subscribe(
-      (response: any) => {
-        const unique = new Map();
-        response.forEach((item: any) => {
-          const email = item.userId.email;
-          if (!unique.has(email)) {
-            unique.set(email, item);
-          }
-        });
-        this.trainers = Array.from(unique.values());
-        this.filteredTrainers = this.trainers;
-        console.log(this.filteredTrainers)
-        this.filteredTrainers2 = this.trainers.filter(trainer => trainer.userId?.roles?.includes(3))
-        console.log("entrendaores: ", this.filteredTrainers2)
+  
+    this.userService.getlistusers().subscribe(
+      (entrenadores: any[]) => {
+        this.trainers = entrenadores;
+        this.filteredTrainers = entrenadores;
+        this.filteredTrainers2 = entrenadores;
+        console.log('✅ Entrenadores completos:', entrenadores);
         this.cargando = false;
       },
-      (error: any) => {
-        console.error(error);
+      (error) => {
+        console.error('❌ Error al cargar entrenadores:', error);
+        this.cargando = false;
       }
     );
   }
-
+  
   getFilterOptions(): void {
     this.usuariosService.getRoles().subscribe(
       (response: any) => {
-        this.filterOptions = [{ name: 'Todos' }, ...response];
+        const roles = response.results || response; // Maneja paginación
+        this.filterOptions = [{ name: 'Todos' }, ...roles];
       },
-      (error: any) => console.error(error)
+      (error: any) => console.error('Error al cargar roles:', error)
     );
   }
 
@@ -565,8 +559,10 @@ export class EntrenadorComponent implements OnInit {
     }
   }
 
-  getInitials(firstName: string, lastName: string): string {
-    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+  getInitials(firstName?: string, lastName?: string): string {
+    const firstInitial = firstName?.charAt(0) || '';
+    const lastInitial = lastName?.charAt(0) || '';
+    return `${firstInitial}${lastInitial}`.toUpperCase();
   }
 
   abrirMedicion() {
@@ -654,7 +650,7 @@ export class EntrenadorComponent implements OnInit {
   }
 
   getProfileImage(user: any): string {
-    if (user && user.avatar) {
+    if (user?.avatar) {
       return `${this.base_user}${user.id}/descargar/`;
     }
     return 'assets/avatars/user.png';

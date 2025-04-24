@@ -30,7 +30,7 @@ export class VerComponent implements OnInit {
 
   ngOnInit() {
     this.usuariosService.getUsers().subscribe(data => {
-      this.usuarios = data as Usuario[];
+      this.usuarios = data.results as any[];
     });
 
     this.usuariosService.getRoles().subscribe(data => {
@@ -50,7 +50,7 @@ export class VerComponent implements OnInit {
 
   getRol() {
     this.usuariosService.getAllRoles().subscribe(response => {
-      this.AllRoles = response;
+      this.AllRoles = response.results;
       this.procesarRoles();
     });
   }

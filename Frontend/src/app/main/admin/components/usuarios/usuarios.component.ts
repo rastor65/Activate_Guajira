@@ -60,28 +60,34 @@ export class UsuariosComponent implements OnInit {
       last_name: ['', Validators.required],
       roles: [[]]
     });
-  
+
     this.cargarDatos();
   }
 
-  cargarDatos(){
+  cargarDatos() {
     this.cargando = true;
     forkJoin({
       usuarios: this.usuariosService.getUsers(),
       roles: this.usuariosService.getRoles(),
       allRoles: this.usuariosService.getAllRoles()
     }).subscribe(({ usuarios, roles, allRoles }) => {
-      this.usuarios = usuarios as Usuario[];
+      // ✅ Extraemos el array real de resultados paginados
+      this.usuarios = Array.isArray(usuarios.results) ? usuarios.results as Usuario[] : [];
+    
       this.roles = roles as Rol[];
-      this.AllRoles = allRoles;
-      this.procesarRoles(); // Llamar aquí, después de tener los datos
+      this.AllRoles = Array.isArray(allRoles.results) ? allRoles.results : [];
+    
+      this.procesarRoles();
+      this.cargando = false;
     });
+      
   }
-  
+
+
 
   vereditarUsuario(usuario: any) {
     this.usuarioSeleccionado = usuario;
-  
+
     this.formUsuario.setValue({
       email: usuario.email || '',
       username: usuario.username || '',
@@ -89,10 +95,10 @@ export class UsuariosComponent implements OnInit {
       last_name: usuario.last_name || '',
       roles: usuario.roles || []
     });
-  
+
     this.dialogUsuario = true;
   }
-  
+
   cerrareditarUsuario() {
     this.dialogUsuario = false
   }
@@ -133,30 +139,38 @@ export class UsuariosComponent implements OnInit {
       this.errorMessage = 'Error al leer el archivo. Verifica la codificación.';
     };
   }
-  
-  procesarRoles() {
 
+  procesarRoles() {
     this.cargando = true;
+
+    if (!Array.isArray(this.AllRoles)) {
+      console.error('AllRoles no es un array:', this.AllRoles);
+      this.cargando = false;
+      return;
+    }
+
     this.usuarios.forEach(usuario => {
-      
-      usuario.roles = this.AllRoles
-        .filter(role => role.userId?.username === usuario.username)
-        .map(role => role.rolesId?.name)
-        .filter(roleName => roleName);
-        const rolesUsuario = this.AllRoles.filter(role => role.userId?.username === usuario.username);
-        if (rolesUsuario.length > 0) {
-          usuario.first_name = rolesUsuario[0].userId?.first_name || usuario.first_name;
-          usuario.last_name = rolesUsuario[0].userId?.last_name || usuario.last_name;
-        }
-  
-      usuario.roles = [...new Set(rolesUsuario.map(role => role.rolesId?.name).filter(roleName => roleName))];
+      const rolesUsuario = this.AllRoles.filter(role =>
+        role.userId && role.userId.username === usuario.username
+      );
+
+      if (rolesUsuario.length > 0) {
+        usuario.first_name = rolesUsuario[0].userId?.first_name || usuario.first_name;
+        usuario.last_name = rolesUsuario[0].userId?.last_name || usuario.last_name;
+      }
+
+      usuario.roles = [...new Set(
+        rolesUsuario
+          .map(role => role.rolesId?.name)
+          .filter(roleName => !!roleName)
+      )];
     });
-  
+
     this.filtrarUsuarios();
     this.cargando = false;
   }
-  
-  
+
+
   filtrarUsuarios() {
     this.cargando = true;
     const filtro = this.searchValue.toLowerCase();
@@ -168,7 +182,7 @@ export class UsuariosComponent implements OnInit {
     );
     this.cargando = false;
   }
-  
+
 
   processCSV(csvData: string) {
     const lines = csvData.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -235,35 +249,35 @@ export class UsuariosComponent implements OnInit {
 
   guardarUsuario() {
     if (this.formUsuario.invalid) {
-        this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Por favor, complete todos los campos correctamente.' });
-        return;
+      this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: 'Por favor, complete todos los campos correctamente.' });
+      return;
     }
 
     if (!this.usuarioSeleccionado || !this.usuarioSeleccionado.id) {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se ha seleccionado un usuario válido.' });
-        return;
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se ha seleccionado un usuario válido.' });
+      return;
     }
 
     const datosActualizados = {
-        first_name: this.formUsuario.value.first_name?.trim(),
-        last_name: this.formUsuario.value.last_name?.trim(),
-        username: this.formUsuario.value.username?.trim() || this.usuarioSeleccionado.username, // Evita null
-        email: this.formUsuario.value.email?.trim(),
-        roles: Array.isArray(this.formUsuario.value.roles) ? this.formUsuario.value.roles : []
+      first_name: this.formUsuario.value.first_name?.trim(),
+      last_name: this.formUsuario.value.last_name?.trim(),
+      username: this.formUsuario.value.username?.trim() || this.usuarioSeleccionado.username, // Evita null
+      email: this.formUsuario.value.email?.trim(),
+      roles: Array.isArray(this.formUsuario.value.roles) ? this.formUsuario.value.roles : []
     };
 
     this.usuariosService.editarUsuario(this.usuarioSeleccionado.id, datosActualizados).subscribe({
-        next: () => {
-            this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Usuario actualizado correctamente.' });
-            this.dialogUsuario = false;
-            this.cargarDatos();
-        },
-        error: (err) => {
-            console.error('Error al actualizar usuario:', err);
-            this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el usuario. Inténtelo de nuevo.' });
-        }
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Usuario actualizado correctamente.' });
+        this.dialogUsuario = false;
+        this.cargarDatos();
+      },
+      error: (err) => {
+        console.error('Error al actualizar usuario:', err);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el usuario. Inténtelo de nuevo.' });
+      }
     });
-}
+  }
 
 
   /**
@@ -384,7 +398,7 @@ export class UsuariosComponent implements OnInit {
             ),
           ]);
         }),
-        catchError((error:any) => {
+        catchError((error: any) => {
           console.error(`Error al reintentar registro de usuario: ${userData.email}`, error);
           finalFailedUsers.push(userData);
           return of([]); // Si hay error, lo marcamos como fallido y continuamos

@@ -23,17 +23,17 @@ export class UsuariosService {
     return this.http.get<any[]>(`${this.base_personas}`);
   }
 
-  getAllRoles() {
-    return this.http.get<any[]>(`${this.base_usuarios_roles}`);
-  }
+  getAllRoles(): Observable<{ count: number; results: any[] }> {
+    return this.http.get<{ count: number; results: any[] }>(this.base_usuarios_roles);
+  }   
 
   getRoles() {
     return this.http.get<any[]>(`${this.base_roles}`);
   }
 
-  getUsers() {
-    return this.http.get<any[]>(`${this.base_usuarios}`);
-  }
+  getUsers(): Observable<{ results: any[] }> {
+    return this.http.get<{ results: any[] }>(this.base_usuarios);
+  }  
 
   asignarRoles(bodyString: string, httpOptions: { headers: HttpHeaders }): Observable<any> {
     return this.http.post<any>(this.base_usuarios_roles, bodyString, httpOptions);

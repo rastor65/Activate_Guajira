@@ -336,3 +336,16 @@ class AlimentacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alimentacion
         fields = '__all__'
+
+class ListUserSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    username = serializers.CharField()
+    email = serializers.EmailField()
+    avatar_url = serializers.SerializerMethodField()
+    first_name = serializers.CharField(source='person.nombres', default="")
+    last_name = serializers.CharField(source='person.apellidos', default="")
+
+    def get_avatar_url(self, obj):
+        if obj.avatar:
+            return self.context['request'].build_absolute_uri(f'/api/user/{obj.id}/descargar/')
+        return None

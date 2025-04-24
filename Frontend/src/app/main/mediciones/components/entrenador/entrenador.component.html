@@ -24,37 +24,37 @@
 <!-- CARDS -->
 <div class="card-container">
   <p-card *ngFor="let trainer of filteredTrainers" class="trainer-card clickable-card">
-    <!-- Header de la tarjeta -->
     <ng-template pTemplate="header">
       <div class="card-header">
-        <!-- Avatar  -->
-        <p-avatar *ngIf="trainer.userId.avatar" [image]="getProfileImage(trainer.userId)" shape="circle" size="large">
+        <p-avatar *ngIf="trainer.avatar_url" [image]="trainer.avatar_url" shape="circle" size="large"></p-avatar>
+        <p-avatar *ngIf="!trainer.avatar_url" shape="circle" size="large">
+          {{ getInitials(trainer.first_name, trainer.last_name) }}
         </p-avatar>
-        <p-avatar *ngIf="!trainer.userId.avatar" shape="circle" size="large">
-          {{ getInitials(trainer.userId.first_name, trainer.userId.last_name) }}
-        </p-avatar>
-        <!-- Nombre de usuario -->
         <div class="trainer-info">
-          <h3>{{ trainer.userId.first_name }} {{ trainer.userId.last_name }}</h3>
+          <h3>{{ trainer.first_name }} {{ trainer.last_name }}</h3>
         </div>
       </div>
     </ng-template>
-    <!-- Contenido de la tarjeta -->
+  
     <ng-template pTemplate="content">
       <div class="card-content">
-        <p><i class="pi pi-user"></i> {{ trainer.userId.username }}</p>
-        <p><i class="pi pi-envelope"></i> {{ trainer.userId.email }}</p>
+        <p><i class="pi pi-user"></i> {{ trainer.username }}</p>
+        <p><i class="pi pi-envelope"></i> {{ trainer.email }}</p>
       </div>
       <div class="button-container">
         <button class="btn2" (click)="verPerfil(trainer)">
-          <i class="pi pi-check-circle"></i> Mediciones</button>
+          <i class="pi pi-check-circle"></i> Mediciones
+        </button>
         <button class="btn2" (click)="verEntrenamiento(trainer)">
-          <i class="pi pi-eject"></i> Entrenamiento</button>
+          <i class="pi pi-eject"></i> Entrenamiento
+        </button>
         <button class="btn2" (click)="verAlimentacion(trainer)">
-          <i class="pi pi-heart"></i> Alimentacion</button>
+          <i class="pi pi-heart"></i> Alimentación
+        </button>
       </div>
     </ng-template>
   </p-card>
+  
 </div>
 
 <!-- MEDICIONES -->
