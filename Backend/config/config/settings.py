@@ -47,8 +47,9 @@ VAPID_CLAIMS = {
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200", 
-     "https://activateguajira.up.railway.app"
+    "https://activateguajira.up.railway.app",
+    "https://activate-guajira.up.railway.app",
+    "http://localhost:4200"
 ]
 
 # Application definition
