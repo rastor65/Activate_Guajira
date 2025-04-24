@@ -44,12 +44,37 @@ VAPID_CLAIMS = {
     "sub": "mailto:rdamianquintero@uniguajira.edu.co"
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "https://activateguajira.up.railway.app",
     "https://activate-guajira.up.railway.app",
     "http://localhost:4200"
+]
+
+CORS_ORIGIN_WHITELIST = [
+    "https://activateguajira.up.railway.app",
+    "https://activate-guajira.up.railway.app",
+    "http://localhost:4200"
+]
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "authorization",
+    "content-type",
+    "origin",
+    "x-csrftoken",
+    "x-requested-with",
 ]
 
 # Application definition
