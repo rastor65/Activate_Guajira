@@ -73,22 +73,22 @@ class Rol(BaseModel):
         verbose_name_plural = 'Roles'
 
 class Person(BaseModel):
-    identificacion = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    identificacion = models.CharField(max_length=255, unique=True, blank=True, null=True, db_index=True)
     fecha_nacimiento = models.DateField(blank=True, null=True)
     telefono = models.BigIntegerField(null=True)
-    status = models.BooleanField(default=True)
+    status = models.BooleanField(default=True, db_index=True)
     user = models.OneToOneField(CustomUser, related_name='person',on_delete=models.CASCADE)
-    document_type = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="documentos", null=True, blank=False)
-    nivelFormacion = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="niveles_formacion", null=True, blank=False)
-    estado_civil = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="estados_civiles", null=True, blank=False)
-    grupoEtnico = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="grupos_etnicos", null=True, blank=False)
-    departamento = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="departamento", null=True, blank=False)
-    ciudad_residencia = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="ciudad_residencia", null=True, blank=False)
-    ciudad_nacimiento = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="ciudad_nacimiento", null=True, blank=False)
-    barrio = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="barrio", null=True, blank=False)
-    situacion_laboral = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="situacion_laboral", null=True, blank=False)
-    estrato = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="estrato", null=True, blank=False)
-    genero = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="genero", null=True, blank=False)
+    document_type = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="documentos", null=True, blank=True)
+    nivelFormacion = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="niveles_formacion", null=True, blank=True)
+    estado_civil = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="estados_civiles", null=True, blank=True)
+    grupoEtnico = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="grupos_etnicos", null=True, blank=True)
+    departamento = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="departamento", null=True, blank=True)
+    ciudad_residencia = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="ciudad_residencia", null=True, blank=True)
+    ciudad_nacimiento = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="ciudad_nacimiento", null=True, blank=True)
+    barrio = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="barrio", null=True, blank=True)
+    situacion_laboral = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="situacion_laboral", null=True, blank=True)
+    estrato = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="estrato", null=True, blank=True)
+    genero = models.ForeignKey(tablaMaestra, on_delete=models.SET_NULL, related_name="genero", null=True, blank=True)
 
     @property
     def nombres(self):
@@ -103,7 +103,6 @@ class Person(BaseModel):
             return self.user.last_name
         except Exception:
             return ""
-
 
     def __str__(self) -> str:
         return f"{self.nombres} {self.apellidos} ({self.identificacion})"
@@ -121,7 +120,6 @@ class UserRol(models.Model):
         return f"{self.userId.username} - {self.rolesId.name}"
 
     class Meta:
-        unique_together = (('userId', 'rolesId'))
         verbose_name = 'User_rols'
         verbose_name_plural = 'user_rols'
 
@@ -180,7 +178,7 @@ class Medicion(BaseModel):
     volumen_max_oxigeno = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     flexibilidad = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     caff = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    usuario = models.ForeignKey("authenticacion.CustomUser", on_delete=models.CASCADE, related_name="mediciones")
+    usuario = models.ForeignKey("authenticacion.CustomUser", on_delete=models.CASCADE, related_name="mediciones", db_index=True)
 
     class Meta:
         verbose_name = "Medición"

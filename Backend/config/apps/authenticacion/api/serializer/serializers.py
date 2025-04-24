@@ -69,6 +69,14 @@ class PersonsSerializers(serializers.ModelSerializer):
             return edad
         return None
 
+class PersonSimpleSerializer(serializers.ModelSerializer):
+    nombres = serializers.CharField(source="user.first_name", read_only=True)
+    apellidos = serializers.CharField(source="user.last_name", read_only=True)
+
+    class Meta:
+        model = Person
+        fields = ['id', 'identificacion', 'nombres', 'apellidos', 'status']
+
 class PersonsSimpleSerializers(serializers.ModelSerializer):
     document_type = serializers.SerializerMethodField()
     edad = serializers.SerializerMethodField()
@@ -193,6 +201,14 @@ class UserSerial(ModelSerializer):
         return self.rolesId.name
     
 #medicion
+
+class MedicionSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Medicion
+        fields = [
+            'id', 'fecha', 'peso', 'talla', 'usuario'
+        ]  # Incluye solo campos necesarios para el listado
+
 class MedicionSerializer(serializers.ModelSerializer):
     talla = serializers.DecimalField(max_digits=5, decimal_places=2, allow_null=True, default=None)
     peso = serializers.DecimalField(max_digits=6, decimal_places=2, allow_null=True, default=None)
@@ -229,9 +245,8 @@ class MedicionSerializer(serializers.ModelSerializer):
         return None
     
     def get_grasa_corporal(self, obj):
-        """Calcula el porcentaje de grasa corporal usando la ecuación de Jackson & Pollock"""
         try:
-            person = Person.objects.filter(user=obj.usuario).first()  
+            person = getattr(obj.usuario, "person", None)
             if not person:
                 return None
 
