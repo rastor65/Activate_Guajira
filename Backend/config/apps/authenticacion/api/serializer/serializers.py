@@ -176,7 +176,15 @@ class RolesUserSerializers(serializers.ModelSerializer):
             response, code = create_response(
                 404, '', 'Duplicate Key User - Rol')
             raise ValidationError(response, code=code)
-  
+        
+class UserRolListSimpleSerializer(serializers.ModelSerializer):
+    userId = serializers.StringRelatedField()  # o usa userId.username si lo prefieres
+    rolesId = serializers.StringRelatedField()  # o rolesId.nombre si lo prefieres
+
+    class Meta:
+        model = UserRol
+        fields = ['id', 'userId', 'rolesId', 'status']
+
 class UserRolSerializer(serializers.ModelSerializer):
     userId = UserSerialSimple()
     rolesId = RolesSerializers()
