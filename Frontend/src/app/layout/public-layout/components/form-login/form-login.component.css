@@ -121,44 +121,36 @@ input {
 input:focus {
 	outline: none;
 	border-radius: 15px;
-	/* Eliminamos el border-radius para evitar bordes redondeados */
 	border-bottom: 2px solid #0076df;
 	box-shadow: 0 4px 5px rgba(0, 118, 223, 0.5);
 }
 
 ::ng-deep .p-progressbar {
 	position: fixed !important;
-	/* Fijo en la parte superior */
 	top: 0 !important;
-	/* Se alinea en la parte superior */
 	left: 0 !important;
 	width: 100% !important;
 	height: 6px !important;
 	z-index: 9999 !important;
-	/* Asegura que esté por encima de otros elementos */
 	border-radius: 0 !important;
 	background-color: transparent;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
-	/* Sutil sombra para resaltar */
 }
-
 
 ::ng-deep .p-progressbar .p-progressbar-value {
 	background-color: #007bff !important;
-	/* Color de la barra */
 	height: 100% !important;
 }
 
 .container {
 	position: absolute;
-	/* Se mantiene centrado */
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	background-color: #fafafa;
 	border-radius: 20px;
 	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
-		0 10px 10px rgba(0, 0, 0, 0.22);
+			0 10px 10px rgba(0, 0, 0, 0.22);
 	width: 55%;
 	max-width: 100%;
 	min-height: 480px;
@@ -230,7 +222,6 @@ input:focus {
 	transform: translateX(-100%);
 	border-radius: 20px 0 0 20px !important;
 }
-
 
 .overlay {
 	background: #0076df;
@@ -304,7 +295,6 @@ input:focus {
 	color: #090909;
 }
 
-
 footer p {
 	margin: 10px 0;
 }
@@ -318,9 +308,8 @@ footer a {
 	text-decoration: none;
 }
 
-/* ==== VERSION RESPONSIVE ==== */
+/* Versión responsive */
 @media screen and (max-width: 768px) {
-
 	body,
 	html {
 		display: flex;
@@ -328,13 +317,7 @@ footer a {
 		justify-content: center;
 		min-height: 100dvh;
 		margin: 0;
-	}
-
-
-	body {
-		flex-direction: column;
-		font-family: 'Montserrat', sans-serif;
-		background-color: #f8f8f8;
+		padding: 0;
 	}
 
 	.container {
@@ -347,8 +330,6 @@ footer a {
 		margin: auto;
 		padding: 30px 20px;
 		flex-direction: column;
-		box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
-			0 10px 10px rgba(0, 0, 0, 0.22);
 	}
 
 	.form-container {
@@ -402,10 +383,6 @@ footer a {
 		font-size: 14px;
 	}
 
-	.social-container {
-		justify-content: center;
-	}
-
 	footer {
 		position: fixed;
 		bottom: 0;
@@ -419,57 +396,29 @@ footer a {
 		padding: 10px 0;
 		box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
 	}
-
 }
 
-@media screen and (max-width: 768px) {
-	.mobile-toggle-buttons {
-		display: flex;
-		justify-content: center;
-		gap: 10px;
-		margin-top: 20px;
-		flex-wrap: wrap;
-	}
-
-	.mobile-toggle-buttons .ghost {
-		padding: 10px 20px;
-		font-size: 14px;
-		background-color: transparent;
-		color: #0076df;
-		border: 2px solid #0076df;
-		border-radius: 20px;
-		transition: all 0.3s ease;
-	}
-
-	.mobile-toggle-buttons .ghost:hover {
-		background-color: #0076df;
-		color: #fff;
-	}
+.mobile-toggle-buttons {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 20px;
+	flex-wrap: wrap;
 }
 
-@media screen and (max-width: 768px) {
-	.mobile-toggle-buttons {
-		display: flex;
-		justify-content: center;
-		gap: 10px;
-		margin-top: 20px;
-		flex-wrap: wrap;
-	}
+.mobile-toggle-buttons .ghost {
+	padding: 10px 20px;
+	font-size: 14px;
+	background-color: transparent;
+	color: #0076df;
+	border: 2px solid #0076df;
+	border-radius: 20px;
+	transition: all 0.3s ease;
+}
 
-	.mobile-toggle-buttons .ghost {
-		padding: 10px 20px;
-		font-size: 14px;
-		background-color: transparent;
-		color: #0076df;
-		border: 2px solid #0076df;
-		border-radius: 20px;
-		transition: all 0.3s ease;
-	}
-
-	.mobile-toggle-buttons .ghost:hover {
-		background-color: #0076df;
-		color: #fff;
-	}
+.mobile-toggle-buttons .ghost:hover {
+	background-color: #0076df;
+	color: #fff;
 }
 
 .password-wrapper {
@@ -480,14 +429,13 @@ footer a {
 .password-input {
 	width: 100%;
 	padding-right: 2.5rem;
-	/* espacio para el icono dentro */
 	border-radius: 12px;
 	border: none;
 	padding: 12px 16px;
 	background-color: #e6f0ff;
 	font-size: 1rem;
 	outline: none;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .toggle-icon {
@@ -499,18 +447,4 @@ footer a {
 	color: #444;
 	font-size: 1.1rem;
 	z-index: 2;
-}
-
-@media screen and (max-width: 768px) {
-
-	body,
-	html {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 0;
-		margin: 0;
-		min-height: 100dvh;
-	}
 }
