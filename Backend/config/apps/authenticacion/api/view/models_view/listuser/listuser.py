@@ -8,8 +8,6 @@ from apps.authenticacion.api.serializer.serializers import ListUserSerializer
 
 
 class UsersView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request):
         entrenadores_ids = UserRol.objects.filter(rolesId__name="Usuario").values_list('userId', flat=True)
         users = CustomUser.objects.filter(id__in=entrenadores_ids).select_related('person')
