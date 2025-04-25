@@ -69,6 +69,7 @@ export class PerfilComponent implements OnInit {
     this.chartLabels = [];
   }
 
+  
   loadUserProfile() {
     if (this.usuarioId !== undefined) {
       this.userService.getUserProfile(this.usuarioId).subscribe(
