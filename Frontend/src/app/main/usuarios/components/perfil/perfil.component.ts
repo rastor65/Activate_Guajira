@@ -98,10 +98,12 @@ export class PerfilComponent implements OnInit {
         next: (data) => {
           this.mediciones = data.results || [];
           this.chartLabels = this.mediciones.map(m => m.fecha ?? 'Sin fecha');
+          this.cargando = false;
           this.cd.detectChanges();
         },
         error: (err) => {
           console.error('Error al cargar mediciones:', err);
+          this.cargando = false;
         }
       });
     }
