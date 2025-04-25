@@ -592,7 +592,7 @@ export class EntrenadorComponent implements OnInit {
 
     this.medicionService.obtenerMedicionesPorUsuario(trainer.userId.id).subscribe(
       (mediciones) => {
-        this.medicionesUsuario = mediciones;
+        this.medicionesUsuario = mediciones.results;
       },
       (error) => {
         console.error('Error al obtener mediciones:', error);

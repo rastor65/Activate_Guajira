@@ -47,9 +47,17 @@ export class MedicionService {
     return this.http.delete<any>(`${this.base_medicion}${id}/`);
   }
 
-  obtenerMedicionesPorUsuario(userId: number): Observable<Medicion[]> {
-    return this.http.get<Medicion[]>(`${this.base_medicion_x_usuario}${userId}/`, { headers: this.getHeaders() });
+  obtenerMedicionesPorUsuario(userId: number): Observable<PaginatedMediciones> {
+    return this.http.get<PaginatedMediciones>(`${this.base_medicion_x_usuario}${userId}/`, { headers: this.getHeaders() });
   }
-  
+
+
   ////////////////////////////////////////////////////////////////////////////////////////////
+}
+
+export interface PaginatedMediciones {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Medicion[];
 }

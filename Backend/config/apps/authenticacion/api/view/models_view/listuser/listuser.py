@@ -5,6 +5,7 @@ from apps.authenticacion.models import CustomUser, Person
 from apps.authenticacion.models import UserRol
 from rest_framework import status
 from apps.authenticacion.api.serializer.serializers import ListUserSerializer
+from rest_framework.generics import RetrieveAPIView
 
 
 class UsersView(APIView):
@@ -13,3 +14,11 @@ class UsersView(APIView):
         users = CustomUser.objects.filter(id__in=entrenadores_ids).select_related('person')
         serializer = ListUserSerializer(users, many=True, context={'request': request})
         return Response(serializer.data)
+    
+class UserDetailView(RetrieveAPIView):
+    queryset = CustomUser.objects.select_related('person')
+    serializer_class = ListUserSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return CustomUser.objects.select_related('person')

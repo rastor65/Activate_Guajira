@@ -344,8 +344,15 @@ class ListUserSerializer(serializers.Serializer):
     avatar_url = serializers.SerializerMethodField()
     first_name = serializers.CharField(source='person.nombres', default="")
     last_name = serializers.CharField(source='person.apellidos', default="")
+    gender_name = serializers.SerializerMethodField()  # <-- AQUÍ
 
     def get_avatar_url(self, obj):
         if obj.avatar:
             return self.context['request'].build_absolute_uri(f'/api/user/{obj.id}/descargar/')
         return None
+
+    def get_gender_name(self, obj):
+        try:
+            return obj.person.genero.nombre if obj.person and obj.person.genero else None
+        except Exception:
+            return None

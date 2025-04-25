@@ -9,6 +9,7 @@ import { MessageService } from 'primeng/api';
 import { ChartData } from 'chart.js';
 import { tablaMaestra, categoriaTablaMaestra } from 'src/app/models/user/person';
 import { TablaMaestraService } from 'src/app/core/services/admin/tabla-maestra.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 declare var Chart: any;
 
@@ -50,69 +51,54 @@ export class PerfilComponent implements OnInit {
     private authService: AuthService,
     private tablaService: TablaMaestraService,
     private medicionService: MedicionService,
-    private messageService: MessageService,) {
+    private messageService: MessageService,
+    private cd: ChangeDetectorRef
+  ) {
   }
 
   ngOnInit() {
     this.cargando = true;
     this.usuarioId = this.authService.getUserId();
-    this.loadUser();
-    this.loadPersonGenero();
-    this.cargarMediciones();
-
+    console.log("ID USER", this.usuarioId);
+  
+    if (this.usuarioId !== undefined) {
+      this.loadUserProfile();  // <-- SOLO ESTO
+      this.cargarMediciones();
+    }
+  
     this.chartLabels = [];
   }
 
-  loadUser() {
+  loadUserProfile() {
     if (this.usuarioId !== undefined) {
-      forkJoin({
-        user: this.userService.loadUser(this.usuarioId),
-        person: this.userService.getPeopleByUserId(this.usuarioId)
-      }).subscribe(
-        ({ user, person }) => {
-          this.user = user.user;
-          this.profileImage = user.profileImage;
-          this.person = person.length > 0 ? person[0] : null;
+      this.userService.getUserProfile(this.usuarioId).subscribe(
+        (userProfile) => {
+          console.log("User Profile cargado", userProfile);
+          this.user.username = userProfile.username;
+          this.user.email = userProfile.email;
+          this.profileImage = userProfile.avatar_url;
+          this.genero = userProfile.gender_name;
+          this.person = {
+            nombres: userProfile.first_name,
+            apellidos: userProfile.last_name
+          } as Person; // <-- simulamos el objeto Person para tu HTML
+  
+          this.cd.detectChanges();
         },
-        error => {
-          console.error('Error al cargar los datos:', error);
+        (error) => {
+          console.error('Error cargando perfil:', error);
         }
       );
     }
-  }
-
-  loadPersonGenero() {
-
-    this.cargando = true;
-
-    const finalizar = () => {
-      this.cargando = false;
-    };
-
-    if (this.usuarioId !== undefined) {
-      this.userService.getPeopleByUserId(this.usuarioId).subscribe(
-        (person) => {
-          this.person = person.length > 0 ? person[0] : null;
-          this.generoPerson = this.person?.genero;
-          this.tablaService.getByIdMaestra(this.generoPerson).subscribe(
-            (data) => {
-              this.genero = data.nombre;
-              console.log(this.genero)
-              finalizar();
-            }
-          )
-        })
-    }
-  }
-
+  }  
 
   cargarMediciones(): void {
     if (this.usuarioId !== undefined) {
-
       this.medicionService.obtenerMedicionesPorUsuario(this.usuarioId).subscribe({
         next: (data) => {
-          this.mediciones = data;
+          this.mediciones = data.results || [];
           this.chartLabels = this.mediciones.map(m => m.fecha ?? 'Sin fecha');
+          this.cd.detectChanges();
         },
         error: (err) => {
           console.error('Error al cargar mediciones:', err);

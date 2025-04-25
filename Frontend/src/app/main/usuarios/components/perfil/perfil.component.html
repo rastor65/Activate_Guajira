@@ -7,10 +7,9 @@
 
 <div class="container" *ngIf="person">
     <img [src]="profileImage" alt="Avatar de usuario" class="user-avatar">
-    <h2>{{ person.nombres }} {{ person.apellidos }}
-        <button pButton icon="pi pi-chart-bar" label="Estadisticas" class="btn-medicion"
-            style="width: 250px; justify-content: right;" (click)="abrirEstadisticas()"></button>
-    </h2>
+    <h2>{{ person.nombres }} {{ person.apellidos }}</h2>
+    <button pButton icon="pi pi-chart-bar" label="Estadisticas" class="btn-medicion"
+        style="width: 250px; justify-content: right;" (click)="abrirEstadisticas()"></button>
 </div>
 <div class="medicion">
     <button pButton icon="pi pi-plus" label="Agregar medición" class="btn-medicion" (click)="abrirMedicion()"></button>

@@ -15,8 +15,10 @@ urlpatterns = [
     path('tabla_maestra/', include('apps.authenticacion.api.view.models_view.tablaMaestra.urls_tablaMaestra')),
     path('categoria_tipo/', include('apps.authenticacion.api.view.models_view.categoriaTipo.urls_categoria_tipo')),
     path('listusers/', include('apps.authenticacion.api.view.models_view.listuser.urls')),
+    path('listusers/<int:id>/', include('apps.authenticacion.api.view.models_view.listuser.urls_user')),
 
     path('api/save-subscription/', save_subscription, name='save_subscription'),
     path('api/delete-subscription/', delete_subscription),
+    
 
 ]

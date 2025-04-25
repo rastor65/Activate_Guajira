@@ -74,6 +74,10 @@ export class UserService {
     }
   }
 
+  getUserProfile(id: number): Observable<any> {
+    return this.http.get<any>(`${this.API_URI}/listusers/${id}/`);
+  }  
+
   UsersInvestigatorStudentTeacherProyecto(formValue: any): Observable<{ teachers: any[], estudiantes: any[], investigator_collaborators: any[] }> {
     let token: string | null = localStorage.getItem('token')
     let user: string | null = localStorage.getItem('user')
