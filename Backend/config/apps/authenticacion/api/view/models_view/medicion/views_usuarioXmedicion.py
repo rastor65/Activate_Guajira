@@ -66,7 +66,7 @@ def descargar_cert_grado(request, pk):
 
 
 class MedicionUsuarioList(ListAPIView):
-    serializer_class = MedicionSimpleSerializer
+    serializer_class = MedicionSerializer
 
     def get_queryset(self):
         user_id = self.kwargs.get('userId')

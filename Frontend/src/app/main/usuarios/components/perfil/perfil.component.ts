@@ -69,7 +69,7 @@ export class PerfilComponent implements OnInit {
     this.chartLabels = [];
   }
 
-  
+
   loadUserProfile() {
     if (this.usuarioId !== undefined) {
       this.userService.getUserProfile(this.usuarioId).subscribe(
@@ -100,6 +100,7 @@ export class PerfilComponent implements OnInit {
           this.mediciones = data.results || [];
           this.chartLabels = this.mediciones.map(m => m.fecha ?? 'Sin fecha');
           this.cargando = false;
+          console.log(this.mediciones)
           this.cd.detectChanges();
         },
         error: (err) => {
