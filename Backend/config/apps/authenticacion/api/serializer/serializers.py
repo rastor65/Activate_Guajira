@@ -348,7 +348,8 @@ class ListUserSerializer(serializers.Serializer):
 
     def get_avatar_url(self, obj):
         if obj.avatar:
-            return self.context['request'].build_absolute_uri(f'/api/user/{obj.id}/descargar/')
+            url = self.context['request'].build_absolute_uri(f'/api/user/{obj.id}/descargar/')
+            return url.replace('http://', 'https://')
         return None
 
     def get_gender_name(self, obj):
