@@ -10,6 +10,13 @@
       <input type="password" placeholder="Contraseña" formControlName="password" />
       <input type="password" formControlName="password2" placeholder="Confirmar contraseña" minlength="8"
         maxlength="50">
+      <label class="checkbox-label">
+        <input type="checkbox" id="consentimiento" formControlName="consentimiento" required />
+        <span class="checkbox-text">
+          He leído y acepto el <a href="assets/Consentimiento_informado.pdf" target="_blank"
+            rel="noopener noreferrer">consentimiento informado</a>.
+        </span>
+      </label>
       <br>
       <button pButton pRipple type="submit" label="Crear una cuenta" [disabled]="!formRegister.valid"></button>
     </form>
@@ -28,8 +35,7 @@
       <span>Utiliza tu cuenta</span>
       <input type="email" placeholder="Email" formControlName="username" />
       <div class="password-wrapper">
-        <input [type]="mostrarContrasena ? 'text' : 'password'" formControlName="password"
-          placeholder="Contraseña" />
+        <input [type]="mostrarContrasena ? 'text' : 'password'" formControlName="password" placeholder="Contraseña" />
         <i class="pi toggle-icon" [ngClass]="mostrarContrasena ? 'pi-eye-slash' : 'pi-eye'"
           (click)="toggleMostrarContrasena()"></i>
       </div>

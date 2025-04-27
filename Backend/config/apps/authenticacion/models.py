@@ -17,10 +17,8 @@ class CustomUser(AbstractUser):
     resetToken = models.CharField(max_length=256, blank=True, null=True)
     avatar = models.ImageField(upload_to=path_to_avatar, blank=True, null=True)
     roles = models.ManyToManyField('Rol', through='UserRol', related_name='users_customuser')
-    codigo = models.CharField(max_length=20, default="SIN_CODIGO")
     consentimiento = models.BooleanField(default=False)
     objects = UserManager()
-    chat_id_telegram = models.CharField(max_length=50, null=True, blank=True)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
