@@ -71,6 +71,7 @@ export class PerfilComponent implements OnInit {
 
 
   loadUserProfile() {
+    this.cargando = true;
     if (this.usuarioId !== undefined) {
       this.userService.getUserProfile(this.usuarioId).subscribe(
         (userProfile) => {
@@ -83,17 +84,19 @@ export class PerfilComponent implements OnInit {
             nombres: userProfile.first_name,
             apellidos: userProfile.last_name
           } as Person; // <-- simulamos el objeto Person para tu HTML
-  
+          this.cargando = false;
           this.cd.detectChanges();
         },
         (error) => {
           console.error('Error cargando perfil:', error);
+          this.cargando = false;
         }
       );
     }
   }  
 
   cargarMediciones(): void {
+    this.cargando = true;
     if (this.usuarioId !== undefined) {
       this.medicionService.obtenerMedicionesPorUsuario(this.usuarioId).subscribe({
         next: (data) => {

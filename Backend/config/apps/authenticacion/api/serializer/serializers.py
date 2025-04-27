@@ -344,13 +344,23 @@ class ListUserSerializer(serializers.Serializer):
     avatar_url = serializers.SerializerMethodField()
     first_name = serializers.CharField(source='person.nombres', default="")
     last_name = serializers.CharField(source='person.apellidos', default="")
-    gender_name = serializers.SerializerMethodField()  # <-- AQUÍ
+    gender_name = serializers.SerializerMethodField()
 
     def get_avatar_url(self, obj):
-        if obj.avatar:
-            url = self.context['request'].build_absolute_uri(f'/api/user/{obj.id}/descargar/')
-            return url.replace('http://', 'https://')
-        return None
+        try:
+            if obj.avatar:
+                request = self.context.get('request')
+                if request is not None:
+                    url = request.build_absolute_uri(f'/api/user/{obj.id}/descargar/')
+                    # Corrige si el request ya viene en https
+                    if request.is_secure():
+                        return url
+                    else:
+                        return url.replace('http://', 'https://')
+            return None
+        except Exception:
+            return None
+
 
     def get_gender_name(self, obj):
         try:
