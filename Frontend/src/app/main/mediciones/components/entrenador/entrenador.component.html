@@ -70,8 +70,8 @@
           (click)="abrirMedicion()"></button>
       </div>
       <div class="card">
-        <div *ngIf="estadoIMC" class="imc-message">
-          Estado de índice de masa corporal: <strong>{{ estadoIMC }}</strong>
+        <div *ngIf="estado" class="imc-message">
+          <strong>{{ estado }}</strong>
         </div>
         <table class="mediciones-table">
           <thead>
@@ -81,6 +81,7 @@
               <th>Peso (Kg)</th>
               <th>IMC</th>
               <th>ICC</th>
+              <th>Grasa corporal</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -92,7 +93,13 @@
               <td [ngClass]="getIMCClass(medicion.imc)" class="imc-cell" (click)="mostrarEstadoIMC(medicion.imc)">
                 {{ medicion.imc }}
               </td>
-              <td>{{ medicion.icc }}</td>
+              <td [ngClass]="getICCClass(medicion.icc)" class="imc-cell" (click)="mostrarEstadoICC(medicion.icc)">
+                {{ medicion.icc }}
+              </td>
+              <td [ngClass]="getGrasaClass(medicion.grasa_corporal)" class="imc-cell"
+                (click)="mostrarEstadoGrasa(medicion.grasa_corporal)">
+                {{ medicion.grasa_corporal }}
+              </td>
               <td>
                 <button pButton icon="pi pi-eye" class="btn-ver" (click)="verMedicion(medicion)"></button>
                 <button pButton icon="pi pi-pencil" class="btn-editar" (click)="editarMedicion(medicion)"></button>
@@ -374,8 +381,7 @@
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
         <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
-          placeholder="Seleccione un entrenador" optionLabel="userId.first_name" optionValue="userId.id"
-          [filter]="true">
+          placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
         </p-dropdown>
       </div>
 
@@ -546,8 +552,7 @@
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
         <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
-          placeholder="Seleccione un entrenador" optionLabel="userId.first_name" optionValue="userId.id"
-          [filter]="true">
+          placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
         </p-dropdown>
       </div>
 
@@ -605,11 +610,6 @@
   </div>
 
   <div class="contenedor">
-    <div *ngIf="cargandoPersonas">
-      <p class="loading-text" style="text-align: center;">Cargando personas, por favor espere...</p>
-      <p-progressBar mode="indeterminate"></p-progressBar>
-    </div>   
-    <br> 
     <div class="filtro-compacto">
       <label for="ciudad">Filtrar por ciudad:</label>
       <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
@@ -664,10 +664,10 @@
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
         <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
-          placeholder="Seleccione un entrenador" optionLabel="userId.first_name" optionValue="userId.id"
-          [filter]="true">
+          placeholder="Seleccione un entrenador" optionLabel="fullName" optionValue="id" [filter]="true">
         </p-dropdown>
       </div>
+
 
       <div class="form-group">
         <label for="descripcion">Descripción</label>
@@ -778,8 +778,7 @@
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
         <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
-          placeholder="Seleccione un entrenador" optionLabel="userId.first_name" optionValue="userId.id"
-          [filter]="true">
+          placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
         </p-dropdown>
       </div>
 

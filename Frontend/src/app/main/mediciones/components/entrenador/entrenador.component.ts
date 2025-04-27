@@ -25,10 +25,10 @@ export class EntrenadorComponent implements OnInit {
   base_user = `${this.API_URI}/api/user/`;
 
   personas: Person[] = [];
-  cargandoPersonas: boolean = false;
+  genero: string = '';
   personasFiltradas: Person[] = [];
   formData: any = {};
-  estadoIMC: string = '';
+  estado: string = '';
   alimentacion: any[] = [];
   cargando: boolean = true;
   entrenamiento: any[] = [];
@@ -45,7 +45,7 @@ export class EntrenadorComponent implements OnInit {
   selectedAlimentacion: any = null;
   ciudad: tablaMaestra[] = [];
   selectedEntrenamiento: any = null;
-  medicionesUsuario: Medicion[] = [];
+  medicionesUsuario: any[] = [];
   dialogAlimentacion: boolean = false;
   public filteredTrainers: any[] = [];
   public filteredTrainers2: any[] = [];
@@ -104,7 +104,6 @@ export class EntrenadorComponent implements OnInit {
     this.getTrainers();
     this.getFilterOptions();
     this.obtenerTipos();
-    this.cargarPersonas();
   }
 
   generarSemanas() {
@@ -179,14 +178,11 @@ export class EntrenadorComponent implements OnInit {
 
   getTrainers(): void {
     this.cargando = true;
-    this.cargandoPersonas = true;
 
     this.userService.getlistusers().subscribe(
       (entrenadores: any[]) => {
         this.trainers = entrenadores;
         this.filteredTrainers = entrenadores;
-        this.filteredTrainers2 = entrenadores;
-
         this.personas = entrenadores.map((trainer: any) => ({
           ...trainer,
           seleccionado: true,
@@ -198,16 +194,33 @@ export class EntrenadorComponent implements OnInit {
 
         console.log('✅ Entrenadores completos:', entrenadores);
         this.cargando = false;
-        this.cargandoPersonas = false;
+        this.filtrarEntrenadoresPorRol()
       },
       (error) => {
         console.error('❌ Error al cargar entrenadores:', error);
         this.cargando = false;
-        this.cargandoPersonas = false;
       }
     );
   }
-
+  
+  filtrarEntrenadoresPorRol(): void {
+    this.userService.getUsuariosPorRol(3).subscribe(
+      (response: any) => {
+        const userIdsEntrenadores = response.users;
+        this.filteredTrainers2 = this.trainers
+          .filter(trainer => userIdsEntrenadores.includes(trainer.id))
+          .map(trainer => ({
+            ...trainer,
+            fullName: `${trainer.first_name} ${trainer.last_name}`.trim()
+          }));
+        console.log('✅ Entrenadores filtrados:', this.filteredTrainers2);
+      },
+      (error) => {
+        console.error('❌ Error al filtrar entrenadores:', error);
+      }
+    );
+  }  
+  
   getFilterOptions(): void {
     this.usuariosService.getRoles().subscribe(
       (response: any) => {
@@ -607,7 +620,9 @@ export class EntrenadorComponent implements OnInit {
 
   verPerfil(trainer: any) {
     this.selectedTrainer = trainer;
-
+  
+    this.genero = trainer.gender_name || '';
+  
     this.medicionService.obtenerMedicionesPorUsuario(trainer.id).subscribe(
       (mediciones) => {
         this.medicionesUsuario = mediciones.results;
@@ -616,9 +631,10 @@ export class EntrenadorComponent implements OnInit {
         console.error('Error al obtener mediciones:', error);
       }
     );
-
+  
     this.dialogMediciones = true;
   }
+  
 
   cerrarMedicion() {
     this.dialogMedicion = false;
@@ -696,17 +712,17 @@ export class EntrenadorComponent implements OnInit {
 
   mostrarEstadoIMC(imc: number): void {
     if (imc < 18.5) {
-      this.estadoIMC = 'Bajo Peso';
+      this.estado = 'Bajo Peso';
     } else if (imc >= 18.5 && imc <= 24.9) {
-      this.estadoIMC = 'Normal';
+      this.estado = 'Normal';
     } else if (imc >= 25 && imc <= 29.9) {
-      this.estadoIMC = 'Sobrepeso';
+      this.estado = 'Sobrepeso';
     } else {
-      this.estadoIMC = 'Obesidad';
+      this.estado = 'Obesidad';
     }
 
     setTimeout(() => {
-      this.estadoIMC = '';
+      this.estado = '';
     }, 3000);
   }
 
@@ -722,40 +738,63 @@ export class EntrenadorComponent implements OnInit {
     }
   }
 
-  cargarPersonas() {
-    this.personas = []; // Limpiar lista antes de cargar
-    this.cargarPersonasRecursivo(`${this.usuariosService.base_personas}`);
+  
+  getICCClass(icc: number): string {
+    if (this.genero === 'Masculino') {
+      if (icc < 0.90) return 'icc-bajo';
+      else if (icc >= 0.90 && icc < 1.0) return 'icc-moderado';
+      else return 'icc-alto';
+    } else {
+      if (icc < 0.85) return 'icc-bajo';
+      else if (icc >= 0.85 && icc < 0.95) return 'icc-moderado';
+      else return 'icc-alto';
+    }
   }
-  
-  private cargarPersonasRecursivo(url: string): void {
-    this.usuariosService.getPersonasByUrl(url).subscribe({
-      next: (response: any) => {
-        if (response && response.results) {
-          const personasConSeleccion = response.results.map((persona: any) => ({
-            ...persona,
-            seleccionado: true
-          }));
-  
-          this.personas = [...this.personas, ...personasConSeleccion];
-  
-          if (response.next) {
-            // Si hay otra página, sigue cargando
-            this.cargarPersonasRecursivo(response.next);
-          } else {
-            console.log('Todas las personas cargadas:', this.personas.length);
-            this.cargandoPersonas = false;
-          }
-        } else {
-          console.error('Respuesta inesperada:', response);
-          this.cargandoPersonas = false;
-        }
-      },
-      error: (error: any) => {
-        console.error('Error cargando personas:', error);
-        this.cargandoPersonas = false;
-      }
-    });
-  }  
+
+  getGrasaClass(grasa: number): string {
+    if (this.genero === 'Masculino') {
+      if (grasa < 10) return 'grasa-bajo';
+      else if (grasa >= 10 && grasa <= 20) return 'grasa-normal';
+      else return 'grasa-alta';
+    } else {
+      if (grasa < 18) return 'grasa-bajo';
+      else if (grasa >= 18 && grasa <= 28) return 'grasa-normal';
+      else return 'grasa-alta';
+    }
+  }
+
+  mostrarEstadoICC(icc: number): void {
+    if (this.genero === 'Masculino') {
+      if (icc < 0.90) this.estado = 'ICC bajo: dentro del rango saludable.';
+      else if (icc >= 0.90 && icc < 1.0) this.estado = 'ICC moderado: precaución.';
+      else this.estado = 'ICC alto: riesgo cardiovascular aumentado.';
+    } else {
+      if (icc < 0.85) this.estado = 'ICC bajo: dentro del rango saludable.';
+      else if (icc >= 0.85 && icc < 0.95) this.estado = 'ICC moderado: precaución.';
+      else this.estado = 'ICC alto: riesgo cardiovascular aumentado.';
+    }
+
+    setTimeout(() => {
+      this.estado = '';
+    }, 3000);
+  }
+
+  mostrarEstadoGrasa(grasa: number): void {
+    if (this.genero === 'Masculino') {
+      if (grasa < 10) this.estado = 'Grasa corporal baja: posible déficit.';
+      else if (grasa >= 10 && grasa <= 20) this.estado = 'Grasa corporal normal.';
+      else this.estado = 'Grasa corporal alta.';
+    } else {
+      if (grasa < 18) this.estado = 'Grasa corporal baja: posible déficit.';
+      else if (grasa >= 18 && grasa <= 28) this.estado = 'Grasa corporal normal.';
+      else this.estado = 'Grasa corporal alta.';
+    }
+
+    setTimeout(() => {
+      this.estado = '';
+    }, 3000);
+  }
+
 
   seleccionarTodos(event: any) {
     const seleccionado = event.target.checked;
@@ -781,12 +820,10 @@ export class EntrenadorComponent implements OnInit {
 
   verEntrenamientosMasivos() {
     this.dialogEntrenamientoRegion = true;
-    this.cargandoPersonas = true;
   }
 
   verAlimentacionesMasivas() {
     this.dialogAlimentacionRegion = true;
-    this.cargandoPersonas = true;
   }
 
   cerrarEntrenamientosMasivos() {

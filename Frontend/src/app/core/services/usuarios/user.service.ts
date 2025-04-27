@@ -27,6 +27,7 @@ export class UserService {
   base_usuario_rol = `${this.API_URI}/roles/user_roles/create/`;
   base_tabla_maestra = `${this.API_URI}/tabla_maestra/tabla-maestra/`;
   base_tabla_categoria = `${this.API_URI}/categoria_tipo/categoria-tipo/`;
+  base_roles = `${this.API_URI}/roles`;
 
   constructor(private http: HttpClient,) { }
 
@@ -255,6 +256,10 @@ export class UserService {
   getlistusers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_URI}/listusers/`);
   }
+
+  getUsuariosPorRol(rolId: number) {
+    return this.http.get<any>(`${this.base_roles}/${rolId}`);
+  }  
 
   actualzarContraseña(contraseña: CambiarPasswordI): Observable<{ user: CambiarPasswordI }> {
     let token: string | null = localStorage.getItem('token')

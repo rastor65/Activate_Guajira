@@ -60,12 +60,12 @@ export class PerfilComponent implements OnInit {
     this.cargando = true;
     this.usuarioId = this.authService.getUserId();
     console.log("ID USER", this.usuarioId);
-  
+
     if (this.usuarioId !== undefined) {
       this.loadUserProfile();  // <-- SOLO ESTO
       this.cargarMediciones();
     }
-  
+
     this.chartLabels = [];
   }
 
@@ -93,7 +93,7 @@ export class PerfilComponent implements OnInit {
         }
       );
     }
-  }  
+  }
 
   cargarMediciones(): void {
     this.cargando = true;

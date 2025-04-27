@@ -407,26 +407,6 @@ td {
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.bajo-peso {
-  background-color: #b3e5fc;
-  color: #01579b;
-}
-
-.normal {
-  background-color: #a5d6a7;
-  color: #1b5e20;
-}
-
-.sobrepeso {
-  background-color: #ffcc80;
-  color: #e65100;
-}
-
-.obesidad {
-  background-color: #ef9a9a;
-  color: #b71c1c;
-}
-
 .imc-message {
   background-color: #c2c2c2;
   color: #333;
@@ -760,6 +740,60 @@ input[type="checkbox"] {
   height: 6px;
   margin-top: 10px;
   margin-bottom: 20px;
+}
+
+
+/* IMC */
+.bajo-peso {
+  background-color: #FFE0B2;
+  color: #E65100;
+}
+
+.normal {
+  background-color: #C8E6C9;
+  color: #2E7D32;
+}
+
+.sobrepeso {
+  background-color: #FFF9C4;
+  color: #FBC02D;
+}
+
+.obesidad {
+  background-color: #FFCDD2;
+  color: #C62828;
+}
+
+/* ICC */
+.icc-bajo {
+  background-color: #C8E6C9;
+  color: #2E7D32;
+}
+
+.icc-moderado {
+  background-color: #ffcc80;
+  color: #e65100;
+}
+
+.icc-alto {
+  background-color: #FFCDD2;
+  color: #C62828;
+}
+
+/* Grasa corporal */
+.grasa-bajo {
+  background-color: #BBDEFB;
+  color: #0D47A1;
+}
+
+.grasa-normal {
+  background-color: #C8E6C9;
+  color: #2E7D32;
+}
+
+.grasa-alta {
+  background-color: #FFCDD2;
+  color: #C62828;
 }
 
 .overlay-spinner {
