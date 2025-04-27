@@ -202,9 +202,9 @@ export class EntrenadorComponent implements OnInit {
 
   verAlimentacion(trainer: any) {
     this.selectedTrainer = trainer;
-    this.entrenadorService.getAlimentacionesPorUsuario(trainer.userId.id).subscribe(
+    this.entrenadorService.getAlimentacionesPorUsuario(trainer.id).subscribe(
       (data) => {
-        this.alimentaciones = data;
+        this.alimentaciones = data.results;
         this.dialogAlimentacion = true;
         this.alimentaciones.forEach((alimentacion: any) => {
           if (alimentacion.entrenador) {
@@ -261,7 +261,7 @@ export class EntrenadorComponent implements OnInit {
 
   agregarAlimentacion() {
     if (this.selectedTrainer) {
-      this.formData.usuario = this.selectedTrainer.userId.id;
+      this.formData.usuario = this.selectedTrainer.id;
       this.entrenadorService.createAlimentacion(this.formData).subscribe(
         (data) => {
           this.alimentaciones.push(data);
@@ -357,7 +357,7 @@ export class EntrenadorComponent implements OnInit {
 
   guardarAlimentacion() {
     if (this.esEdicionAlimentacion) {
-      this.formAlimentacion.usuario = this.selectedTrainer?.userId?.id;
+      this.formAlimentacion.usuario = this.selectedTrainer?.id;
       this.entrenadorService.updateAlimentacion(this.formAlimentacion.id, this.formAlimentacion).subscribe(
         (data) => {
           const index = this.alimentaciones.findIndex(a => a.id === this.formAlimentacion.id);
@@ -370,7 +370,7 @@ export class EntrenadorComponent implements OnInit {
         (error) => console.error(error)
       );
     } else {
-      this.formAlimentacion.usuario = this.selectedTrainer?.userId?.id;
+      this.formAlimentacion.usuario = this.selectedTrainer?.id;
       this.entrenadorService.createAlimentacion(this.formAlimentacion).subscribe(
         (data) => {
           this.alimentaciones.push(data);
@@ -384,7 +384,7 @@ export class EntrenadorComponent implements OnInit {
   }
 
   guardarEntrenamiento(): void {
-    this.formEntrenamiento.usuario = this.selectedTrainer?.userId?.id;
+    this.formEntrenamiento.usuario = this.selectedTrainer?.id;
 
     if (!this.formEntrenamiento.usuario || !this.formEntrenamiento.nombre) {
       this.messageService.add({
@@ -499,9 +499,9 @@ export class EntrenadorComponent implements OnInit {
 
   verEntrenamiento(trainer: any) {
     this.selectedTrainer = trainer;
-    this.entrenadorService.getEntrenamientosPorUsuario(trainer.userId.id).subscribe(
+    this.entrenadorService.getEntrenamientosPorUsuario(trainer.id).subscribe(
       (data) => {
-        this.entrenamientos = data;
+        this.entrenamientos = data.results;
         this.entrenamientos.forEach((entrenamiento: any) => {
           if (entrenamiento.entrenador) {
             this.getNombre(entrenamiento.entrenador).subscribe((persona: any) => {
@@ -530,7 +530,7 @@ export class EntrenadorComponent implements OnInit {
 
   agregarEntrenamiento() {
     if (this.selectedTrainer) {
-      this.formData.usuario = this.selectedTrainer.userId.id;
+      this.formData.usuario = this.selectedTrainer.id;
       this.entrenadorService.createEntrenamiento(this.formData).subscribe(
         (data) => {
           this.entrenamientos.push(data);
@@ -544,10 +544,10 @@ export class EntrenadorComponent implements OnInit {
   filterCards(): void {
     const search = this.searchValue.toLowerCase();
     this.filteredTrainers = this.trainers.filter(trainer =>
-      trainer.userId.first_name.toLowerCase().includes(search) ||
-      trainer.userId.last_name.toLowerCase().includes(search) ||
-      trainer.userId.email.toLowerCase().includes(search) ||
-      trainer.userId.username.toLowerCase().includes(search)
+      trainer.first_name.toLowerCase().includes(search) ||
+      trainer.last_name.toLowerCase().includes(search) ||
+      trainer.email.toLowerCase().includes(search) ||
+      trainer.username.toLowerCase().includes(search)
     );
   }
 
@@ -590,7 +590,7 @@ export class EntrenadorComponent implements OnInit {
   verPerfil(trainer: any) {
     this.selectedTrainer = trainer;
 
-    this.medicionService.obtenerMedicionesPorUsuario(trainer.userId.id).subscribe(
+    this.medicionService.obtenerMedicionesPorUsuario(trainer.id).subscribe(
       (mediciones) => {
         this.medicionesUsuario = mediciones.results;
       },
@@ -635,7 +635,7 @@ export class EntrenadorComponent implements OnInit {
           this.dialogMedicion = false;
         });
       } else {
-        this.formData.usuario = this.selectedTrainer?.userId?.id;
+        this.formData.usuario = this.selectedTrainer?.id;
         this.medicionService.crearMedicion(this.formData).subscribe(() => {
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Medición creada' });
           if (this.selectedTrainer) {

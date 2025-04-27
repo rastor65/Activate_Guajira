@@ -63,7 +63,7 @@
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
       <div class="profile-header">
-        <h2>{{ selectedTrainer.userId.first_name }} {{ selectedTrainer.userId.last_name }}</h2>
+        <h2>{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h2>
       </div>
       <div class="medicion">
         <button pButton icon="pi pi-plus" label="Agregar medición" class="btn-agregar"
@@ -265,7 +265,7 @@
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
       <div class="profile-header">
-        <h2>{{ selectedTrainer.userId.first_name }} {{ selectedTrainer.userId.last_name }}</h2>
+        <h2>{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h2>
       </div>
       <div class="alimentacion">
         <button class="btn-agregar" (click)="abrirFormularioAlimentacion()">
@@ -401,7 +401,7 @@
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
       <div class="profile-header">
-        <h2>{{ selectedTrainer.userId.first_name }} {{ selectedTrainer.userId.last_name }}</h2>
+        <h2>{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h2>
       </div>
 
       <div class="alimentacion">
