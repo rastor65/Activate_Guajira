@@ -25,6 +25,7 @@ export class EntrenadorComponent implements OnInit {
   base_user = `${this.API_URI}/api/user/`;
 
   personas: Person[] = [];
+  cargandoPersonas: boolean = false;
   personasFiltradas: Person[] = [];
   formData: any = {};
   estadoIMC: string = '';
@@ -104,6 +105,7 @@ export class EntrenadorComponent implements OnInit {
     this.getFilterOptions();
     this.getMediciones();
     this.obtenerTipos();
+    this.cargarPersonas();
   }
 
   generarSemanas() {
@@ -729,13 +731,16 @@ export class EntrenadorComponent implements OnInit {
             this.cargarPersonasRecursivo(response.next);
           } else {
             console.log('Todas las personas cargadas:', this.personas.length);
+            this.cargandoPersonas = false;
           }
         } else {
           console.error('Respuesta inesperada:', response);
+          this.cargandoPersonas = false;
         }
       },
       error: (error: any) => {
         console.error('Error cargando personas:', error);
+        this.cargandoPersonas = false;
       }
     });
   }  
@@ -745,21 +750,31 @@ export class EntrenadorComponent implements OnInit {
     this.personasFiltradas.forEach(persona => persona.seleccionado = seleccionado);
   }
 
-  filtrarPorCiudad(ciudad: any) {
-    console.log(this.personas)
-    this.personasFiltradas = ciudad ?
-      this.personas.filter(persona => persona.ciudad_residencia === ciudad) :
-      [...this.personas];
-  }
+  filtrarPorCiudad(ciudadId: number) {
+  
+    setTimeout(() => { // Simula tiempo de carga
+      if (ciudadId) {
+        this.personasFiltradas = this.personas.filter(persona => {
+          if (typeof persona.ciudad_residencia === 'object' && persona.ciudad_residencia !== null) {
+            return persona.ciudad_residencia === ciudadId;
+          } else {
+            return persona.ciudad_residencia === ciudadId;
+          }
+        });
+      } else {
+        this.personasFiltradas = [...this.personas];
+      }
+    }, 500); // 500ms para dar sensación de carga
+  }  
 
   verEntrenamientosMasivos() {
     this.dialogEntrenamientoRegion = true;
-    this.cargarPersonas();
+    this.cargandoPersonas = true;
   }
 
   verAlimentacionesMasivas() {
     this.dialogAlimentacionRegion = true;
-    this.cargarPersonas();
+    this.cargandoPersonas = true;
   }
 
   cerrarEntrenamientosMasivos() {

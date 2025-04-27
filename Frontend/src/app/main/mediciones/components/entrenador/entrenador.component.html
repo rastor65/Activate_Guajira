@@ -35,7 +35,7 @@
         </div>
       </div>
     </ng-template>
-  
+
     <ng-template pTemplate="content">
       <div class="card-content">
         <p><i class="pi pi-user"></i> {{ trainer.username }}</p>
@@ -54,7 +54,7 @@
       </div>
     </ng-template>
   </p-card>
-  
+
 </div>
 
 <!-- MEDICIONES -->
@@ -605,6 +605,10 @@
   </div>
 
   <div class="contenedor">
+    <div *ngIf="cargandoPersonas">
+      <p class="loading-text" style="text-align: center;">Cargando personas, por favor espere...</p>
+      <p-progressBar mode="indeterminate"></p-progressBar>
+    </div>    
     <div class="filtro-compacto">
       <label for="ciudad">Filtrar por ciudad:</label>
       <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"

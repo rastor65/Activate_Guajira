@@ -363,7 +363,9 @@ class ListUserSerializer(serializers.Serializer):
 
 
     def get_gender_name(self, obj):
-        try:
-            return obj.person.genero.nombre if obj.person and obj.person.genero else None
-        except Exception:
-            return None
+        person = getattr(obj, 'person', None)
+        if person:
+            genero = getattr(person, 'genero', None)
+            if genero:
+                return genero.nombre
+        return None

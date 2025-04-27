@@ -756,6 +756,12 @@ input[type="checkbox"] {
   display: block;
 }
 
+.progress-bar-cargando {
+  height: 6px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
 .overlay-spinner {
   position: absolute;
   top: 0;

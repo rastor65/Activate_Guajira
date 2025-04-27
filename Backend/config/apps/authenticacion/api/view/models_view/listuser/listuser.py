@@ -11,14 +11,20 @@ from rest_framework.generics import RetrieveAPIView
 class UsersView(APIView):
     def get(self, request):
         entrenadores_ids = UserRol.objects.filter(rolesId__name="Usuario").values_list('userId', flat=True)
-        users = CustomUser.objects.filter(id__in=entrenadores_ids).select_related('person', 'person__genero')
+
+        users = (CustomUser.objects
+                 .filter(id__in=entrenadores_ids, is_active=True)
+                 .select_related('person', 'person__genero')
+                )
+
         serializer = ListUserSerializer(users, many=True, context={'request': request})
         return Response(serializer.data)
     
 class UserDetailView(RetrieveAPIView):
-    queryset = CustomUser.objects.select_related('person')
     serializer_class = ListUserSerializer
     lookup_field = 'id'
 
     def get_queryset(self):
-        return CustomUser.objects.select_related('person')
+        return (CustomUser.objects
+                .filter(is_active=True)
+                .select_related('person', 'person__genero'))

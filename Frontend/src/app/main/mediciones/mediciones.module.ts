@@ -11,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ProgressBarModule } from 'primeng/progressbar';
+
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     CardModule,
     AvatarModule,
     ProgressSpinnerModule,
+    ProgressBarModule,
   ]
 })
 
