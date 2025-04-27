@@ -75,7 +75,7 @@ class PersonSimpleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Person
-        fields = ['id', 'identificacion', 'nombres', 'apellidos', 'status']
+        fields = ['id', 'identificacion', 'nombres', 'apellidos', 'ciudad_residencia', 'status']
 
 class PersonsSimpleSerializers(serializers.ModelSerializer):
     document_type = serializers.SerializerMethodField()

@@ -23,6 +23,10 @@ export class UsuariosService {
     return this.http.get<any[]>(`${this.base_personas}`);
   }
 
+  getPersonasByUrl(url: string): Observable<any> {
+    return this.http.get<any>(url);
+  }
+  
   getAllRoles(): Observable<{ count: number; results: any[] }> {
     return this.http.get<{ count: number; results: any[] }>(this.base_usuarios_roles);
   }   

@@ -151,22 +151,30 @@ export class EntrenadorComponent implements OnInit {
   }
 
   public obtenerTipos(): void {
-    // El ID de la categoría "Ciudad" (debes saber cuál es, por ejemplo 7 o el que corresponda en tu base de datos)
     const categoriaCiudadId = 7;
-
-    this.userService.getTablaMaestraPorCategoria(categoriaCiudadId).subscribe(
-      (tiposResponse: any) => {
-        const tipos = tiposResponse.results;
-        console.log("Tipos de la categoría Ciudad:", tipos);
-        this.ciudad = tipos;
-      },
-      (error: any) => {
-        console.error('Error al cargar los tipos por categoría:', error);
-      }
-    );
+    this.ciudad = []; // Limpiar ciudades antes de cargar
+    this.cargarCiudadesRecursivo(`${this.userService.base_tabla_maestra}categoria/${categoriaCiudadId}/`);
   }
-
-
+  
+  private cargarCiudadesRecursivo(url: string): void {
+    this.userService.getTablaMaestraByUrl(url).subscribe({
+      next: (response: any) => {
+        this.ciudad = [...this.ciudad, ...response.results]; // Agrega las ciudades
+  
+        if (response.next) {
+          // Si hay otra página, llamar de nuevo
+          this.cargarCiudadesRecursivo(response.next);
+        } else {
+          // Si no hay más páginas
+          console.log('Todas las ciudades cargadas:', this.ciudad);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error al cargar ciudades:', error);
+      }
+    });
+  }
+  
 
   getTrainers(): void {
     this.cargando = true;
@@ -701,20 +709,36 @@ export class EntrenadorComponent implements OnInit {
   }
 
   cargarPersonas() {
-    this.usuariosService.getAllUsuarios().subscribe(
-      (response: any) => {
+    this.personas = []; // Limpiar lista antes de cargar
+    this.cargarPersonasRecursivo(`${this.usuariosService.base_personas}`);
+  }
+  
+  private cargarPersonasRecursivo(url: string): void {
+    this.usuariosService.getPersonasByUrl(url).subscribe({
+      next: (response: any) => {
         if (response && response.results) {
-          this.personas = response.results.map((persona: any) => ({
+          const personasConSeleccion = response.results.map((persona: any) => ({
             ...persona,
             seleccionado: true
           }));
+  
+          this.personas = [...this.personas, ...personasConSeleccion];
+  
+          if (response.next) {
+            // Si hay otra página, sigue cargando
+            this.cargarPersonasRecursivo(response.next);
+          } else {
+            console.log('Todas las personas cargadas:', this.personas.length);
+          }
         } else {
           console.error('Respuesta inesperada:', response);
         }
       },
-      (error: any) => console.error('Error cargando personas:', error)
-    );
-  }
+      error: (error: any) => {
+        console.error('Error cargando personas:', error);
+      }
+    });
+  }  
 
   seleccionarTodos(event: any) {
     const seleccionado = event.target.checked;
@@ -722,11 +746,11 @@ export class EntrenadorComponent implements OnInit {
   }
 
   filtrarPorCiudad(ciudad: any) {
+    console.log(this.personas)
     this.personasFiltradas = ciudad ?
       this.personas.filter(persona => persona.ciudad_residencia === ciudad) :
       [...this.personas];
   }
-
 
   verEntrenamientosMasivos() {
     this.dialogEntrenamientoRegion = true;

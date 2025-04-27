@@ -407,6 +407,11 @@ export class UserService {
     );
   }
 
+  // Nuevo método para traer cualquier URL directa de la tabla maestra
+  getTablaMaestraByUrl(url: string): Observable<any> {
+    return this.http.get<any>(url);
+  }
+
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Editar persona
