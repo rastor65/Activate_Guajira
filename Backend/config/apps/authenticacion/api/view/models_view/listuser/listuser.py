@@ -13,11 +13,12 @@ class UsersView(APIView):
 
         users = (CustomUser.objects
                  .filter(id__in=entrenadores_ids, is_active=True)
-                 .select_related('person', 'person__genero')
+                 .select_related('person', 'person__genero', 'person__ciudad_residencia')  # <- Agrega ciudad_residencia aquí
                  .order_by('id'))
                  
         serializer = ListUserSerializer(users, many=True, context={'request': request})
         return Response(serializer.data)
+
 
 class UserDetailView(RetrieveAPIView):
     serializer_class = ListUserSerializer
@@ -26,5 +27,6 @@ class UserDetailView(RetrieveAPIView):
     def get_queryset(self):
         return (CustomUser.objects
                 .filter(is_active=True)
-                .select_related('person', 'person__genero')
+                .select_related('person', 'person__genero', 'person__ciudad_residencia')  # <- Aquí también
                 .order_by('id'))
+
