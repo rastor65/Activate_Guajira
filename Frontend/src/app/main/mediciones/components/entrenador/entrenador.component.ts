@@ -179,12 +179,23 @@ export class EntrenadorComponent implements OnInit {
 
   getTrainers(): void {
     this.cargando = true;
+    this.cargandoPersonas = true;
 
     this.userService.getlistusers().subscribe(
       (entrenadores: any[]) => {
         this.trainers = entrenadores;
         this.filteredTrainers = entrenadores;
         this.filteredTrainers2 = entrenadores;
+
+        this.personas = entrenadores.map((trainer: any) => ({
+          ...trainer,
+          seleccionado: true,
+          ciudad_residencia: trainer.ciudad_residencia,
+          nombres: trainer.first_name,
+          apellidos: trainer.last_name,
+          user: trainer.id
+        }));
+
         console.log('✅ Entrenadores completos:', entrenadores);
         this.cargando = false;
       },

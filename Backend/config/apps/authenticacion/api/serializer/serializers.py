@@ -345,6 +345,7 @@ class ListUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(source='person.nombres', default="")
     last_name = serializers.CharField(source='person.apellidos', default="")
     gender_name = serializers.SerializerMethodField()
+    ciudad_residencia = serializers.SerializerMethodField()
 
     def get_avatar_url(self, obj):
         try:
@@ -368,4 +369,12 @@ class ListUserSerializer(serializers.Serializer):
             genero = getattr(person, 'genero', None)
             if genero:
                 return genero.nombre
+        return None
+
+    def get_ciudad_residencia(self, obj):
+        person = getattr(obj, 'person', None)
+        if person:
+            ciudad = getattr(person, 'ciudad_residencia', None)
+            if ciudad:
+                return ciudad.id
         return None
