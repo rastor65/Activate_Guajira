@@ -372,9 +372,9 @@ class ListUserSerializer(serializers.Serializer):
         return None
 
     def get_ciudad_residencia(self, obj):
-        person = getattr(obj, 'person', None)
-
-        # Asegurarnos que `person` es un objeto válido y no None
-        if person and getattr(person, 'ciudad_residencia', None):
-            return person.ciudad_residencia.id
-        return None
+        try:
+            return obj.person.ciudad_residencia.id
+        except AttributeError:
+            return None
+        except Exception:
+            return None
