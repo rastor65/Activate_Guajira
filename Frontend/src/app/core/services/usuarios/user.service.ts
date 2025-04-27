@@ -76,7 +76,7 @@ export class UserService {
 
   getUserProfile(id: number): Observable<any> {
     return this.http.get<any>(`${this.API_URI}/listusers/${id}/`);
-  }  
+  }
 
   UsersInvestigatorStudentTeacherProyecto(formValue: any): Observable<{ teachers: any[], estudiantes: any[], investigator_collaborators: any[] }> {
     let token: string | null = localStorage.getItem('token')
@@ -181,7 +181,7 @@ export class UserService {
           'user': `${parseInt(userObjeto.id)}`
         })
       }
-      
+
       return this.http
         .get<{ users: any[], usersestudiente: any[], userseadministrative: any[], usersInvestigador: any[], ResponsibleBodyUser: any[] }>
         (this.API_URI + '/api/userteacher', httpOptions)
@@ -254,7 +254,7 @@ export class UserService {
 
   getlistusers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_URI}/listusers/`);
-  }  
+  }
 
   actualzarContraseña(contraseña: CambiarPasswordI): Observable<{ user: CambiarPasswordI }> {
     let token: string | null = localStorage.getItem('token')
@@ -398,6 +398,16 @@ export class UserService {
     return this.http.delete(url);
   }
 
+  // Buscar Tabla Maestra por Categoría
+  getTablaMaestraPorCategoria(categoriaId: number): Observable<any[]> {
+    const url = `${this.base_tabla_maestra}categoria/${categoriaId}/`;
+    return this.http.get<any[]>(url).pipe(
+      retry(0),
+      catchError(this.handleError)
+    );
+  }
+
+
   ////////////////////////////////////////////////////////////////////////////////////////
   // Editar persona
 
@@ -431,7 +441,7 @@ export class UserService {
 
   getPeopleByUserId(userId: number): Observable<Person[]> {
     const url = `${this.base_personas}?user=${userId}`;
-  
+
     return this.http.get<any>(url).pipe(  // <-- 'any' para acceder a .results
       catchError(error => {
         console.error("Error in getPeopleByUserId:", error);
@@ -443,7 +453,7 @@ export class UserService {
       })
     );
   }
-  
+
 
   obtenerEditores(): Observable<any[]> {
     const url = `${this.base_usuario}`;

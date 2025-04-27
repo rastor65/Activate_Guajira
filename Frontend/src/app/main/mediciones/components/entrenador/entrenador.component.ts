@@ -151,30 +151,26 @@ export class EntrenadorComponent implements OnInit {
   }
 
   public obtenerTipos(): void {
-    this.userService.obtenerTipoCategoria().subscribe(
-      (categoriasResponse: any) => {
-        const categorias = categoriasResponse.results || categoriasResponse;
+    // El ID de la categoría "Ciudad" (debes saber cuál es, por ejemplo 7 o el que corresponda en tu base de datos)
+    const categoriaCiudadId = 7;
 
-        const categoriaMap = categorias.reduce((acc: any, categoria: any) => {
-          acc[categoria.id] = categoria.nombre;
-          return acc;
-        }, {} as Record<number, string>);
-
-        this.userService.obtenerTipo().subscribe(
-          (tiposResponse: any) => {
-            const tipos = tiposResponse.results || tiposResponse;
-            this.ciudad = tipos.filter((tipo: any) => categoriaMap[tipo.categoria] === "Ciudad");
-          },
-          (error: any) => console.error(error)
-        );
+    this.userService.getTablaMaestraPorCategoria(categoriaCiudadId).subscribe(
+      (tiposResponse: any) => {
+        const tipos = tiposResponse.results;
+        console.log("Tipos de la categoría Ciudad:", tipos);
+        this.ciudad = tipos;
       },
-      (error: any) => console.error(error)
+      (error: any) => {
+        console.error('Error al cargar los tipos por categoría:', error);
+      }
     );
   }
 
+
+
   getTrainers(): void {
     this.cargando = true;
-  
+
     this.userService.getlistusers().subscribe(
       (entrenadores: any[]) => {
         this.trainers = entrenadores;
@@ -189,7 +185,7 @@ export class EntrenadorComponent implements OnInit {
       }
     );
   }
-  
+
   getFilterOptions(): void {
     this.usuariosService.getRoles().subscribe(
       (response: any) => {
@@ -706,10 +702,17 @@ export class EntrenadorComponent implements OnInit {
 
   cargarPersonas() {
     this.usuariosService.getAllUsuarios().subscribe(
-      (response: Person[]) => {
-        this.personas = response.map(persona => ({ ...persona, seleccionado: true }));
+      (response: any) => {
+        if (response && response.results) {
+          this.personas = response.results.map((persona: any) => ({
+            ...persona,
+            seleccionado: true
+          }));
+        } else {
+          console.error('Respuesta inesperada:', response);
+        }
       },
-      (error: any) => console.error(error)
+      (error: any) => console.error('Error cargando personas:', error)
     );
   }
 
