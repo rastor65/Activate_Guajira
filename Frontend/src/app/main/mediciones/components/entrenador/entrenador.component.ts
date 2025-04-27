@@ -198,10 +198,12 @@ export class EntrenadorComponent implements OnInit {
 
         console.log('✅ Entrenadores completos:', entrenadores);
         this.cargando = false;
+        this.cargandoPersonas = false;
       },
       (error) => {
         console.error('❌ Error al cargar entrenadores:', error);
         this.cargando = false;
+        this.cargandoPersonas = false;
       }
     );
   }
