@@ -103,7 +103,6 @@ export class EntrenadorComponent implements OnInit {
   ngOnInit(): void {
     this.getTrainers();
     this.getFilterOptions();
-    this.getMediciones();
     this.obtenerTipos();
     this.cargarPersonas();
   }
