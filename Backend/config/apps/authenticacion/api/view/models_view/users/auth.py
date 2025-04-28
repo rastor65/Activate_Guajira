@@ -33,6 +33,7 @@ from django.views.decorators.csrf import csrf_exempt
 ##  USER ##
 class CustomUserList(generics.ListCreateAPIView):
     queryset = CustomUser.objects.filter(is_active=True)
+    pagination_class = None
     serializer_class = CustomUserSerializer
 
     def create(self, request, *args, **kwargs):
