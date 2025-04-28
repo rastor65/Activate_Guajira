@@ -7,6 +7,7 @@ from ....serializer.serializers import categoriaTipoSerializer
 class categoriaTipoView(viewsets.ModelViewSet):
     queryset = categoriaTipo.objects.filter(status=True)
     serializer_class = categoriaTipoSerializer
+    pagination_class = None
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
