@@ -16,6 +16,7 @@ class AlimentacionListCreateView(generics.ListCreateAPIView):
 
 class AlimentacionPorUsuarioListView(generics.ListAPIView):
     serializer_class = AlimentacionSerializer
+    pagination_class = None
 
     def get_queryset(self):
         usuario_id = self.kwargs["usuario_id"]
@@ -24,6 +25,7 @@ class AlimentacionPorUsuarioListView(generics.ListAPIView):
 class AlimentacionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Alimentacion.objects.filter(status=True)
     serializer_class = AlimentacionSerializer
+    pagination_class = None
     lookup_field = "id"
 
     def perform_destroy(self, instance):
