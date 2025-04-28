@@ -150,35 +150,43 @@ export class PrivateLayoutComponent implements OnInit {
 
   public obtenerTipos(): void {
     this.userService.obtenerTipoCategoria().subscribe(
-      (categorias: any[]) => {
-        const categoriaMap = categorias.reduce((acc, categoria) => {
-          acc[categoria.id] = categoria.nombre;
-          return acc;
-        }, {} as Record<number, string>);
-
-        this.userService.obtenerTipo().subscribe(
-          (tipos: any[]) => {
-            this.barrio = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Barrio");
-            this.ciudad = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Ciudad");
-            this.estrato = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Estrato");
-            this.genderTypes = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Género");
-            this.estadoCivil = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Estado civil");
-            this.grupoEtnico = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Grupo étnico");
-            this.departamento = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Departamento");
-            this.documentTypes = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Tipo de documento");
-            this.niveles_formacion = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Nivel de formación");
-            this.situacionLaboral = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Situación Laboral");
-            this.genero = tipos.filter(tipo => categoriaMap[tipo.categoria] === "Genero");
-          },
-          (error: any) => {
-            console.error(error);
-          }
-        );
+      (categorias: any) => {
+        if (Array.isArray(categorias.results)) {
+          const categoriaMap = categorias.results.reduce((acc: any, categoria: any) => {
+            acc[categoria.id] = categoria.nombre;
+            return acc;
+          }, {} as Record<number, string>);
+    
+          this.userService.obtenerTipo().subscribe(
+            (tipos: any) => {
+              if (Array.isArray(tipos.results)) {
+                this.barrio = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Barrio");
+                this.ciudad = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Ciudad");
+                this.estrato = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Estrato");
+                this.genderTypes = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Género");
+                this.estadoCivil = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Estado civil");
+                this.grupoEtnico = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Grupo étnico");
+                this.departamento = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Departamento");
+                this.documentTypes = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Tipo de documento");
+                this.niveles_formacion = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Nivel de formación");
+                this.situacionLaboral = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Situación Laboral");
+                this.genero = tipos.results.filter((tipo: any) => categoriaMap[tipo.categoria] === "Genero");
+              } else {
+                console.error('La propiedad results de tipos no es un array:', tipos.results);
+              }
+            },
+            (error: any) => {
+              console.error(error);
+            }
+          );          
+        } else {
+          console.error('La propiedad results no es un array:', categorias.results);
+        }
       },
       (error: any) => {
         console.error(error);
       }
-    );
+    );    
   }
 
   save(id: string) { }

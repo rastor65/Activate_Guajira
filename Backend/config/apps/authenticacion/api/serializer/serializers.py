@@ -29,7 +29,7 @@ class categoriaTipoSerializer(serializers.ModelSerializer):
 class tablaMaestraSerializer(serializers.ModelSerializer):
     class Meta:
         model = tablaMaestra
-        fields = '__all__'
+        fields = ('id', 'nombre', 'categoria')
 
 #PERSON
 class PersonsSerializers(serializers.ModelSerializer):
