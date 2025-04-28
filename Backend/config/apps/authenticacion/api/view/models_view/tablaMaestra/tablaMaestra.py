@@ -6,6 +6,7 @@ from rest_framework import generics
 
 class tablaMaestraView(viewsets.ModelViewSet):
     serializer_class = tablaMaestraSerializer
+    pagination_class = None
 
     def get_queryset(self):
         return tablaMaestra.objects.filter(status=True)
@@ -18,6 +19,7 @@ class tablaMaestraView(viewsets.ModelViewSet):
     
 class TablaMaestraPorCategoriaView(generics.ListAPIView):
     serializer_class = tablaMaestraSerializer
+    pagination_class = None
 
     def get_queryset(self):
         categoria_id = self.kwargs.get('categoria_id')
