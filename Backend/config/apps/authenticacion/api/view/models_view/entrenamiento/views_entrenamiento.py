@@ -46,6 +46,7 @@ class EntrenamientoListCreateView(generics.ListCreateAPIView):
 
 class EntrenamientoPorUsuarioListView(generics.ListAPIView):
     serializer_class = EntrenamientoSerializer
+    pagination_class = None
 
     def get_queryset(self):
         usuario_id = self.kwargs["usuario_id"]
