@@ -604,43 +604,56 @@ label {
   ::ng-deep .p-dialog {
     width: 90% !important;
     max-width: 90% !important;
-    top: 5% !important;
+    transform: none !important;
+    margin: 0 auto;
   }
 
-  .edit-profile-dialog {
-    padding: 10px;
+  .header-container {
+    flex-direction: column;
+    text-align: center;
   }
 
-  .profile-image-container {
-    margin-bottom: 10px;
+  .header-container h3 {
+    font-size: 1.2rem;
+    margin: 5px 0;
   }
 
-  .profile-image {
-    width: 90px;
-    height: 90px;
+  /* ProgressBar centrado en móvil */
+  ::ng-deep p-progressbar {
+    width: 80% !important;
+    margin: 10px auto;
+    display: block;
   }
 
-  .file-input-label {
-    padding: 8px 12px;
-    font-size: 0.9rem;
+  /* Formularios */
+  .form-container {
+    flex-direction: column;
+    gap: 10px;
+    padding: 5px 0;
   }
 
+  .form-group {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  /* Inputs */
+  ::ng-deep .custom-input, 
+  ::ng-deep .custom-dropdown {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Botones */
   .button-container-imagen {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+    margin-top: 20px;
   }
 
   .btn {
-    width: 100%;
-    padding: 8px 10px;
-    font-size: 0.9rem;
-  }
-
-  .btn-primary, .btn-secondary {
-    width: 100%;
-  }
-
-  .edit-profile-dialog h3 {
-    font-size: 1.2rem;
+    width: 100% !important;
+    font-size: 1rem;
+    padding: 10px;
   }
 }

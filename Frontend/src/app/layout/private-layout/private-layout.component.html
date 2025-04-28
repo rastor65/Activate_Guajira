@@ -22,7 +22,7 @@
           <button pButton icon="pi pi-sign-out" (click)="showConfirm()"></button>
         </li>
       </ul>
-    </div>    
+    </div>
   </aside>
   <section>
     <div class="titulo">
@@ -90,6 +90,8 @@
 
   <div class="p-grid p-nogutter p-align-center header-container">
     <h3 class="p-text-2xl font-weight-bold"><i class="pi pi-pencil"></i> Editar perfil</h3>
+    <p-progressBar *ngIf="cargandopersona" mode="indeterminate" [style]="{ height: '6px' }">
+    </p-progressBar>
     <h3>{{ usuario.nombres }} {{ usuario.apellidos }}</h3>
   </div>
   <br>

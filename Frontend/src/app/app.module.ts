@@ -59,12 +59,15 @@ import { MedicionesComponent } from './main/mediciones/mediciones.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 
 import { environment } from '../environments/environment';
+import { PreventMultipleClicksDirective } from './shared/prevent-multiple-clicks.directive';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     MantenimientoComponent,
     MedicionesComponent,
+    PreventMultipleClicksDirective,
   ],
   imports: [
 

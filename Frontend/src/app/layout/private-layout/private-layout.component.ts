@@ -72,6 +72,7 @@ export class PrivateLayoutComponent implements OnInit {
   situacionLaboral: tablaMaestra[] = [];
   niveles_formacion: tablaMaestra[] = [];
   categoriaTablaMaestra: categoriaTablaMaestra[] = [];
+  cargandopersona: boolean = false;
 
   public user: User = {
     id: 0,
@@ -135,6 +136,7 @@ export class PrivateLayoutComponent implements OnInit {
       console.warn('usuarioId es undefined, no se puede cargar el usuario.');
     }
 
+    this.obtenerTipos();
     this.loadUser();
     this.verificar();
     this.primengConfig.ripple = true;
@@ -210,7 +212,6 @@ export class PrivateLayoutComponent implements OnInit {
 
   abrirEditarPerfil() {
     this.loadUserData();
-    this.obtenerTipos();
     this.Dialog2 = true;
     this.usuarioCopy = { ...this.usuario };
   }
@@ -239,6 +240,7 @@ export class PrivateLayoutComponent implements OnInit {
   // EDITAR DATOS DE USUARIO
 
   loadUserData(): void {
+    this.cargandopersona = true;
     if (this.usuarioId !== undefined) {
       this.userService.getPeopleByUserId(this.usuarioId).subscribe(
         people => {
@@ -246,13 +248,17 @@ export class PrivateLayoutComponent implements OnInit {
             const firstUser = people[0];
             if (firstUser.user === this.usuarioId) {
               this.usuario = firstUser;
+              this.cargandopersona = false;
             } else {
               console.error('El ID del usuario logueado no coincide con el campo "user" en el registro de Persona.');
+              this.cargandopersona = false;
             }
           } else {
             console.error('No se encontraron datos de usuario para el ID proporcionado.');
+            this.cargandopersona = false;
           }
           this.userDataLoaded = true; // Marcar que los datos del usuario han sido cargados
+          this.cargandopersona = false;
 
         },
         error => {

@@ -152,29 +152,18 @@ export class EntrenadorComponent implements OnInit {
 
   public obtenerTipos(): void {
     const categoriaCiudadId = 7;
-    this.ciudad = []; // Limpiar ciudades antes de cargar
-    this.cargarCiudadesRecursivo(`${this.userService.base_tabla_maestra}categoria/${categoriaCiudadId}/`);
-  }
+    this.ciudad = []; // Limpiar antes de cargar
   
-  private cargarCiudadesRecursivo(url: string): void {
-    this.userService.getTablaMaestraByUrl(url).subscribe({
-      next: (response: any) => {
-        this.ciudad = [...this.ciudad, ...response.results]; // Agrega las ciudades
-  
-        if (response.next) {
-          // Si hay otra página, llamar de nuevo
-          this.cargarCiudadesRecursivo(response.next);
-        } else {
-          // Si no hay más páginas
-          console.log('Todas las ciudades cargadas:', this.ciudad);
-        }
+    this.userService.getTablaMaestraPorCategoria(categoriaCiudadId).subscribe({
+      next: (ciudades: any[]) => {
+        this.ciudad = ciudades; // Ya viene como array de ciudades
+        console.log('✅ Todas las ciudades cargadas:', this.ciudad);
       },
       error: (error: any) => {
-        console.error('Error al cargar ciudades:', error);
+        console.error('❌ Error al cargar ciudades:', error);
       }
     });
   }
-  
 
   getTrainers(): void {
     this.cargando = true;
