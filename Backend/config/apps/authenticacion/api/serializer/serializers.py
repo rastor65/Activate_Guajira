@@ -24,7 +24,7 @@ class UserSerialSimple(ModelSerializer):
 class categoriaTipoSerializer(serializers.ModelSerializer):
     class Meta:
         model = categoriaTipo
-        fields = '__all__'
+        fields = ('id', 'nombre')
 
 class tablaMaestraSerializer(serializers.ModelSerializer):
     class Meta:
