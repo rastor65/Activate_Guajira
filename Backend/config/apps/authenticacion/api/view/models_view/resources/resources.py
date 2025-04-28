@@ -8,10 +8,12 @@ from ....serializer.serializers import ResourcesSerializers, ResourcesRolesSeria
 class ResourceList(generics.ListCreateAPIView):
     queryset = Resource.objects.filter(status=True)
     serializer_class = ResourcesSerializers
+    pagination_class = None
 
 class ResourceDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Resource.objects.all()
     serializer_class = ResourcesSerializers
+    pagination_class = None
 
     def perform_destroy(self, instance):
         # Cambia el estado booleano en lugar de eliminar el objeto
@@ -39,10 +41,12 @@ class ResourceDetail(generics.RetrieveUpdateDestroyAPIView):
 class ResourceRolList(generics.ListCreateAPIView):
     queryset = ResourceRol.objects.filter(status=True)
     serializer_class = ResourcesRolesSerializers
+    pagination_class = None
 
 class ResourceRolDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ResourceRol.objects.all()
     serializer_class = ResourcesRolesSerializers
+    pagination_class = None
 
     def perform_destroy(self, instance):
         # Cambia el estado booleano en lugar de eliminar el objeto

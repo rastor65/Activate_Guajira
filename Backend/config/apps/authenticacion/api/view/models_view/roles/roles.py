@@ -15,7 +15,7 @@ class StandardResultsSetPagination(PageNumberPagination):
 class UserRolList(ListCreateAPIView):
     queryset = UserRol.objects.filter(status=True).select_related('userId', 'rolesId')
     serializer_class = UserRolListSimpleSerializer
-    pagination_class = StandardResultsSetPagination
+    pagination_class = None
 
     def post(self, request, *args, **kwargs):
         user_id = request.data.get('userId')
@@ -33,10 +33,12 @@ class UserRolList(ListCreateAPIView):
 class RolList(generics.ListCreateAPIView):
     queryset = Rol.objects.filter(status=True)
     serializer_class = RolesSerializers
+    pagination_class = None
 
 class RolDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Rol.objects.all()
     serializer_class = RolesSerializers
+    pagination_class = None
 
     def perform_destroy(self, instance):
         # Cambia el estado booleano en lugar de eliminar el objeto
@@ -61,6 +63,7 @@ class RolDetail(generics.RetrieveUpdateDestroyAPIView):
 class UserRolDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = UserRol.objects.all()
     serializer_class = RolesUserSerializers
+    pagination_class = None
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
