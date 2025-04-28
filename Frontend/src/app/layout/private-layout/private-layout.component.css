@@ -599,3 +599,48 @@ label {
     z-index: 9999 !important;
   }
 }
+
+@media screen and (max-width: 768px) {
+  ::ng-deep .p-dialog {
+    width: 90% !important;
+    max-width: 90% !important;
+    top: 5% !important;
+  }
+
+  .edit-profile-dialog {
+    padding: 10px;
+  }
+
+  .profile-image-container {
+    margin-bottom: 10px;
+  }
+
+  .profile-image {
+    width: 90px;
+    height: 90px;
+  }
+
+  .file-input-label {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .button-container-imagen {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100%;
+  }
+
+  .edit-profile-dialog h3 {
+    font-size: 1.2rem;
+  }
+}

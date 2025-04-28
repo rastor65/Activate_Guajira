@@ -185,6 +185,7 @@ export class FormLoginComponent implements OnInit {
       email1: ['', [Validators.required]],
       password: ['', [Validators.required]],
       password2: ['', [Validators.required]],
+      consentimiento: ['', [Validators.required]],
     });
   }
 
@@ -197,6 +198,7 @@ export class FormLoginComponent implements OnInit {
       last_name: this.formRegister.value.last_name,
       email: this.formRegister.value.email1,
       password: this.formRegister.value.password,
+      consentimiento: this.formRegister.value.consentimiento,
     };
     if (this.formRegister.value.password !== this.formRegister.value.password2) {
       this.messageService.add({ severity: 'warn', summary: 'Alerta', detail: 'Las contraseñas no coinciden' });
@@ -216,6 +218,7 @@ export class FormLoginComponent implements OnInit {
               if (seconds == '03') {
                 this.showProgressBar = false;
                 this.messageService.add({ severity: 'success', summary: 'Registro', detail: 'Registro exitoso.' });
+                this.onSubmitLogin();
               }
               if (seconds == '01') {
                 this.bandera = false
