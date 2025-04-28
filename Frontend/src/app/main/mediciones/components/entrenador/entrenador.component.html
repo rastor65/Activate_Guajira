@@ -609,8 +609,12 @@
     <p class="loading-text">Guardando entrenamiento...</p>
   </div>
 
+
+
   <div class="contenedor">
     <div class="filtro-compacto">
+      <p-progressBar *ngIf="cargandoCiudades" mode="indeterminate">
+      </p-progressBar>
       <label for="ciudad">Filtrar por ciudad:</label>
       <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
         placeholder="Seleccionar una ciudad" class="custom-dropdown" [filter]="true"

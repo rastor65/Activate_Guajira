@@ -60,6 +60,7 @@ export class EntrenadorComponent implements OnInit {
   dialogFormularioEntrenamiento: boolean = false;
   dialogFormularioAlimentacion: boolean = false;
   public cargandoEntrenamiento: boolean = false;
+  cargandoCiudades: boolean = false; 
   formAlimentacion = {
     id: 0,
     nombre: '',
@@ -102,8 +103,8 @@ export class EntrenadorComponent implements OnInit {
 
   ngOnInit(): void {
     this.getTrainers();
-    this.getFilterOptions();
     this.obtenerTipos();
+    this.getFilterOptions();
   }
 
   generarSemanas() {
@@ -151,6 +152,7 @@ export class EntrenadorComponent implements OnInit {
   }
 
   public obtenerTipos(): void {
+    this.cargando = true;
     const categoriaCiudadId = 7;
     this.ciudad = []; // Limpiar antes de cargar
   
@@ -158,9 +160,11 @@ export class EntrenadorComponent implements OnInit {
       next: (ciudades: any[]) => {
         this.ciudad = ciudades; // Ya viene como array de ciudades
         console.log('✅ Todas las ciudades cargadas:', this.ciudad);
+        this.cargando = false;
       },
       error: (error: any) => {
         console.error('❌ Error al cargar ciudades:', error);
+        this.cargando = false;
       }
     });
   }
