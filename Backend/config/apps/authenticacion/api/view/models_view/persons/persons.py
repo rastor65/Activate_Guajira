@@ -18,10 +18,10 @@ class BasePersonView:
             'situacion_laboral',
             'estrato',
             'genero'
-        ).filter(status=True)
+        ).filter(status=True).order_by('id')
 
 class PersonList(BasePersonView, generics.ListCreateAPIView):
-    serializer_class = PersonSimpleSerializer  # Usamos la versión optimizada
+    serializer_class = PersonsSerializers
 
 class PersonDetail(BasePersonView, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PersonsSerializers
