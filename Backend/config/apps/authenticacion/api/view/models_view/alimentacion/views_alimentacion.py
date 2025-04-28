@@ -25,7 +25,6 @@ class AlimentacionPorUsuarioListView(generics.ListAPIView):
 class AlimentacionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Alimentacion.objects.filter(status=True)
     serializer_class = AlimentacionSerializer
-    pagination_class = None
     lookup_field = "id"
 
     def perform_destroy(self, instance):
