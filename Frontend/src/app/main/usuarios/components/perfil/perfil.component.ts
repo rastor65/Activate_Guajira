@@ -32,11 +32,11 @@ export class PerfilComponent implements OnInit {
   chartLabels: string[] = [];
   generoPerson: any;
   cargando: boolean = false;
-
   genero: any;
-
   pesoChart: any;
   imcChart: any;
+  isGuardando: boolean = false;
+  botonesDesactivados: boolean = false;
 
   public user: User = {
     id: 0,
@@ -192,15 +192,27 @@ export class PerfilComponent implements OnInit {
     this.dialogMedicion = true;
   }
 
-  cerrarMedicion() { this.dialogMedicion = false; }
+  cerrarMedicion() {
+    this.botonesDesactivados = true;
+    setTimeout(() => {
+      this.botonesDesactivados = false;
+    }, 1000);
+    this.dialogMedicion = false;
+
+  }
 
   guardarMedicion() {
+    this.isGuardando = true;
+    this.botonesDesactivados = true;
+
     if (this.formData) {
       if (this.formData.id) {
         this.medicionService.actualizarMedicion(this.formData.id, this.formData).subscribe(() => {
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Medición actualizada' });
           this.cargarMediciones();
           this.dialogMedicion = false;
+          this.isGuardando = false;
+          this.botonesDesactivados = false;
         });
       } else {
         this.formData.usuario = this.usuarioId;
@@ -208,6 +220,8 @@ export class PerfilComponent implements OnInit {
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Medición creada' });
           this.cargarMediciones();
           this.dialogMedicion = false;
+          this.isGuardando = false;
+          this.botonesDesactivados = false;
         });
       }
     } else {

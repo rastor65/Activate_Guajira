@@ -18,6 +18,7 @@ export class AlimentacionComponent implements OnInit {
   usuarioId: number | undefined;
   public person: Person | null = null;
   public profileImage = '';
+  isLoading: boolean = true;
 
   public user: User = {
     id: 0,
@@ -34,6 +35,7 @@ export class AlimentacionComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.usuarioId = this.authService.getUserId();
     this.loadUser();
     this.getAlimentacion();
@@ -68,6 +70,7 @@ export class AlimentacionComponent implements OnInit {
 
   loadUser() {
     if (this.usuarioId !== undefined) {
+      this.isLoading = true;
       forkJoin({
         user: this.userService.loadUser(this.usuarioId),
         person: this.userService.getPeopleByUserId(this.usuarioId)
@@ -76,9 +79,11 @@ export class AlimentacionComponent implements OnInit {
           this.user = user.user;
           this.profileImage = user.profileImage;
           this.person = person.length > 0 ? person[0] : null;
+          this.isLoading = false;
         },
         error => {
           console.error('Error al cargar los datos:', error);
+          this.isLoading = false;
         }
       );
     }

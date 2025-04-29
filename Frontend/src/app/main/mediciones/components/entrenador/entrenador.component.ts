@@ -61,6 +61,9 @@ export class EntrenadorComponent implements OnInit {
   dialogFormularioAlimentacion: boolean = false;
   public cargandoEntrenamiento: boolean = false;
   cargandoCiudades: boolean = false; 
+  isGuardando: boolean = false;
+  botonesDesactivados: boolean = false;
+  cargandoPdialog: boolean = false;
   formAlimentacion = {
     id: 0,
     nombre: '',
@@ -225,18 +228,22 @@ export class EntrenadorComponent implements OnInit {
   }
 
   verAlimentacion(trainer: any) {
+    this.cargandoPdialog = true;
+    this.dialogAlimentacion = true;
     this.selectedTrainer = trainer;
     this.entrenadorService.getAlimentacionesPorUsuario(trainer.id).subscribe(
       (data) => {
-        this.alimentaciones = data.results;
+        this.alimentaciones = data;
         this.dialogAlimentacion = true;
         this.alimentaciones.forEach((alimentacion: any) => {
           if (alimentacion.entrenador) {
             this.getNombre(alimentacion.entrenador).subscribe((persona: any) => {
               if (persona.length > 0) {
                 alimentacion.entrenador = `${persona[0].nombres} ${persona[0].apellidos}`;
+                this.cargandoPdialog = false;
               } else {
                 alimentacion.entrenador = "Desconocido"; // Si no hay datos
+                this.cargandoPdialog = false;
               }
             });
           }
@@ -244,8 +251,10 @@ export class EntrenadorComponent implements OnInit {
             this.getNombre(alimentacion.usuario).subscribe((persona: any) => {
               if (persona.length > 0) {
                 alimentacion.usuario = `${persona[0].nombres} ${persona[0].apellidos}`;
+                this.cargandoPdialog = false;
               } else {
                 alimentacion.usuario = "Desconocido"; // Si no hay datos
+                this.cargandoPdialog = false;
               }
             });
           }
@@ -284,6 +293,8 @@ export class EntrenadorComponent implements OnInit {
   }
 
   agregarAlimentacion() {
+    this.isGuardando = true;
+    this.botonesDesactivados = true;
     if (this.selectedTrainer) {
       this.formData.usuario = this.selectedTrainer.id;
       this.entrenadorService.createAlimentacion(this.formData).subscribe(
@@ -291,6 +302,8 @@ export class EntrenadorComponent implements OnInit {
           this.alimentaciones.push(data);
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Alimentación añadida' });
           this.formData = {};
+          this.isGuardando = false;
+          this.botonesDesactivados = false;
         },
         (error) => console.error(error)
       );
@@ -380,6 +393,8 @@ export class EntrenadorComponent implements OnInit {
   }
 
   guardarAlimentacion() {
+    this.isGuardando = true;
+    this.botonesDesactivados = true;
     if (this.esEdicionAlimentacion) {
       this.formAlimentacion.usuario = this.selectedTrainer?.id;
       this.entrenadorService.updateAlimentacion(this.formAlimentacion.id, this.formAlimentacion).subscribe(
@@ -390,6 +405,8 @@ export class EntrenadorComponent implements OnInit {
           }
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Alimentación actualizada' });
           this.dialogFormularioAlimentacion = false;
+          this.isGuardando = false;
+          this.botonesDesactivados = false;
         },
         (error) => console.error(error)
       );
@@ -400,6 +417,8 @@ export class EntrenadorComponent implements OnInit {
           this.alimentaciones.push(data);
           this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Alimentación añadida' });
           this.dialogFormularioAlimentacion = false;
+          this.isGuardando = false;
+          this.botonesDesactivados = false;
         },
         (error) => console.error(error)
       );
@@ -522,17 +541,20 @@ export class EntrenadorComponent implements OnInit {
   }
 
   verEntrenamiento(trainer: any) {
+    this.cargandoPdialog = true;
     this.selectedTrainer = trainer;
     this.entrenadorService.getEntrenamientosPorUsuario(trainer.id).subscribe(
       (data) => {
-        this.entrenamientos = data.results;
+        this.entrenamientos = data;
         this.entrenamientos.forEach((entrenamiento: any) => {
           if (entrenamiento.entrenador) {
             this.getNombre(entrenamiento.entrenador).subscribe((persona: any) => {
               if (persona.length > 0) {
                 entrenamiento.entrenador = `${persona[0].nombres} ${persona[0].apellidos}`;
+                this.cargandoPdialog = false;
               } else {
                 entrenamiento.entrenador = "Desconocido"; // Si no hay datos
+                this.cargandoPdialog = false;
               }
             });
           }
@@ -540,8 +562,10 @@ export class EntrenadorComponent implements OnInit {
             this.getNombre(entrenamiento.usuario).subscribe((persona: any) => {
               if (persona.length > 0) {
                 entrenamiento.usuario = `${persona[0].nombres} ${persona[0].apellidos}`;
+                this.cargandoPdialog = false;
               } else {
                 entrenamiento.usuario = "Desconocido"; // Si no hay datos
+                this.cargandoPdialog = false;
               }
             });
           }
@@ -596,7 +620,13 @@ export class EntrenadorComponent implements OnInit {
   }
 
   cerrarAliemtancion() {
-    this.dialogAlimentacion = false
+    this.dialogAlimentacion = false;
+    this.botonesDesactivados = true;
+
+    // lógica real aquí
+    setTimeout(() => {
+      this.botonesDesactivados = false;
+    }, 1000);
   }
 
   cerrarVerAliemtancion() {
@@ -652,6 +682,8 @@ export class EntrenadorComponent implements OnInit {
   }
 
   guardarMedicion() {
+    this.isGuardando = true;
+    this.botonesDesactivados = true;
     if (this.formData) {
       if (this.formData.id) {
         this.medicionService.actualizarMedicion(this.formData.id, this.formData).subscribe(() => {
@@ -660,6 +692,8 @@ export class EntrenadorComponent implements OnInit {
             this.verPerfil(this.selectedTrainer);
           }
           this.dialogMedicion = false;
+          this.isGuardando = false;
+          this.botonesDesactivados = false;
         });
       } else {
         this.formData.usuario = this.selectedTrainer?.id;
@@ -669,6 +703,8 @@ export class EntrenadorComponent implements OnInit {
             this.verPerfil(this.selectedTrainer);
           }
           this.dialogMedicion = false;
+          this.isGuardando = false;
+          this.botonesDesactivados = false;
         });
       }
     } else {
@@ -837,16 +873,23 @@ export class EntrenadorComponent implements OnInit {
   }
 
   guardarAlimentacionRegion() {
+    this.isGuardando = true;
+    this.botonesDesactivados = true;
     const usuariosSeleccionados = this.personasFiltradas.filter(p => p.seleccionado).map(p => p.user);
     if (usuariosSeleccionados.length === 0) {
       this.messageService.add({ severity: 'warn', summary: 'Validación', detail: 'Debe seleccionar al menos un usuario.' });
+      this.isGuardando = false;
+      this.botonesDesactivados = false;
       return;
     }
 
     if (!this.formAlimentacion.nombre || !this.formAlimentacion.entrenador || !this.formAlimentacion.calorias_diarias) {
       this.messageService.add({
         severity: 'warn', summary: 'Validación', detail: 'Debe completar todos los campos del formulario.'
-      }); return;
+      }); 
+      this.isGuardando = false;
+      this.botonesDesactivados = false;
+      return;
     }
 
     this.cargandoEntrenamiento = true;
@@ -870,6 +913,8 @@ export class EntrenadorComponent implements OnInit {
       this.messageService.add({
         severity: 'success', summary: 'Éxito', detail: `Se asignó el plan a ${respuestas.length} usuarios correctamente.`
       });
+      this.isGuardando = false;
+      this.botonesDesactivados = false;
       this.dialogAlimentacionRegion = false;
       this.cargandoEntrenamiento = false;
       this.formAlimentacion = {
@@ -886,6 +931,8 @@ export class EntrenadorComponent implements OnInit {
         severity: 'error', summary: 'Error', detail: 'Ocurrió un error al asignar los planes.'
       });
       this.cargandoEntrenamiento = false;
+      this.isGuardando = false;
+      this.botonesDesactivados = false;
     });
   }
 

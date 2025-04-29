@@ -8,11 +8,12 @@
 <div class="container" *ngIf="person">
     <img [src]="profileImage" alt="Avatar de usuario" class="user-avatar">
     <h2>{{ person.nombres }} {{ person.apellidos }}</h2>
-        <button appPreventMultipleClicks pButton icon="pi pi-chart-bar" label="Estadisticas" class="btn-medicion"
-            style="width: 250px; justify-content: right;" (click)="abrirEstadisticas()"></button>
+    <button appPreventMultipleClicks pButton icon="pi pi-chart-bar" label="Estadisticas" class="btn-medicion"
+        style="width: 250px; justify-content: right;" (click)="abrirEstadisticas()"></button>
 </div>
 <div class="medicion">
-    <button appPreventMultipleClicks pButton icon="pi pi-plus" label="Agregar medición" class="btn-medicion" (click)="abrirMedicion()"></button>
+    <button appPreventMultipleClicks pButton icon="pi pi-plus" label="Agregar medición" class="btn-medicion"
+        (click)="abrirMedicion()"></button>
 </div>
 
 <br>
@@ -198,10 +199,13 @@
 
             <div class="p-grid p-nogutter p-align-center header-container"></div>
             <div class="button-container">
-                <button appPreventMultipleClicks class="btn" (click)="guardarMedicion()">
-                    <i class="pi pi-check"></i> Guardar Cambios</button>
-                <button appPreventMultipleClicks class="btn" (click)="cerrarMedicion()">
-                    <i class="pi pi-times"></i> Cancelar</button>
+                <button class="btn" (click)="guardarMedicion()" [disabled]="botonesDesactivados">
+                    <i *ngIf="!isGuardando" class="pi pi-check"></i>
+                    <i *ngIf="isGuardando" class="pi pi-spin pi-spinner"></i>Guardar Cambios
+                </button>
+                <button class="btn" (click)="cerrarMedicion()" [disabled]="botonesDesactivados">
+                    <i class="pi pi-times"></i> Cancelar
+                </button>
             </div>
         </div>
     </div>

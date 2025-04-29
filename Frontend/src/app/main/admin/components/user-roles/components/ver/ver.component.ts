@@ -30,16 +30,18 @@ export class VerComponent implements OnInit {
 
   ngOnInit() {
     this.usuariosService.getUsers().subscribe(data => {
-      this.usuarios = data.results as any[];
+      this.usuarios = data as any;
+      console.log("Usuarios: ", this.usuarios);
     });
-
+  
     this.usuariosService.getRoles().subscribe(data => {
       this.roles = data as Rol[];
+      console.log("Roles: ", this.roles);
     });
-    this.procesarRoles();
-    this.getRol();
-
+  
+    this.getRol(); // SOLO llama getRol aquí
   }
+  
 
   searchUsuarios(event: { query: string }): void {
     const filtered: Usuario[] = this.usuarios.filter(usuario =>
@@ -50,56 +52,73 @@ export class VerComponent implements OnInit {
 
   getRol() {
     this.usuariosService.getAllRoles().subscribe(response => {
-      this.AllRoles = response.results;
+      this.AllRoles = response as any;
       this.procesarRoles();
     });
-  }
+  }  
 
   procesarRoles() {
+    console.log('Iniciando procesarRoles con el nuevo formato...');
     this.usuarioRolesMap.clear();
+    console.log('usuarioRolesMap limpiado.');
 
-    this.AllRoles.forEach((userRole) => {
-      const usuario = userRole.userId.username;
+    this.AllRoles.forEach((userRole: any, index: number) => {
+      console.log(`Procesando asignación ${index}:`, userRole);
 
-      // Aquí, verificamos si `rolesId` es un objeto o un arreglo
-      // y extraemos los nombres de los roles en consecuencia.
-      const roles = Array.isArray(userRole.rolesId)
-        ? userRole.rolesId.map((rol: any) => rol.name)
-        : [userRole.rolesId.name];
+      const usuarioEmail = userRole.userId;   // ahora es el email
+      const rolName = userRole.rolesId;        // ahora es el nombre del rol directamente
 
-      if (this.usuarioRolesMap.has(usuario)) {
-        const rolesExistente = this.usuarioRolesMap.get(usuario) || [];
-        rolesExistente.push(...roles);
-        this.usuarioRolesMap.set(usuario, Array.from(new Set(rolesExistente)));
+      if (this.usuarioRolesMap.has(usuarioEmail)) {
+        const rolesExistente = this.usuarioRolesMap.get(usuarioEmail) || [];
+        rolesExistente.push(rolName);
+        this.usuarioRolesMap.set(usuarioEmail, Array.from(new Set(rolesExistente)));
       } else {
-        this.usuarioRolesMap.set(usuario, Array.from(new Set(roles)));
+        this.usuarioRolesMap.set(usuarioEmail, [rolName]);
       }
     });
 
+    console.log('Mapa usuarioRolesMap final:', this.usuarioRolesMap);
 
     // Actualizar rolesSeleccionados con los roles del usuario seleccionado
-    const rolesDelUsuarioSeleccionado = this.usuarioRolesMap.get(this.usuarioSeleccionado.username) || [];
-    this.rolesSeleccionados = rolesDelUsuarioSeleccionado.map((rolNombre: string) => {
-      const rolEncontrado = this.roles.find((rol) => rol.name === rolNombre);
-      return rolEncontrado ? rolEncontrado.id : null;
-    }) as number[];
+    if (this.usuarioSeleccionado && this.usuarioSeleccionado.username) {
+      const rolesDelUsuarioSeleccionado = this.usuarioRolesMap.get(this.usuarioSeleccionado.username) || [];
+      console.log(`Roles actuales del usuario seleccionado (${this.usuarioSeleccionado.username}):`, rolesDelUsuarioSeleccionado);
 
+      this.rolesSeleccionados = rolesDelUsuarioSeleccionado.map((rolNombre: string) => {
+        const rolEncontrado = this.roles.find((rol) => rol.name === rolNombre);
+        return rolEncontrado ? rolEncontrado.id : null;
+      }).filter(id => id !== null) as number[];
+
+      console.log('IDs de roles seleccionados:', this.rolesSeleccionados);
+    }
   }
 
   onUsuarioSelect(event: any) {
     this.usuarioSeleccionado = event;
-    this.rolesSeleccionados = this.getAllRolesForUsuario(this.usuarioSeleccionado.id);
+
+    // Primero asegurarse de que AllRoles ya está cargado
+    if (this.AllRoles.length > 0) {
+      const rolesDelUsuario = this.usuarioRolesMap.get(this.usuarioSeleccionado.username) || [];
+
+      this.rolesSeleccionados = rolesDelUsuario.map((rolNombre: string) => {
+        const rolEncontrado = this.roles.find((rol) => rol.name === rolNombre);
+        return rolEncontrado ? rolEncontrado.id : null;
+      }).filter(id => id !== null) as number[];
+
+      console.log('Roles seleccionados al elegir usuario:', this.rolesSeleccionados);
+    }
   }
 
-  getAllRolesForUsuario(usuarioId: number): number[] {
+  getAllRolesForUsuario(usuarioEmail: string): number[] {
     const rolesSeleccionados: number[] = [];
 
-    // Filtrar los roles que corresponden al usuario seleccionado
-    const rolesUsuario = this.AllRoles.filter((rol) => rol.userId.id === usuarioId);
-
-    // Extraer solo los identificadores de roles y agregarlos a rolesSeleccionados
-    rolesUsuario.forEach((rol) => {
-      rolesSeleccionados.push(rol.rolesId.id);
+    this.AllRoles.forEach((userRole: any) => {
+      if (userRole.userId === usuarioEmail) {
+        const rolEncontrado = this.roles.find((rol) => rol.name === userRole.rolesId);
+        if (rolEncontrado) {
+          rolesSeleccionados.push(rolEncontrado.id);
+        }
+      }
     });
 
     return rolesSeleccionados;
@@ -109,41 +128,88 @@ export class VerComponent implements OnInit {
     return this.rolesSeleccionados.some((selectedRoleId) => selectedRoleId === rol.id);
   }
 
-
   onRolChange(rol: any, isChecked: boolean) {
-    const rolId = Number(rol.id); // Convertir el id del rol a número
+    const rolId = Number(rol.id);
+    const rolName = rol.name; // importante: ahora necesitamos el nombre
+    const usuarioEmail = this.usuarioSeleccionado.username;
 
     if (isChecked) {
-      // Si el rol no estaba seleccionado previamente, agregarlo a la lista de roles seleccionados
+      // Si el rol no estaba seleccionado previamente, agregarlo
       if (!this.rolesSeleccionados.includes(rolId)) {
         this.rolesSeleccionados.push(rolId);
-        this.asignarRol();
+
+        const existingUserRole = this.buscarUserRole(usuarioEmail, rolName);
+
+        if (!existingUserRole) {
+          const body = {
+            status: true,
+            userId: usuarioEmail,
+            rolesId: rolName
+          };
+
+          const bodyString = JSON.stringify(body);
+          const httpOptions = {
+            headers: new HttpHeaders({
+              'Content-Type': 'application/json'
+            })
+          };
+
+          this.usuariosService.asignarRoles(bodyString, httpOptions).subscribe(
+            response => {
+              this.messageService.add({ severity: 'success', summary: `Rol asignado satisfactoriamente` });
+              this.getRol(); // Recargar los roles después de asignar
+            },
+            error => {
+              console.error("Error al asignar el rol", error);
+              this.messageService.add({ severity: 'error', summary: 'Error al asignar el rol' });
+            }
+          );
+        }
       }
     } else {
-      // Si el rol estaba seleccionado previamente, eliminarlo de la lista de roles seleccionados
+      // Si se desmarca un rol
       const index = this.rolesSeleccionados.indexOf(rolId);
       if (index !== -1) {
         this.rolesSeleccionados.splice(index, 1);
-        this.deleteUserRole(rol);
-        return;
+
+        const userRoleAEliminar = this.buscarUserRole(usuarioEmail, rolName);
+        if (!userRoleAEliminar) {
+          console.error('No se encontró ningún registro de user_roles coincidente');
+          return;
+        }
+
+        const userRoleId = userRoleAEliminar.id;
+
+        this.usuariosService.deleteUserRole(userRoleId).subscribe(
+          () => {
+            this.messageService.add({ severity: 'success', summary: `Rol eliminado satisfactoriamente` });
+            this.getRol(); // Recargar los roles después de eliminar
+          },
+          (error: HttpErrorResponse) => {
+            console.error('Error al eliminar el user_roles', error);
+            this.messageService.add({ severity: 'error', summary: 'Error al eliminar el rol' });
+          }
+        );
       }
     }
   }
-
-
 
   asignarRol() {
     if (this.rolesSeleccionados.length === 0) {
       return;
     }
-  
+
     const rolId = this.rolesSeleccionados[this.rolesSeleccionados.length - 1]; // Obtener el último rol seleccionado
-  
-    // Verificar si el usuario ya tiene asignado este rol (incluso si está oculto)
-    const existingUserRole = this.buscarUserRole(this.usuarioSeleccionado.id, rolId);
-  
+
+    const rol = this.roles.find(r => r.id === rolId);
+    if (!rol) {
+      console.error("No se encontró el rol con ID:", rolId);
+      return;
+    }
+
+    const existingUserRole = this.buscarUserRole(this.usuarioSeleccionado.username, rol.name);
+
     if (existingUserRole) {
-      // Si el rol existe y está oculto, cambiar su estado a true
       if (!existingUserRole.status) {
         existingUserRole.status = true;
         const userRoleId = existingUserRole.id;
@@ -153,23 +219,21 @@ export class VerComponent implements OnInit {
       // Si el rol no existe, agregarlo como un nuevo registro
       const body = {
         status: true,
-        userId: this.usuarioSeleccionado.id,
-        rolesId: rolId // Enviar solo el ID del rol seleccionado
+        userId: this.usuarioSeleccionado.username, // correo aquí, no id
+        rolesId: rol.name // nombre del rol, no id
       };
-  
+
       const bodyString = JSON.stringify(body);
       const httpOptions = {
         headers: new HttpHeaders({
           'Content-Type': 'application/json'
         })
       };
-  
+
       this.usuariosService.asignarRoles(bodyString, httpOptions).subscribe(
         response => {
           this.messageService.add({ severity: 'success', summary: `Rol asignado satisfactoriamente` });
-  
-          // Recargar los roles del usuario después de agregar uno nuevo
-          this.getAllRolesForUsuario(this.usuarioSeleccionado.id);
+          this.getRol(); // Recargar roles después de agregar
         },
         error => {
           console.error("Error al asignar el rol", error);
@@ -178,27 +242,26 @@ export class VerComponent implements OnInit {
       );
     }
   }
-
   actualizarUserRole(userRoleId: number, updatedUserRole: UserRole) {
     const body = {
       status: updatedUserRole.status,
-      userId: updatedUserRole.userId.id,
-      rolesId: updatedUserRole.rolesId.id
+      userId: updatedUserRole.userId,     // correo directamente
+      rolesId: updatedUserRole.rolesId    // nombre del rol directamente
     };
-  
+
     const bodyString = JSON.stringify(body);
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
     };
-  
+
     this.usuariosService.actualizarUserRole(userRoleId, bodyString, httpOptions).subscribe(
       response => {
         this.messageService.add({ severity: 'success', summary: `Rol actualizado satisfactoriamente` });
-  
+
         // Recargar los roles del usuario después de actualizar el estado del rol
-        this.getAllRolesForUsuario(this.usuarioSeleccionado.id);
+        this.getRol();
       },
       error => {
         console.error("Error al actualizar el rol", error);
@@ -206,19 +269,18 @@ export class VerComponent implements OnInit {
       }
     );
   }
-  
-  
-  buscarUserRole(usuarioId: number, rolId: number): UserRole | undefined {
-    return this.AllRoles.find((userRole: UserRole) =>
-      userRole.userId.id === usuarioId && userRole.rolesId.id === rolId
+
+  buscarUserRole(usuarioEmail: string, rolName: string): any | undefined {
+    return this.AllRoles.find((userRole: any) =>
+      userRole.userId === usuarioEmail && userRole.rolesId === rolName
     );
   }
 
   deleteUserRole(rol: any) {
-    const usuarioIdSeleccionado = this.usuarioSeleccionado.id;
-    const rolIdSeleccionado = rol.id;
+    const usuarioEmailSeleccionado = this.usuarioSeleccionado.username; // ahora sí el correo
+    const rolNameSeleccionado = rol.name; // el nombre del rol
 
-    const userRoleAEliminar = this.buscarUserRole(usuarioIdSeleccionado, rolIdSeleccionado);
+    const userRoleAEliminar = this.buscarUserRole(usuarioEmailSeleccionado, rolNameSeleccionado);
 
     if (!userRoleAEliminar) {
       console.error('No se encontró ningún registro de user_roles coincidente');
@@ -230,6 +292,7 @@ export class VerComponent implements OnInit {
     this.usuariosService.deleteUserRole(userRoleId).subscribe(
       () => {
         this.messageService.add({ severity: 'success', summary: `Rol eliminado satisfactoriamente` });
+        this.getRol(); // Recargar roles
       },
       (error: HttpErrorResponse) => {
         console.error('Error al eliminar el user_roles', error);
@@ -237,5 +300,6 @@ export class VerComponent implements OnInit {
       }
     );
   }
+
 }
 

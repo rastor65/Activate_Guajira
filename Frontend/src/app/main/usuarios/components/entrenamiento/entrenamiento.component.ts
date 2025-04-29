@@ -19,6 +19,7 @@ export class EntrenamientoComponent implements OnInit {
   public profileImage = '';
   diasSemana = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'];
   expandedEntrenamientoId: number | null = null;
+  isLoading: boolean = true;
 
   public user: User = {
     id: 0,
@@ -35,6 +36,7 @@ export class EntrenamientoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.usuarioId = this.authService.getUserId();
     this.loadUser();
     this.getEntrenamientos();
@@ -87,9 +89,11 @@ export class EntrenamientoComponent implements OnInit {
           this.user = user.user;
           this.profileImage = user.profileImage;
           this.person = person.length > 0 ? person[0] : null;
+          this.isLoading = false;
         },
         error => {
           console.error('Error al cargar los datos:', error);
+          this.isLoading = false;
         }
       );
     }

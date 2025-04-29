@@ -1,4 +1,7 @@
-<div class="container mt-4">
+<p-progressSpinner *ngIf="isLoading" styleClass="custom-spinner"></p-progressSpinner>
+
+
+<div class="container mt-4" *ngIf="!isLoading">
     <div class="profile-header">
         <img [src]="profileImage || 'assets/default-avatar.png'" alt="Avatar" class="profile-img">
         <div class="profile-info">

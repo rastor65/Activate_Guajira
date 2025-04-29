@@ -89,3 +89,113 @@
     font-size: 1rem;
     margin-top: 20px;
 }
+
+/* Contenedor */
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Encabezado del perfil */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.profile-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #0d6efd;
+}
+
+.profile-info h2 {
+    font-size: 1.6rem;
+    margin: 0;
+    color: #2c3e50;
+}
+
+.profile-info p {
+    margin: 4px 0 0;
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+/* Título de sección */
+.section-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #0d6efd;
+    margin-bottom: 25px;
+    border-left: 4px solid #0d6efd;
+    padding-left: 12px;
+}
+
+/* Tarjeta de alimentación */
+.alimento-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.alimento-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    color: #0d6efd;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 0.95rem;
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 0.95rem;
+}
+
+.label {
+    font-weight: 600;
+    color: #343a40;
+}
+
+.value {
+    color: #0d6efd;
+}
+
+/* Mensaje cuando no hay datos */
+.no-alimentos-msg {
+    font-size: 1.1rem;
+    margin-top: 40px;
+    color: #999;
+}
+
+::ng-deep .custom-spinner {
+    display: block;
+    margin: 80px auto;
+    width: 60px;
+    height: 60px;
+}
