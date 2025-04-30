@@ -373,7 +373,12 @@ class ListUserSerializer(serializers.Serializer):
 
     def get_ciudad_residencia(self, obj):
         try:
-            return obj.person.ciudad_residencia.id
+            ciudad = obj.person.ciudad_residencia
+            if ciudad:
+                return {
+                    "id": ciudad.id,
+                    "nombre": ciudad.nombre
+                }
         except AttributeError:
             return None
         except Exception:
