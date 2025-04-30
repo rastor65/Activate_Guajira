@@ -44,6 +44,7 @@ export class PerfilComponent implements OnInit {
     email: '',
     password: '',
     avatar: '',
+    consentimiento: false,
   }
 
   constructor(

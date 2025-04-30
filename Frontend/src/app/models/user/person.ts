@@ -50,6 +50,7 @@ export interface User {
   password: string;
   email: string;
   avatar: string;
+  consentimiento: boolean;
 }
 
 export interface Person_request {

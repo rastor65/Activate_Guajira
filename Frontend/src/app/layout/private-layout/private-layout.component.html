@@ -200,7 +200,7 @@
       <div class="form-container">
         <div class="form-group">
           <label class="checkbox-label">
-            <input type="checkbox" id="consentimiento" required />
+            <input type="checkbox" id="consentimiento" required [(ngModel)]="user.consentimiento"/>
             <span class="checkbox-text">
               He leído y acepto el <a href="assets/Consentimiento_informado.pdf" target="_blank"
                 rel="noopener noreferrer">consentimiento informado</a>.
@@ -210,12 +210,14 @@
       </div>
     </div>
   </div>
-  <div class="p-grid p-nogutter p-align-center header-container"></div>
   <div class="button-container-imagen">
-    <button class="btn btn-primary" (click)="guardarDatos()">
-      <i class="pi pi-check"></i> Guardar Cambios</button>
-    <button class="btn btn-secondary" (click)="cerrarEditarPerfil()">
-      <i class="pi pi-times"></i> Cancelar</button>
+    <button class="btn btn-primary" (click)="guardarDatos()" [disabled]="botonesDesactivados">
+      <i *ngIf="!isGuardando" class="pi pi-check"></i>
+      <i *ngIf="isGuardando" class="pi pi-spin pi-spinner"></i>Guardar Cambios
+    </button>
+    <button class="btn btn-secondary" (click)="cerrarEditarPerfil()" [disabled]="botonesDesactivados">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
   </div>
 
 </p-dialog>

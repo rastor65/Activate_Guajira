@@ -35,6 +35,7 @@ export class PrivateLayoutComponent implements OnInit {
   public files1: menu[] = [];
   public nombre: string = '';
   public image3: string = '';
+  isGuardando: boolean = false;
   public algo: listaMenuI[] = [];
   public Dialog: boolean = false;
   public mostrar: boolean = false;
@@ -42,6 +43,7 @@ export class PrivateLayoutComponent implements OnInit {
   public Dialog2: boolean = false;
   public mensaje: boolean = false;
   public token: string | null = null;
+  botonesDesactivados: boolean = false;
   public usuarioId: number | undefined;
   public publicMenu: listaMenuI[] = [];
   public privateMenu: listaMenuI[] = [];
@@ -80,6 +82,7 @@ export class PrivateLayoutComponent implements OnInit {
     email: '',
     password: '',
     avatar: '',
+    consentimiento: false,
   }
 
   public usuario: Person = {
@@ -137,7 +140,6 @@ export class PrivateLayoutComponent implements OnInit {
     }
 
     this.obtenerTipos();
-    this.loadUser();
     this.verificar();
     this.primengConfig.ripple = true;
     this.items = [
@@ -269,6 +271,16 @@ export class PrivateLayoutComponent implements OnInit {
   }
 
   guardarDatos() {
+    this.isGuardando = true;
+    this.botonesDesactivados = true;
+    if (!this.user.consentimiento) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Debe aceptar el consentimiento informado para continuar.'
+      });
+      return;
+    }
+
     const usuarioActualizado: Person = {
       id: this.usuario.id,
       user: this.usuarioId,
@@ -294,15 +306,28 @@ export class PrivateLayoutComponent implements OnInit {
       status: this.usuario.status !== undefined ? this.usuario.status : false
     };
 
-    console.log("datos: ", usuarioActualizado)
     this.userService.editarUsuario(usuarioActualizado).subscribe(
       (response) => {
-        this.messageService.add({ severity: 'success', summary: 'Datos basicos guardados' });
-        this.Dialog2 = false;
+        this.userService.updateConsentimiento(this.usuarioId!, this.user.consentimiento).subscribe(
+          () => {
+            this.messageService.add({ severity: 'success', summary: 'Datos actualizados correctamente' });
+            this.Dialog2 = false;
+            this.isGuardando = false;
+            this.botonesDesactivados = false;
+          },
+          (error) => {
+            console.error('Error actualizando consentimiento:', error);
+            this.messageService.add({ severity: 'warn', summary: 'Datos actualizados pero consentimiento falló' });
+            this.isGuardando = false;
+            this.botonesDesactivados = false;
+          }
+        );
       },
       (error) => {
         console.error('Error al guardar los datos del usuario', error);
         this.messageService.add({ severity: 'error', summary: 'Error al actualizar los datos basicos', detail: 'Todos los campos son requeridos' });
+        this.isGuardando = false;
+        this.botonesDesactivados = false;
       }
     );
   }
@@ -332,7 +357,6 @@ export class PrivateLayoutComponent implements OnInit {
         data => {
           this.user = data.user;
           this.profileImage = data.profileImage;
-          console.log(this.user)
         },
         error => {
           console.error('Error al cargar el usuario:', error);

@@ -79,6 +79,14 @@ export class UserService {
     return this.http.get<any>(`${this.API_URI}/listusers/${id}/`);
   }
 
+  updateConsentimiento(userId: number, consentimiento: boolean): Observable<any> {
+    const body = { consentimiento };
+    return this.http.patch(`${this.base_editar_user}${userId}/`, body).pipe(
+      retry(0),
+      catchError(this.handleError)
+    );
+  }  
+
   UsersInvestigatorStudentTeacherProyecto(formValue: any): Observable<{ teachers: any[], estudiantes: any[], investigator_collaborators: any[] }> {
     let token: string | null = localStorage.getItem('token')
     let user: string | null = localStorage.getItem('user')

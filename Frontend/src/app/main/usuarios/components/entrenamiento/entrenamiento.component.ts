@@ -27,6 +27,7 @@ export class EntrenamientoComponent implements OnInit {
     email: '',
     password: '',
     avatar: '',
+    consentimiento: false,
   }
 
   constructor(

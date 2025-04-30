@@ -26,6 +26,7 @@ export class AlimentacionComponent implements OnInit {
     email: '',
     password: '',
     avatar: '',
+    consentimiento: false,
   }
 
   constructor(
