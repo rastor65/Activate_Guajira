@@ -1,5 +1,6 @@
 <br>
-<div class="p-personas-controls">
+<div *ngIf="!cargando" class="p-personas-controls">
+
   <div class="p-personas-search">
     <span class="search-icon-container">
       <i class="pi pi-search search-icon"></i>
@@ -7,9 +8,13 @@
     <input type="text" pInputText placeholder="Buscar..." [(ngModel)]="searchValue" (input)="filterCards()"
       class="search-box">
   </div>
+
+  <p-dropdown class="custom-dropdown" [options]="ciudad" [(ngModel)]="selectedCiudad" optionLabel="nombre"
+    optionValue="id" placeholder="Filtrar por ciudad" (onChange)="filterCards()" [filter]="true">
+  </p-dropdown>
 </div>
 
-<div class="button-container">
+<div *ngIf="!cargando" class="button-container">
   <button class="btn" (click)="verEntrenamientosMasivos()">
     <i class="pi pi-eject"></i> Entrenamiento por región</button>
   <button class="btn" (click)="verAlimentacionesMasivas()">
@@ -40,7 +45,8 @@
       <div class="card-content">
         <p><i class="pi pi-user"></i> {{ trainer.username }}</p>
         <p><i class="pi pi-envelope"></i> {{ trainer.email }}</p>
-        <p><i class="pi pi-map-marker"></i> {{ trainer.ciudad_residencia }}</p>
+        <p><i class="pi pi-map-marker"></i> {{ trainer.ciudad_residencia?.nombre }}</p>
+
       </div>
       <div class="button-container">
         <button class="btn2" (click)="verPerfil(trainer)">
@@ -432,7 +438,7 @@
 
       <br>
       <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate" [style]="{ height: '6px' }"> </p-progressBar>
-      
+
       <div class="table-responsive">
         <table class="styled-table" *ngIf="entrenamientos?.length; else noData">
           <thead>

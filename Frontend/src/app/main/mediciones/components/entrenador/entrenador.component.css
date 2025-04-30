@@ -15,15 +15,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1rem;
-}
-
-.p-personas-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  gap: 15px;
 }
 
 .dropdown-filter {
@@ -121,14 +112,6 @@
 
 .trainer-card p {
   margin: 5px 0;
-}
-
-.p-personas-controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 20px;
 }
 
 .p-personas-search {
@@ -1231,7 +1214,7 @@ input[type="checkbox"] {
 }
 
 ::ng-deep .custom-dropdown .p-dropdown {
-  height: 36px;
+  height: 30px;
   font-size: 0.9rem;
   padding: 0 8px;
   border-radius: 6px;
@@ -1264,5 +1247,184 @@ input[type="checkbox"] {
 
   ::ng-deep .custom-dropdown {
     width: 100% !important;
+  }
+}
+
+.p-personas-search p-dropdown {
+  border-radius: 25px;
+  border: 1px solid #dcdcdc;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  height: 45px;
+  padding: 0 12px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.3s ease;
+}
+
+.p-personas-search p-dropdown:hover {
+  border-color: #007ad9;
+}
+
+::ng-deep .p-dropdown {
+  width: 220px;
+  border-radius: 25px !important;
+}
+
+::ng-deep .p-dropdown-label {
+  padding-left: 10px;
+  color: #676767;
+  font-size: 0.95rem;
+}
+
+::ng-deep .p-dropdown-trigger {
+  color: #007ad9;
+}
+
+@media screen and (max-width: 768px) {
+  .p-personas-search p-dropdown {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .p-personas-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 0 10px;
+  }
+
+  .p-personas-search {
+    width: 100%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 25px;
+    background: #fff;
+    padding: 6px 10px;
+  }
+
+  .search-icon-container {
+    font-size: 1.2rem;
+    color: #007ad9;
+    padding-right: 8px;
+  }
+
+  .search-box {
+    font-size: 1rem;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    outline: none;
+  }
+
+  .custom-dropdown ::ng-deep .p-dropdown {
+    width: 100% !important;
+    border-radius: 25px;
+    padding: 8px 12px;
+    font-size: 1rem;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    background: #fff;
+  }
+
+  .custom-dropdown ::ng-deep .p-dropdown-label {
+    padding: 6px 10px;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  .custom-dropdown ::ng-deep .p-dropdown-trigger {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .p-personas-controls {
+    margin-bottom: 0px !important;
+  }
+
+  .custom-dropdown {
+    margin-bottom: 0 !important;
+  }
+
+  ::ng-deep .p-dropdown {
+    margin-bottom: 0 !important;
+    min-height: unset !important;
+  }
+
+  .card-container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  ::ng-deep p-dropdown {
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 25px !important;
+    line-height: 1.2rem !important;
+    background-color: transparent !important;
+    max-height: 30px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  ::ng-deep p-dropdown-label {
+    padding: 10px 15px !important;
+    min-height: 40px !important;
+  }
+
+  .custom-dropdown {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .p-personas-controls {
+    margin-bottom: 8px !important;
+  }
+
+  .card-container {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .p-personas-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 20px 0;
+  }
+
+  .p-personas-search {
+    max-width: 400px;
+    flex-grow: 1;
+  }
+
+  .custom-dropdown {
+    max-width: 240px;
+    flex-shrink: 0;
+  }
+
+  ::ng-deep .p-dropdown {
+    height: 45px;
+    font-size: 1rem;
+    border-radius: 25px !important;
+    padding: 0 14px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  ::ng-deep .p-dropdown-label {
+    line-height: 45px;
+    font-size: 0.95rem;
+    padding-left: 10px;
+  }
+
+  ::ng-deep .p-dropdown-trigger {
+    height: 100%;
+    font-size: 1rem;
   }
 }

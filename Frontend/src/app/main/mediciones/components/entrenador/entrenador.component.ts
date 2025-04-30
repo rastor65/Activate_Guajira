@@ -64,6 +64,8 @@ export class EntrenadorComponent implements OnInit {
   isGuardando: boolean = false;
   botonesDesactivados: boolean = false;
   cargandoPdialog: boolean = false;
+  public selectedCiudad: number | null = null;
+
   formAlimentacion = {
     id: 0,
     nombre: '',
@@ -188,9 +190,10 @@ export class EntrenadorComponent implements OnInit {
           user: trainer.id
         }));
 
-        console.log('✅ Entrenadores completos:', entrenadores);
-        this.cargando = false;
         this.filtrarEntrenadoresPorRol()
+        this.filterCards();
+        this.cargando = false;
+
       },
       (error) => {
         console.error('❌ Error al cargar entrenadores:', error);
@@ -590,14 +593,21 @@ export class EntrenadorComponent implements OnInit {
   }
 
   filterCards(): void {
-    const search = this.searchValue.toLowerCase();
-    this.filteredTrainers = this.trainers.filter(trainer =>
-      trainer.first_name.toLowerCase().includes(search) ||
-      trainer.last_name.toLowerCase().includes(search) ||
-      trainer.email.toLowerCase().includes(search) ||
-      trainer.username.toLowerCase().includes(search)
-    );
+    const search = this.searchValue?.toLowerCase() || '';
+  
+    this.filteredTrainers = this.trainers.filter(trainer => {
+      const matchesText = 
+        (trainer.first_name?.toLowerCase() || '').includes(search) ||
+        (trainer.last_name?.toLowerCase() || '').includes(search) ||
+        (trainer.email?.toLowerCase() || '').includes(search) ||
+        (trainer.username?.toLowerCase() || '').includes(search);
+  
+      const matchesCiudad = !this.selectedCiudad || trainer.ciudad_residencia?.id === this.selectedCiudad;
+  
+      return matchesText && matchesCiudad;
+    });
   }
+  
 
   filterByRole(role: string): void {
     if (role === 'Todos' || !role) {

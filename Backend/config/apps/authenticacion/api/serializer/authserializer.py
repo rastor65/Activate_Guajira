@@ -15,7 +15,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'email', 'avatar_url')
+        fields = ('id', 'username', 'email', 'avatar_url', 'consentimiento')
         
     def get_avatar_url(self, user):
         if user.avatar:

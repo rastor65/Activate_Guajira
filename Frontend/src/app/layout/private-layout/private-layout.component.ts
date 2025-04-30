@@ -332,6 +332,7 @@ export class PrivateLayoutComponent implements OnInit {
         data => {
           this.user = data.user;
           this.profileImage = data.profileImage;
+          console.log(this.user)
         },
         error => {
           console.error('Error al cargar el usuario:', error);
