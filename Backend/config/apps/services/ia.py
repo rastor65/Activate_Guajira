@@ -3,8 +3,11 @@ from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
+import logging
 
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
+logger = logging.getLogger(__name__)
+
+client = OpenAI(api_key=settings.OPENAI_API_KEY, timeout=30)
 
 def generar_sugerencias(tipo: str, dia: str, nivel: str = "principiante") -> list[str]:
     prompt = f"""
@@ -25,6 +28,7 @@ def generar_sugerencias(tipo: str, dia: str, nivel: str = "principiante") -> lis
         texto = response.choices[0].message.content
         return texto.strip().split('\n')
     except Exception as e:
+        logger.error(f"Error al generar sugerencias: {str(e)}")
         return [f"Error al generar sugerencias: {str(e)}"]
 
 @csrf_exempt
@@ -32,8 +36,8 @@ def editar_sugerencia(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            tipo = data.get('tipo')
-            dia = data.get('dia')
+            tipo = data.get('tipo', '')[:50]
+            dia = data.get('dia', '')[:50]
 
             if not tipo or not dia:
                 return JsonResponse({'error': 'tipo y dia son requeridos'}, status=400)
@@ -41,5 +45,6 @@ def editar_sugerencia(request):
             sugerencias = generar_sugerencias(tipo, dia)
             return JsonResponse({'sugerencias': sugerencias})
         except Exception as e:
+            logger.error(f"Error en editar_sugerencia: {str(e)}")
             return JsonResponse({'error': f'Error al generar sugerencias: {str(e)}'}, status=500)
     return JsonResponse({'error': 'Método no permitido'}, status=405)

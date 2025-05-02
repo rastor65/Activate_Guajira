@@ -55,9 +55,9 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://activateguajira.up.railway.app",
-    "https://activate-guajira.up.railway.app",
-    "http://localhost:4200"
+    "activateguajira.up.railway.app",
+    "activate-guajira.up.railway.app",
+    "localhost:4200"
 ]
 
 CORS_ALLOW_METHODS = [
