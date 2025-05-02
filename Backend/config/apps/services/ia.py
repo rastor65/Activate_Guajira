@@ -4,6 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
 import logging
+import re
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +32,52 @@ def generar_sugerencias(tipo: str, dia: str, nivel: str = "principiante") -> lis
     except Exception as e:
         logger.error(f"Error al generar sugerencias: {str(e)}")
         return [f"Error al generar sugerencias: {str(e)}"]
+    
+
+def generar_sugerencias_complejo(programa: dict, nivel: str = "principiante") -> dict:
+    prompt = f"Genera ejercicios para la siguiente rutina semanal. Nivel del usuario: {nivel}.\n\n"
+    for dia, tipos in programa.items():
+        if tipos:
+            tipos_str = ", ".join(tipos)
+            prompt += f"{dia}: {tipos_str}\n"
+    prompt += "\nPara cada día, sugiere 2 ejercicios por tipo con nombre y breve descripción. Devuelve las respuestas organizadas por día."
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=1000,
+            temperature=0.7
+        )
+        texto = response.choices[0].message.content
+        # Aquí deberías convertir `texto` a un diccionario estructurado (puede usar regex o parsing simple)
+        return parsear_respuesta(texto)  # función adicional que tú defines
+    except Exception as e:
+        logger.error(f"Error al generar sugerencias: {str(e)}")
+        return {}
+
+
+def parsear_respuesta(texto: str) -> dict:
+    resultado = defaultdict(list)
+    dia_actual = None
+
+    for linea in texto.strip().split('\n'):
+        linea = linea.strip()
+        if not linea:
+            continue
+
+        # Detectar día de la semana (ej. "LUNES:")
+        if re.match(r'^[A-ZÁÉÍÓÚÑ]{4,10}:$', linea):
+            dia_actual = linea.rstrip(':')
+            continue
+
+        # Detectar línea de ejercicio (ej. "- Cardio: Sentadillas – descripción")
+        match = re.match(r'^-\s*(.*?):\s*(.*?)\s*[–-]\s*(.+)$', linea)
+        if match and dia_actual:
+            tipo, nombre, descripcion = match.groups()
+            resultado[dia_actual].append(f"{tipo.strip()}: {nombre.strip()} – {descripcion.strip()}")
+
+    return dict(resultado)
 
 @csrf_exempt
 def editar_sugerencia(request):

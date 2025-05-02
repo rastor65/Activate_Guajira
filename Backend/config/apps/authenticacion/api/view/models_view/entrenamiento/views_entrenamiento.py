@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from apps.authenticacion.models import Entrenamiento
 from apps.authenticacion.api.serializer.serializers import EntrenamientoSerializer
-from apps.services.ia import generar_sugerencias
+from apps.services.ia import generar_sugerencias_complejo
 from django.contrib.auth import get_user_model
 
 
@@ -29,20 +29,35 @@ class EntrenamientoListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         data = serializer.validated_data
         semanas = data.get('semanas', [])
-
+        
         for semana in semanas:
+            dias_agrupados = {dia: [] for dia in dias_semana}
+            
             for ejercicio in semana.get('ejercicios', []):
-                sugerencias_por_dia = {}
+                tipo = ejercicio.get('tipo', 'GENERAL')
                 dias = ejercicio.get('dias', [])
                 for i, marcado in enumerate(dias):
                     if marcado:
                         dia = dias_semana[i]
-                        tipo = ejercicio.get('tipo', 'GENERAL')
-                        sugerencias = generar_sugerencias(tipo, dia)
-                        sugerencias_por_dia[dia] = sugerencias
+                        dias_agrupados[dia].append(tipo)
+            
+            sugerencias_totales = generar_sugerencias_complejo(dias_agrupados)
+
+            # Reasignar las sugerencias a cada ejercicio
+            for ejercicio in semana.get('ejercicios', []):
+                dias = ejercicio.get('dias', [])
+                tipo = ejercicio.get('tipo', 'GENERAL')
+                sugerencias_por_dia = {}
+                for i, marcado in enumerate(dias):
+                    if marcado:
+                        dia = dias_semana[i]
+                        sugerencias_por_dia[dia] = [
+                            s for s in sugerencias_totales.get(dia, []) if tipo.lower() in s.lower()
+                        ][:2]  # limitar a 2 por tipo y día
                 ejercicio['sugerencias'] = sugerencias_por_dia
 
         serializer.save()
+
 
 class EntrenamientoPorUsuarioListView(generics.ListAPIView):
     serializer_class = EntrenamientoSerializer
