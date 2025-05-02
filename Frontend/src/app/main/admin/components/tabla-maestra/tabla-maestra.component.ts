@@ -14,7 +14,6 @@ export class TablaMaestraComponent implements OnInit {
   dialogCategoria: boolean = false;
   dialogMaestra: boolean = false;
   dialogEditCategoria: boolean = false;
-
   categoriasMap: Map<number, string> = new Map();
   isEditMode: boolean = false;
   categorias: any[] = [];
@@ -94,8 +93,8 @@ export class TablaMaestraComponent implements OnInit {
   }
 
   editarCategoria(categoria: any) {
-    this.isEditMode = true; // Modo edición
-    this.selectedCategoria = { ...categoria }; // Clonar para evitar modificar la original antes de guardar
+    this.isEditMode = true;
+    this.selectedCategoria = { ...categoria };
     this.dialogEditCategoria = true;
   }
 

@@ -175,7 +175,6 @@ export class EntrenadorComponent implements OnInit {
 
   getTrainers(): void {
     this.cargando = true;
-
     this.userService.getlistusers().subscribe(
       (entrenadores: any[]) => {
         this.trainers = entrenadores;
@@ -222,7 +221,7 @@ export class EntrenadorComponent implements OnInit {
   getFilterOptions(): void {
     this.usuariosService.getRoles().subscribe(
       (response: any) => {
-        const roles = response.results || response; // Maneja paginación
+        const roles = response.results || response;
         this.filterOptions = [{ name: 'Todos' }, ...roles];
       },
       (error: any) => console.error('Error al cargar roles:', error)
