@@ -725,7 +725,7 @@ export class EntrenadorComponent implements OnInit {
       return `${this.base_user}${user.id}/descargar/`;
     }
     return 'assets/avatars/user.png';
-  }
+  }  
 
   getMediciones() {
     this.medicionService.obtenerMediciones().subscribe(

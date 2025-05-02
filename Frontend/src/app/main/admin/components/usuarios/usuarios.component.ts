@@ -62,6 +62,7 @@ export class UsuariosComponent implements OnInit {
     });
 
     this.cargarDatos();
+
   }
 
   cargarDatos() {
@@ -73,14 +74,14 @@ export class UsuariosComponent implements OnInit {
     }).subscribe(({ usuarios, roles, allRoles }) => {
       // ✅ Extraemos el array real de resultados paginados
       this.usuarios = Array.isArray(usuarios.results) ? usuarios.results as Usuario[] : [];
-    
+
       this.roles = roles as Rol[];
       this.AllRoles = Array.isArray(allRoles.results) ? allRoles.results : [];
-    
+
       this.procesarRoles();
       this.cargando = false;
     });
-      
+
   }
 
 
@@ -173,13 +174,17 @@ export class UsuariosComponent implements OnInit {
 
   filtrarUsuarios() {
     this.cargando = true;
-    const filtro = this.searchValue.toLowerCase();
-    this.usuariosFiltrados = this.usuarios.filter(usuario =>
-      usuario.username.toLowerCase().includes(filtro) ||
-      usuario.first_name.toLowerCase().includes(filtro) ||  // Agregar first_name
-      usuario.last_name.toLowerCase().includes(filtro) ||   // Agregar last_name
-      usuario.roles.some(rol => String(rol).toLowerCase().includes(filtro))
-    );
+    const filtro = this.searchValue.toLowerCase() || '';
+
+    this.usuariosFiltrados = this.usuarios.filter(usuario => {
+
+      const matchesText =
+        (usuario.username.toLowerCase() || '').includes(filtro) ||
+        (usuario.first_name.toLowerCase() || '').includes(filtro) ||
+        (usuario.last_name.toLowerCase() || '').includes(filtro);
+
+      return matchesText;
+    });
     this.cargando = false;
   }
 
