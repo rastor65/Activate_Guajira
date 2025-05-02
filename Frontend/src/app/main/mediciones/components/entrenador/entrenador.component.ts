@@ -159,8 +159,7 @@ export class EntrenadorComponent implements OnInit {
   public obtenerTipos(): void {
     this.cargando = true;
     const categoriaCiudadId = 7;
-    this.ciudad = []; // Limpiar antes de cargar
-  
+    this.ciudad = [];
     this.userService.getTablaMaestraPorCategoria(categoriaCiudadId).subscribe({
       next: (ciudades: any[]) => {
         this.ciudad = ciudades; // Ya viene como array de ciudades
@@ -840,22 +839,23 @@ export class EntrenadorComponent implements OnInit {
     this.personasFiltradas.forEach(persona => persona.seleccionado = seleccionado);
   }
 
-  filtrarPorCiudad(ciudadId: number) {
+  filtrarPorCiudad(ciudadId: number | null) {
+    if (ciudadId) {
+      this.personasFiltradas = this.personas.filter(persona => {
+        const ciudad = persona.ciudad_residencia;
   
-    setTimeout(() => { // Simula tiempo de carga
-      if (ciudadId) {
-        this.personasFiltradas = this.personas.filter(persona => {
-          if (typeof persona.ciudad_residencia === 'object' && persona.ciudad_residencia !== null) {
-            return persona.ciudad_residencia === ciudadId;
-          } else {
-            return persona.ciudad_residencia === ciudadId;
-          }
-        });
-      } else {
-        this.personasFiltradas = [...this.personas];
-      }
-    }, 500); // 500ms para dar sensación de carga
-  }  
+        if (!ciudad) return false;
+  
+        if (typeof ciudad === 'object') {
+          return (ciudad as { id: number }).id === ciudadId;
+        }
+  
+        return ciudad === ciudadId;
+      });
+    } else {
+      this.personasFiltradas = [...this.personas];
+    }
+  }      
 
   verEntrenamientosMasivos() {
     this.dialogEntrenamientoRegion = true;
