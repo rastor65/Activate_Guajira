@@ -36,7 +36,8 @@ import os
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'activate-guajira.up.railway.app'
+    'activate-guajira.up.railway.app',
+    'activateguajira.up.railway.app'
 ]
 
 
@@ -50,16 +51,10 @@ VAPID_CLAIMS = {
     "sub": "mailto:rdamianquintero@uniguajira.edu.co"
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "https://activateguajira.up.railway.app",
-    "https://activate-guajira.up.railway.app",
-    "http://localhost:4200"
-]
-
-CORS_ORIGIN_WHITELIST = [
     "https://activateguajira.up.railway.app",
     "https://activate-guajira.up.railway.app",
     "http://localhost:4200"
