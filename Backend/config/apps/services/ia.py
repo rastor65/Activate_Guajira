@@ -42,26 +42,29 @@ def generar_sugerencias(tipo: str, dia: str, nivel: str = "principiante") -> lis
 
 def generar_sugerencias_complejo(programa: dict, nivel: str = "principiante") -> dict:
     prompt = f"""
-    Para un usuario de nivel {nivel}, genera una rutina semanal de ejercicios. 
-    Para cada día, se indican los tipos de ejercicio requeridos. Para cada tipo, sugiere 3 ejercicios con nombre y breve descripción. 
-    Devuelve la respuesta en el siguiente formato JSON:
+    Eres un generador de rutinas de ejercicio para un sistema automático. Devuelve únicamente un JSON. 
+    Para un usuario de nivel {nivel}, genera una rutina semanal. 
+    Para cada día de la semana, devuelve los tipos de ejercicio requeridos y para cada tipo, sugiere 3 ejercicios con nombre y descripción. 
+
+    Devuelve solo el JSON, sin comentarios ni explicaciones. Ejemplo de formato:
 
     {{
     "LUNES": {{
         "RESISTENCIA": [
-        {{"nombre": "Subidas de escalón", "descripcion": "Sube y baja escalones rápidamente durante 1 minuto."}}
+        {{"nombre": "Subidas de escalón", "descripcion": "Sube y baja escalones durante 1 minuto."}},
+        {{"nombre": "Burpees", "descripcion": "Ejercicio de cuerpo completo con salto y flexión."}},
+        {{"nombre": "Saltos de tijera", "descripcion": "Salta abriendo y cerrando piernas y brazos."}}
         ],
-        "CARDIOVASCULAR": [...],
+        "CARDIOVASCULAR": [
         ...
+        ]
     }},
-    "MARTES": {{ ... }},
     ...
     }}
 
-    Tipos posibles: RESISTENCIA, CARDIOVASCULAR, FORTALECIMIENTO, EQUILIBRIO, FLEXIBILIDAD
-
-    Programa semanal:
+    IMPORTANTE: Devuelve solo el JSON sin explicaciones, encabezados ni texto adicional.
     """
+
     for dia, tipos in programa.items():
         if tipos:
             prompt += f"- {dia}: {', '.join(tipos)}\n"
@@ -70,7 +73,7 @@ def generar_sugerencias_complejo(programa: dict, nivel: str = "principiante") ->
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=2000,
+            max_tokens=4000,
             temperature=0.7
         )
         texto = response.choices[0].message.content
@@ -81,7 +84,9 @@ def generar_sugerencias_complejo(programa: dict, nivel: str = "principiante") ->
         return resultado
     except json.JSONDecodeError as e:
         logger.error(f"❌ JSON inválido: {str(e)}")
+        logger.error(f"Contenido devuelto por OpenAI:\n{texto}")
         return {}
+
     except Exception as e:
         logger.error(f"❌ Error al generar sugerencias complejas: {str(e)}")
         return {}
