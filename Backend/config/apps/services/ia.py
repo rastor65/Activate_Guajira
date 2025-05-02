@@ -35,23 +35,41 @@ def generar_sugerencias(tipo: str, dia: str, nivel: str = "principiante") -> lis
     
 
 def generar_sugerencias_complejo(programa: dict, nivel: str = "principiante") -> dict:
-    prompt = f"Genera ejercicios para la siguiente rutina semanal. Nivel del usuario: {nivel}.\n\n"
+    prompt = f"""
+Para un usuario de nivel {nivel}, genera una rutina semanal de ejercicios. 
+Para cada día, se indican los tipos de ejercicio requeridos. Para cada tipo, sugiere 2 ejercicios con nombre y breve descripción. 
+Devuelve la respuesta en el siguiente formato JSON:
+
+{{
+  "LUNES": {{
+    "RESISTENCIA": [
+      {{"nombre": "Subidas de escalón", "descripcion": "Sube y baja escalones rápidamente durante 1 minuto."}},
+      ...
+    ],
+    "CARDIOVASCULAR": [...],
+    ...
+  }},
+  "MARTES": {{ ... }},
+  ...
+}}
+
+Tipos posibles: RESISTENCIA, CARDIOVASCULAR, FORTALECIMIENTO, EQUILIBRIO, FLEXIBILIDAD
+
+Programa semanal:
+"""
     for dia, tipos in programa.items():
         if tipos:
-            tipos_str = ", ".join(tipos)
-            prompt += f"{dia}: {tipos_str}\n"
-    prompt += "\nPara cada día, sugiere 2 ejercicios por tipo con nombre y breve descripción. Devuelve las respuestas organizadas por día."
+            prompt += f"- {dia}: {', '.join(tipos)}\n"
 
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=1000,
+            max_tokens=2000,
             temperature=0.7
         )
         texto = response.choices[0].message.content
-        # Aquí deberías convertir `texto` a un diccionario estructurado (puede usar regex o parsing simple)
-        return parsear_respuesta(texto)  # función adicional que tú defines
+        return json.loads(texto)
     except Exception as e:
         logger.error(f"Error al generar sugerencias: {str(e)}")
         return {}

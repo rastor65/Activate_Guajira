@@ -29,31 +29,30 @@ class EntrenamientoListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         data = serializer.validated_data
         semanas = data.get('semanas', [])
-        
+
         for semana in semanas:
             dias_agrupados = {dia: [] for dia in dias_semana}
-            
             for ejercicio in semana.get('ejercicios', []):
-                tipo = ejercicio.get('tipo', 'GENERAL')
-                dias = ejercicio.get('dias', [])
-                for i, marcado in enumerate(dias):
+                tipo = ejercicio.get('tipo', 'GENERAL').upper()
+                for i, marcado in enumerate(ejercicio.get('dias', [])):
                     if marcado:
-                        dia = dias_semana[i]
-                        dias_agrupados[dia].append(tipo)
-            
+                        dias_agrupados[dias_semana[i]].append(tipo)
+
             sugerencias_totales = generar_sugerencias_complejo(dias_agrupados)
 
-            # Reasignar las sugerencias a cada ejercicio
+            # Reasignar por día y tipo
             for ejercicio in semana.get('ejercicios', []):
+                tipo = ejercicio.get('tipo', 'GENERAL').upper()
                 dias = ejercicio.get('dias', [])
-                tipo = ejercicio.get('tipo', 'GENERAL')
                 sugerencias_por_dia = {}
+
                 for i, marcado in enumerate(dias):
                     if marcado:
                         dia = dias_semana[i]
-                        sugerencias_por_dia[dia] = [
-                            s for s in sugerencias_totales.get(dia, []) if tipo.lower() in s.lower()
-                        ][:2]  # limitar a 2 por tipo y día
+                        sugerencias_dia = sugerencias_totales.get(dia, {})
+                        sugerencias_tipo = sugerencias_dia.get(tipo, [])
+                        sugerencias_por_dia[dia] = sugerencias_tipo[:2]  # máximo 2
+
                 ejercicio['sugerencias'] = sugerencias_por_dia
 
         serializer.save()
