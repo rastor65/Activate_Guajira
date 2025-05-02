@@ -484,7 +484,6 @@
 <!-- VER UN ENTRENAMIENTO -->
 <p-dialog [(visible)]="dialogVerEntrenamiento" [style]="{ 'width': '90vw' }" [resizable]="false" zindex="10000"
   [modal]="true" [closable]="true" [showHeader]="false" class="custom-dialog">
-
   <ng-template pTemplate="content">
     <div *ngIf="selectedEntrenamiento">
       <div class="profile-header">
@@ -516,21 +515,30 @@
         </div>
       </div>
 
+      <!-- Resumen por día -->
       <div class="resumen-dias" *ngIf="selectedEntrenamiento?.semanas?.length">
         <div class="dia-resumen" *ngFor="let dia of diasSemana">
           <h3>{{ dia }}</h3>
 
           <ng-container *ngFor="let semana of selectedEntrenamiento.semanas">
-            <div class="semana-dia" *ngFor="let ejercicio of semana.ejercicios; let i = index">
+            <div class="semana-dia" *ngFor="let ejercicio of semana.ejercicios">
               <ng-container *ngIf="ejercicio.dias[diasSemana.indexOf(dia)]">
                 <div class="ejercicio-dia-card">
                   <h4>{{ ejercicio.tipo }}</h4>
+
                   <ul *ngIf="ejercicio.sugerencias?.[dia] && ejercicio.sugerencias[dia].length">
                     <li *ngFor="let sug of ejercicio.sugerencias[dia]">
-                      {{ sug }}
+                      <ng-container *ngIf="sug.nombre && sug.descripcion">
+                        <strong>{{ sug.nombre }}:</strong> {{ sug.descripcion }}
+                      </ng-container>
+                      <ng-container *ngIf="!sug.nombre">
+                        {{ sug }}
+                      </ng-container>
                     </li>
                   </ul>
-                  <p *ngIf="!ejercicio.sugerencias?.[dia]?.length" class="no-sugerencias">Sin sugerencias disponibles
+
+                  <p *ngIf="!ejercicio.sugerencias?.[dia]?.length" class="no-sugerencias">
+                    Sin sugerencias disponibles
                   </p>
                 </div>
               </ng-container>
@@ -542,7 +550,6 @@
           </p>
         </div>
       </div>
-
 
       <div class="button-container mt-4 text-right">
         <button class="btn" (click)="cerrarVerEntrenamiento()">

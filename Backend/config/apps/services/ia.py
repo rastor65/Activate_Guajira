@@ -10,53 +10,58 @@ from collections import defaultdict
 logger = logging.getLogger(__name__)
 
 client = OpenAI(api_key=settings.OPENAI_API_KEY, timeout=30)
-
-def generar_sugerencias(tipo: str, dia: str, nivel: str = "principiante") -> list[str]:
+def generar_sugerencias(tipo: str, dia: str, nivel: str = "principiante") -> list[dict]:
     prompt = f"""
     Sugiere 5 ejercicios de tipo {tipo} para hacer un día {dia}.
     El usuario es de nivel {nivel}.
-    Muestra solo una lista con los nombres de los ejercicios y una breve descripción.
+    Devuelve solo una lista con el formato:
+    - Nombre del ejercicio – Descripción breve
     """
 
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
+            messages=[{"role": "user", "content": prompt}],
             max_tokens=300,
             temperature=0.7
         )
-        texto = response.choices[0].message.content
-        return texto.strip().split('\n')
+        texto = response.choices[0].message.content.strip()
+        ejercicios = []
+        for linea in texto.split('\n'):
+            if '–' in linea:
+                nombre, descripcion = map(str.strip, linea.split('–', 1))
+                ejercicios.append({
+                    "nombre": nombre.lstrip('- 1234567890.'),
+                    "descripcion": descripcion
+                })
+        return ejercicios
     except Exception as e:
         logger.error(f"Error al generar sugerencias: {str(e)}")
-        return [f"Error al generar sugerencias: {str(e)}"]
-    
+        return [{"nombre": "Error", "descripcion": str(e)}]
+
 
 def generar_sugerencias_complejo(programa: dict, nivel: str = "principiante") -> dict:
     prompt = f"""
-Para un usuario de nivel {nivel}, genera una rutina semanal de ejercicios. 
-Para cada día, se indican los tipos de ejercicio requeridos. Para cada tipo, sugiere 2 ejercicios con nombre y breve descripción. 
-Devuelve la respuesta en el siguiente formato JSON:
+    Para un usuario de nivel {nivel}, genera una rutina semanal de ejercicios. 
+    Para cada día, se indican los tipos de ejercicio requeridos. Para cada tipo, sugiere 3 ejercicios con nombre y breve descripción. 
+    Devuelve la respuesta en el siguiente formato JSON:
 
-{{
-  "LUNES": {{
-    "RESISTENCIA": [
-      {{"nombre": "Subidas de escalón", "descripcion": "Sube y baja escalones rápidamente durante 1 minuto."}},
-      ...
-    ],
-    "CARDIOVASCULAR": [...],
+    {{
+    "LUNES": {{
+        "RESISTENCIA": [
+        {{"nombre": "Subidas de escalón", "descripcion": "Sube y baja escalones rápidamente durante 1 minuto."}}
+        ],
+        "CARDIOVASCULAR": [...],
+        ...
+    }},
+    "MARTES": {{ ... }},
     ...
-  }},
-  "MARTES": {{ ... }},
-  ...
-}}
+    }}
 
-Tipos posibles: RESISTENCIA, CARDIOVASCULAR, FORTALECIMIENTO, EQUILIBRIO, FLEXIBILIDAD
+    Tipos posibles: RESISTENCIA, CARDIOVASCULAR, FORTALECIMIENTO, EQUILIBRIO, FLEXIBILIDAD
 
-Programa semanal:
-"""
+    Programa semanal:
+    """
     for dia, tipos in programa.items():
         if tipos:
             prompt += f"- {dia}: {', '.join(tipos)}\n"
@@ -69,9 +74,16 @@ Programa semanal:
             temperature=0.7
         )
         texto = response.choices[0].message.content
-        return json.loads(texto)
+        resultado = json.loads(texto)
+        # Validar que todo esté como se espera
+        if not isinstance(resultado, dict):
+            raise ValueError("La IA no devolvió un diccionario")
+        return resultado
+    except json.JSONDecodeError as e:
+        logger.error(f"❌ JSON inválido: {str(e)}")
+        return {}
     except Exception as e:
-        logger.error(f"Error al generar sugerencias: {str(e)}")
+        logger.error(f"❌ Error al generar sugerencias complejas: {str(e)}")
         return {}
 
 
