@@ -18,6 +18,7 @@ import { ToastModule } from 'primeng/toast';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { InputSwitch, InputSwitchModule } from 'primeng/inputswitch';
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
     MultiSelectModule,
     ReactiveFormsModule,
     ProgressBarModule,
+    InputSwitchModule
   ],
   providers: [ConfirmationService, ], 
 })

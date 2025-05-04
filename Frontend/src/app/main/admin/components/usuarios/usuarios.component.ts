@@ -40,6 +40,8 @@ export class UsuariosComponent implements OnInit {
   cargando: boolean = true;
   formUsuario: FormGroup = new FormGroup({});
   usuarioSeleccionado: any = null;
+  CargandoUsuario: boolean = false;
+  verPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -56,9 +58,13 @@ export class UsuariosComponent implements OnInit {
     this.formUsuario = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
-      first_name: ['', Validators.required],
-      last_name: ['', Validators.required],
-      roles: [[]]
+      first_name: [''],
+      last_name: [''],
+      roles: [[]],
+      consentimiento: [false],
+      password: [''],
+      last_login: [''],
+      date_joined: ['']
     });
 
     this.cargarDatos();
@@ -73,10 +79,12 @@ export class UsuariosComponent implements OnInit {
       allRoles: this.usuariosService.getAllRoles()
     }).subscribe(({ usuarios, roles, allRoles }) => {
       // ✅ Extraemos el array real de resultados paginados
-      this.usuarios = Array.isArray(usuarios.results) ? usuarios.results as Usuario[] : [];
+      this.usuarios = Array.isArray(usuarios) ? usuarios as Usuario[] : [];
 
       this.roles = roles as Rol[];
-      this.AllRoles = Array.isArray(allRoles.results) ? allRoles.results : [];
+      this.AllRoles = Array.isArray(allRoles) ? allRoles : [];
+
+      console.log(roles)
 
       this.procesarRoles();
       this.cargando = false;
@@ -84,21 +92,45 @@ export class UsuariosComponent implements OnInit {
 
   }
 
-
-
   vereditarUsuario(usuario: any) {
-    this.usuarioSeleccionado = usuario;
-
-    this.formUsuario.setValue({
-      email: usuario.email || '',
-      username: usuario.username || '',
-      first_name: usuario.first_name || '',
-      last_name: usuario.last_name || '',
-      roles: usuario.roles || []
-    });
-
     this.dialogUsuario = true;
+    this.CargandoUsuario = true;
+    this.usuarioSeleccionado = usuario;
+    this.usuariosService.getUsuarioCompleto(usuario.id).subscribe({
+      next: (datos) => {
+        console.log(datos)
+        const formatFechaHora = (isoDate: string | null): string => {
+          if (!isoDate) return '';
+          const date = new Date(isoDate);
+          return date.toLocaleString('es-CO', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        };
+        this.formUsuario.patchValue({
+          email: datos.email || '',
+          username: datos.username || '',
+          first_name: datos.first_name || '',
+          last_name: datos.last_name || '',
+          roles: datos.roles || [],
+          consentimiento: datos.consentimiento || false,
+          last_login: formatFechaHora(datos.last_login) || '',
+          date_joined: formatFechaHora(datos.date_joined) || ''
+        });
+        
+        this.CargandoUsuario = false;
+      },
+      error: (error) => {
+        console.error('Error al obtener datos completos del usuario:', error);
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo cargar la información del usuario.' });
+        this.CargandoUsuario = false;
+      }
+    });
   }
+  
 
   cerrareditarUsuario() {
     this.dialogUsuario = false
@@ -143,51 +175,42 @@ export class UsuariosComponent implements OnInit {
 
   procesarRoles() {
     this.cargando = true;
-
+  
     if (!Array.isArray(this.AllRoles)) {
       console.error('AllRoles no es un array:', this.AllRoles);
       this.cargando = false;
       return;
     }
-
+  
     this.usuarios.forEach(usuario => {
       const rolesUsuario = this.AllRoles.filter(role =>
-        role.userId && role.userId.username === usuario.username
+        role.userId === usuario.email
       );
-
-      if (rolesUsuario.length > 0) {
-        usuario.first_name = rolesUsuario[0].userId?.first_name || usuario.first_name;
-        usuario.last_name = rolesUsuario[0].userId?.last_name || usuario.last_name;
-      }
-
+  
       usuario.roles = [...new Set(
-        rolesUsuario
-          .map(role => role.rolesId?.name)
-          .filter(roleName => !!roleName)
+        rolesUsuario.map(role => role.rolesId).filter(r => !!r)
       )];
     });
-
+  
     this.filtrarUsuarios();
     this.cargando = false;
-  }
-
+  }  
 
   filtrarUsuarios() {
     this.cargando = true;
-    const filtro = this.searchValue.toLowerCase() || '';
-
+    const filtro = this.searchValue?.toLowerCase() || '';
+  
     this.usuariosFiltrados = this.usuarios.filter(usuario => {
-
-      const matchesText =
-        (usuario.username.toLowerCase() || '').includes(filtro) ||
-        (usuario.first_name.toLowerCase() || '').includes(filtro) ||
-        (usuario.last_name.toLowerCase() || '').includes(filtro);
-
-      return matchesText;
+      const username = usuario.username?.toLowerCase() || '';
+      const firstName = usuario.first_name?.toLowerCase() || '';
+      const lastName = usuario.last_name?.toLowerCase() || '';
+  
+      return username.includes(filtro) || firstName.includes(filtro) || lastName.includes(filtro);
     });
+  
     this.cargando = false;
   }
-
+  
 
   processCSV(csvData: string) {
     const lines = csvData.split(/\r?\n/).filter(line => line.trim() !== '');

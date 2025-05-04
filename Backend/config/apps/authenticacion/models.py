@@ -175,7 +175,7 @@ class Medicion(BaseModel):
     frecuencia_cardiaca = models.PositiveIntegerField(null=True, blank=True, validators=[MinValueValidator(30), MaxValueValidator(220)])
     volumen_max_oxigeno = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     flexibilidad = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    caff = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    caff = models.CharField(max_length=50, null=True, blank=True)
     usuario = models.ForeignKey("authenticacion.CustomUser", on_delete=models.CASCADE, related_name="mediciones", db_index=True)
 
     class Meta:

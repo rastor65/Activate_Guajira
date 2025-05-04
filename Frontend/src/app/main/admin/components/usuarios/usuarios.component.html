@@ -83,8 +83,7 @@
         <thead>
             <tr>
                 <th>Usuario</th>
-                <th>Nombres</th>
-                <th>Apellidos</th>
+                <th>Email</th>
                 <th>Rol (roles)</th>
                 <th>Acciones</th>
             </tr>
@@ -93,8 +92,7 @@
             <ng-container *ngFor="let usuario of usuariosFiltrados">
                 <tr>
                     <td>{{ usuario.username }}</td>
-                    <td>{{ usuario.first_name }}</td>
-                    <td>{{ usuario.last_name }}</td>
+                    <td>{{ usuario.email }}</td>
                     <td>{{ usuario.roles.join(', ') }}</td>
                     <td>
                         <button pButton icon="pi pi-pencil" class="btn-editar"
@@ -108,10 +106,17 @@
     </table>
 </div>
 
-<p-dialog [(visible)]="dialogUsuario" [style]="{'width': '60vw'}" [modal]="true" [closable]="false"
+<p-dialog [(visible)]="dialogUsuario" [style]="{'width': '60vw', 'height': '80%'}" [modal]="true" [closable]="false"
     [showHeader]="false">
-    <form [formGroup]="formUsuario">
+
+    <div class="overlay-spinner" *ngIf="CargandoUsuario">
+        <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+        <p class="loading-text">Cargando datos...</p>
+    </div>
+
+    <form *ngIf="!CargandoUsuario" [formGroup]="formUsuario">
         <div class="p-fluid">
+
             <div class="row">
                 <div class="p-field col">
                     <label for="first_name">Nombres</label>
@@ -122,26 +127,59 @@
                     <input id="last_name" type="text" pInputText formControlName="last_name" />
                 </div>
             </div>
+
             <div class="p-field">
                 <label for="username">Username</label>
                 <input id="username" type="text" pInputText formControlName="username" />
             </div>
+
             <div class="p-field">
                 <label for="email">Correo</label>
                 <input id="email" type="email" pInputText formControlName="email" />
             </div>
+
+            <div class="p-field password-toggle">
+                <label for="password">Nueva contraseña</label>
+                <div class="p-inputgroup">
+                    <input id="password" [type]="verPassword ? 'text' : 'password'" pInputText
+                        formControlName="password" />
+                    <button pButton type="button" icon="{{ verPassword ? 'pi pi-eye-slash' : 'pi pi-eye' }}"
+                        class="p-button-text p-button-plain" (click)="verPassword = !verPassword"
+                        [attr.aria-label]="verPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"></button>
+                </div>
+            </div>
+
+            <div class="p-field">
+                <label for="last_login">Último acceso</label>
+                <input id="last_login" type="text" pInputText formControlName="last_login" readonly />
+            </div>
+
+            <div class="p-field">
+                <label for="date_joined">Fecha de registro</label>
+                <input id="date_joined" type="text" pInputText formControlName="date_joined" readonly />
+            </div>
+
+            <div class="p-field">
+                <label for="consentimiento">Consentimiento</label>
+                <p-inputSwitch id="consentimiento" formControlName="consentimiento"></p-inputSwitch>
+            </div>
+            
             <div class="p-field">
                 <label for="roles">Roles</label>
-                <input id="roles" type="text" pInputText formControlName="roles" [readOnly]="true">
+                <p-multiSelect id="roles" formControlName="roles" [options]="roles" optionLabel="name" optionValue="id"
+                    defaultLabel="Seleccionar roles" [readonly]="true">
+                </p-multiSelect>
             </div>
+
         </div>
     </form>
 
-    <div class="p-grid p-nogutter p-align-center header-container"></div>
     <div class="button-container">
         <button class="btn" (click)="guardarUsuario()">
-            <i class="pi pi-check"></i> Guardar Cambios</button>
+            <i class="pi pi-check"></i> Guardar Cambios
+        </button>
         <button class="btn" (click)="cerrareditarUsuario()">
-            <i class="pi pi-times"></i> Cancelar</button>
+            <i class="pi pi-times"></i> Cancelar
+        </button>
     </div>
 </p-dialog>

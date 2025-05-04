@@ -78,7 +78,7 @@ def generar_sugerencias_complejo(programa: dict, nivel: str = "principiante") ->
         )
         texto = response.choices[0].message.content
         resultado = json.loads(texto)
-        # Validar que todo esté como se espera
+        
         if not isinstance(resultado, dict):
             raise ValueError("La IA no devolvió un diccionario")
         return resultado
