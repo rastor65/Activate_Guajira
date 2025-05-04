@@ -270,7 +270,7 @@ export class FormLoginComponent implements OnInit {
                       this.usuariosService.asignarRoles(bodyString, httpOptions).subscribe(
                         (response) => {
                           if (response.status) {
-                            this.messageService.add({ severity: 'success', summary: 'Registro', detail: 'Registro de estudiante exitoso.' });
+                            this.messageService.add({ severity: 'success', summary: 'Registro', detail: 'Registro de Usuario exitoso.' });
                           }
                           this.finalizarRegistro();
                         },
