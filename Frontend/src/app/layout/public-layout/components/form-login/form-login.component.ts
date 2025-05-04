@@ -218,13 +218,13 @@ export class FormLoginComponent implements OnInit {
               if (seconds == '03') {
                 this.showProgressBar = false;
                 this.messageService.add({ severity: 'success', summary: 'Registro', detail: 'Registro exitoso.' });
-                this.onSubmitLogin();
               }
               if (seconds == '01') {
                 this.bandera = false
                 this.userService.getUserDetailsByEmail(formValue.email).subscribe(
                   (userData) => {
                     if (userData) {
+                      console.log("creando persona")
                       const userId = userData.id;
                       const personData: Person = {
                         id: null,

@@ -191,6 +191,7 @@ export class EntrenadorComponent implements OnInit {
     this.userService.getlistusers().subscribe(
       (entrenadores: any[]) => {
         this.trainers = entrenadores;
+        console.log(this.trainers)
         this.filteredTrainers = entrenadores;
         this.personas = entrenadores.map((trainer: any) => ({
           ...trainer,
@@ -200,6 +201,8 @@ export class EntrenadorComponent implements OnInit {
           apellidos: trainer.last_name,
           user: trainer.id
         }));
+
+        console.log("personas: ", this.personas)
 
         this.filtrarEntrenadoresPorRol()
         this.filterCards();

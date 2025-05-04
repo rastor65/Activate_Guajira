@@ -257,9 +257,19 @@ export class UserService {
 
   getUserDetailsByEmail(email: string): Observable<any> {
     return this.http.get<any>(this.base_usuario).pipe(
-      map((response) => response.results.find((user: any) => user.email === email))
+      map((response) => {
+        if (response && Array.isArray(response.results)) {
+          return response.results.find((user: any) => user.email === email);
+        } else if (Array.isArray(response)) {
+          return response.find((user: any) => user.email === email);
+        } else {
+          console.warn('Respuesta inesperada al buscar usuarios por email:', response);
+          return null;
+        }
+      })
     );
   }
+  
 
   getlistusers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_URI}/listusers/`);
