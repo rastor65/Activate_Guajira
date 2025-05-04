@@ -72,55 +72,63 @@
       <div class="profile-header">
         <h2>{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h2>
       </div>
-      <div class="medicion">
-        <button pButton icon="pi pi-plus" label="Agregar medición" class="btn-agregar"
-          (click)="abrirMedicion()"></button>
-      </div>
-      <div class="card">
-        <div *ngIf="estado" class="imc-message">
-          <strong>{{ estado }}</strong>
+
+      <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate" [style]="{ height: '6px' }"> </p-progressBar>
+
+      <div *ngIf="!cargandoPdialog">
+        <div class="medicion">
+          <button pButton icon="pi pi-plus" label="Agregar medición" class="btn-agregar"
+            (click)="abrirMedicion()"></button>
         </div>
-        <table class="mediciones-table">
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Altura (m)</th>
-              <th>Peso (Kg)</th>
-              <th>IMC</th>
-              <th>ICC</th>
-              <th>Grasa corporal</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let medicion of medicionesUsuario">
-              <td>{{ medicion.fecha }}</td>
-              <td>{{ medicion.talla }}</td>
-              <td>{{ medicion.peso }} kg</td>
-              <td [ngClass]="getIMCClass(medicion.imc)" class="imc-cell" (click)="mostrarEstadoIMC(medicion.imc)">
-                {{ medicion.imc }}
-              </td>
-              <td [ngClass]="getICCClass(medicion.icc)" class="imc-cell" (click)="mostrarEstadoICC(medicion.icc)">
-                {{ medicion.icc }}
-              </td>
-              <td [ngClass]="getGrasaClass(medicion.grasa_corporal)" class="imc-cell"
-                (click)="mostrarEstadoGrasa(medicion.grasa_corporal)">
-                {{ medicion.grasa_corporal }}
-              </td>
-              <td>
-                <button pButton icon="pi pi-eye" class="btn-ver" (click)="verMedicion(medicion)"></button>
-                <button pButton icon="pi pi-pencil" class="btn-editar" (click)="editarMedicion(medicion)"></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+
+        <br>
+
+        <div class="card">
+          <div *ngIf="estado" class="imc-message">
+            <strong>{{ estado }}</strong>
+          </div>
+          <table class="mediciones-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Altura (m)</th>
+                <th>Peso (Kg)</th>
+                <th>IMC</th>
+                <th>ICC</th>
+                <th>Grasa corporal</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let medicion of medicionesUsuario">
+                <td>{{ medicion.fecha }}</td>
+                <td>{{ medicion.talla }}</td>
+                <td>{{ medicion.peso }} kg</td>
+                <td [ngClass]="getIMCClass(medicion.imc)" class="imc-cell" (click)="mostrarEstadoIMC(medicion.imc)">
+                  {{ medicion.imc }}
+                </td>
+                <td [ngClass]="getICCClass(medicion.icc)" class="imc-cell" (click)="mostrarEstadoICC(medicion.icc)">
+                  {{ medicion.icc }}
+                </td>
+                <td [ngClass]="getGrasaClass(medicion.grasa_corporal)" class="imc-cell"
+                  (click)="mostrarEstadoGrasa(medicion.grasa_corporal)">
+                  {{ medicion.grasa_corporal }}
+                </td>
+                <td>
+                  <button pButton icon="pi pi-eye" class="btn-ver" (click)="verMedicion(medicion)"></button>
+                  <button pButton icon="pi pi-pencil" class="btn-editar" (click)="editarMedicion(medicion)"></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p *ngIf="medicionesUsuario.length === 0">No hay mediciones disponibles.</p>
+
+        <ng-template #noMediciones>
+          <p>No hay mediciones registradas.</p>
+        </ng-template>
       </div>
-
-      <p *ngIf="medicionesUsuario.length === 0">No hay mediciones disponibles.</p>
-
-      <ng-template #noMediciones>
-        <p>No hay mediciones registradas.</p>
-      </ng-template>
     </div>
     <div class="p-grid p-nogutter p-align-center header-container"></div>
     <div class="button-container">
@@ -432,50 +440,53 @@
         <h2>{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h2>
       </div>
 
-      <div class="alimentacion">
-        <button class="btn-agregar" (click)="abrirFormularioEntrenamiento()">
-          <i class="pi pi-plus-circle"></i> Nuevo plan
-        </button>
-      </div>
-
-      <br>
       <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate" [style]="{ height: '6px' }"> </p-progressBar>
 
-      <div class="table-responsive">
-        <table class="styled-table" *ngIf="entrenamientos?.length; else noData">
-          <thead>
-            <tr>
-              <th>Nombre</th>
-              <th>Duración</th>
-              <th>Entrenador</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let entrenamiento of entrenamientos">
-              <td>{{ entrenamiento.nombre }}</td>
-              <td>{{ entrenamiento.duracion_semanas }} semanas</td>
-              <td>{{ entrenamiento.entrenador }}</td>
-              <td class="action-btns">
-                <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUnEntrenamiento(entrenamiento)"></button>
-                <button pButton icon="pi pi-pencil" class="btn-editar"
-                  (click)="abrirFormularioEntrenamiento(entrenamiento)"></button>
-                <button pButton icon="pi pi-trash" class="btn-eliminar"
-                  (click)="eliminarEntrenamiento(entrenamiento.id)"></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <div *ngIf="!cargandoPdialog">
+        <div class="alimentacion">
+          <button class="btn-agregar" (click)="abrirFormularioEntrenamiento()">
+            <i class="pi pi-plus-circle"></i> Nuevo plan
+          </button>
+        </div>
 
-      <ng-template #noData>
-        <p class="no-data">No hay planes de entrenamiento disponibles.</p>
-      </ng-template>
+        <br>
 
-      <div class="button-container mt-4 text-right">
-        <button class="btn" (click)="cerrarEntrenamiento()">
-          <i class="pi pi-times"></i> Cerrar
-        </button>
+        <div class="table-responsive">
+          <table class="styled-table" *ngIf="entrenamientos?.length; else noData">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Duración</th>
+                <th>Entrenador</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let entrenamiento of entrenamientos">
+                <td>{{ entrenamiento.nombre }}</td>
+                <td>{{ entrenamiento.duracion_semanas }} semanas</td>
+                <td>{{ entrenamiento.entrenador }}</td>
+                <td class="action-btns">
+                  <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUnEntrenamiento(entrenamiento)"></button>
+                  <button pButton icon="pi pi-pencil" class="btn-editar"
+                    (click)="abrirFormularioEntrenamiento(entrenamiento)"></button>
+                  <button pButton icon="pi pi-trash" class="btn-eliminar"
+                    (click)="eliminarEntrenamiento(entrenamiento.id)"></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <ng-template #noData>
+          <p class="no-data">No hay planes de entrenamiento disponibles.</p>
+        </ng-template>
+
+        <div class="button-container mt-4 text-right">
+          <button class="btn" (click)="cerrarEntrenamiento()">
+            <i class="pi pi-times"></i> Cerrar
+          </button>
+        </div>
       </div>
     </div>
   </ng-template>

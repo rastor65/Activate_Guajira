@@ -663,6 +663,7 @@ export class EntrenadorComponent implements OnInit {
   }
 
   verPerfil(trainer: any) {
+    this.cargandoPdialog = true;
     this.selectedTrainer = trainer;
   
     this.genero = trainer.gender_name || '';
@@ -670,9 +671,11 @@ export class EntrenadorComponent implements OnInit {
     this.medicionService.obtenerMedicionesPorUsuario(trainer.id).subscribe(
       (mediciones) => {
         this.medicionesUsuario = mediciones.results;
+        this.cargandoPdialog = false;
       },
       (error) => {
         console.error('Error al obtener mediciones:', error);
+        this.cargandoPdialog = false;
       }
     );
   
