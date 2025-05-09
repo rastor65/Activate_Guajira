@@ -6,6 +6,9 @@ from .api.view.models_view.users.auth import (CustomUserList,UserDetail,UserPubl
                     ,descargar_archivo )
 
 from .api.view.models_view.notificaciones.view import save_subscription
+from django.conf.urls.static import static
+from django.conf import settings
+
 
 urlpatterns = [
     path('registro/', RegistroView.as_view(), name='registro'),
@@ -24,3 +27,5 @@ urlpatterns = [
     path('telegram-test/', prueba_mensaje_telegram),
     path('save-subscription/', save_subscription, name='save_subscription'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -15,7 +15,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField("email address", blank=False, null=False, unique=True)
     password = models.CharField(max_length=100)
     resetToken = models.CharField(max_length=256, blank=True, null=True)
-    avatar = models.ImageField(upload_to=path_to_avatar, blank=True, null=True)
+    avatar = models.ImageField(upload_to='archivos/archivos_useravatar/', blank=True, null=True)
     roles = models.ManyToManyField('Rol', through='UserRol', related_name='users_customuser')
     consentimiento = models.BooleanField(default=False)
     objects = UserManager()
