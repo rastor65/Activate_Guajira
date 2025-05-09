@@ -68,6 +68,12 @@ class PersonsSerializers(serializers.ModelSerializer):
             )
             return edad
         return None
+    
+    def validate_user(self, value):
+        if self.instance is None and Person.objects.filter(user=value).exists():
+            raise serializers.ValidationError("Este usuario ya tiene una persona asociada.")
+        return value
+
 
 class PersonSimpleSerializer(serializers.ModelSerializer):
     nombres = serializers.CharField(source="user.first_name", read_only=True)
