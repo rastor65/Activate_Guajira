@@ -50,13 +50,7 @@ class PersonDetail(BasePersonView, generics.RetrieveUpdateDestroyAPIView):
 
 class PersonByUserIdView(RetrieveAPIView):
     serializer_class = PersonsSerializers
+    lookup_field = 'user_id'
 
-    def get(self, request, user_id, *args, **kwargs):
-        try:
-            person = Person.objects.get(user_id=user_id, status=True)
-            serializer = self.get_serializer(person)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Person.DoesNotExist:
-            return Response({"detail": "No se encontró una persona asociada al usuario."}, status=status.HTTP_404_NOT_FOUND)
-        except Person.MultipleObjectsReturned:
-            return Response({"detail": "Error: múltiples personas asociadas al mismo usuario."}, status=status.HTTP_400_BAD_REQUEST)
+    def get_queryset(self):
+        return Person.objects.filter(status=True)
