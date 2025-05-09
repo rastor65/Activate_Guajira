@@ -20,6 +20,7 @@ export class UserService {
   base_path_post = `${this.API_URI}/api/registro/`;
   base = `${this.API_URI}/api/auth/reset/`;
   base_personas = `${this.API_URI}/persons/`;
+  base_personas_user = `${this.API_URI}/persons/by-user/`;
   base_documentos = `${this.API_URI}/documents/`;
   base_usuario = `${this.API_URI}/api/user/`;
   base_editar_user = `${this.API_URI}/api/user/update/`;
@@ -482,6 +483,10 @@ export class UserService {
     );
   }
 
+  getPersonByUserId(userId: number): Observable<Person> {
+    const url = `${this.base_personas_user}${userId}`;
+    return this.http.get<Person>(url);
+  }
 
   obtenerEditores(): Observable<any[]> {
     const url = `${this.base_usuario}`;

@@ -244,29 +244,13 @@ export class PrivateLayoutComponent implements OnInit {
   loadUserData(): void {
     this.cargandopersona = true;
     if (this.usuarioId !== undefined) {
-      this.userService.getPeopleByUserId(this.usuarioId).subscribe(
-        people => {
-          if (people && people.length > 0) {
-            const firstUser = people[0];
-            if (firstUser.user === this.usuarioId) {
-              this.usuario = firstUser;
-              this.cargandopersona = false;
-            } else {
-              console.error('El ID del usuario logueado no coincide con el campo "user" en el registro de Persona.');
-              this.cargandopersona = false;
-            }
-          } else {
-            console.error('No se encontraron datos de usuario para el ID proporcionado.');
-            this.cargandopersona = false;
-          }
-          this.userDataLoaded = true; // Marcar que los datos del usuario han sido cargados
-          this.cargandopersona = false;
-
-        },
-        error => {
-          console.error('Error loading user data:', error);
-        }
-      );
+      this.userService.getPersonByUserId(this.usuarioId).subscribe(person => {
+        this.usuario = person;
+        this.cargandopersona = false;
+      }, error => {
+        console.error('Error cargando persona:', error);
+        this.cargandopersona = false;
+      });      
     }
   }
 
