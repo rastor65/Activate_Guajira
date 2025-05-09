@@ -273,6 +273,7 @@ export class PrivateLayoutComponent implements OnInit {
   guardarDatos() {
     this.isGuardando = true;
     this.botonesDesactivados = true;
+
     if (!this.user.consentimiento) {
       this.messageService.add({
         severity: 'warn',
@@ -281,55 +282,69 @@ export class PrivateLayoutComponent implements OnInit {
       return;
     }
 
-    const usuarioActualizado: Person = {
-      id: this.usuario.id,
-      user: this.usuarioId,
-      edad: this.usuario.edad,
-      genero: this.usuario.genero,
-      barrio: this.usuario.barrio,
-      estrato: this.usuario.estrato,
-      nombres: this.usuario.nombres,
-      telefono: this.usuario.telefono,
-      updateAt: this.usuario.updateAt,
-      createdAt: this.usuario.createdAt,
-      apellidos: this.usuario.apellidos,
-      grupoEtnico: this.usuario.grupoEtnico,
-      departamento: this.usuario.departamento,
-      estado_civil: this.usuario.estado_civil,
-      document_type: this.usuario.document_type,
-      identificacion: this.usuario.identificacion,
-      nivelFormacion: this.usuario.nivelFormacion,
-      fecha_nacimiento: this.usuario.fecha_nacimiento,
-      ciudad_residencia: this.usuario.ciudad_residencia,
-      ciudad_nacimiento: this.usuario.ciudad_nacimiento,
-      situacion_laboral: this.usuario.situacion_laboral,
-      status: this.usuario.status !== undefined ? this.usuario.status : false
-    };
-
-    this.userService.editarUsuario(usuarioActualizado).subscribe(
-      (response) => {
-        this.userService.updateConsentimiento(this.usuarioId!, this.user.consentimiento).subscribe(
-          () => {
-            this.messageService.add({ severity: 'success', summary: 'Datos actualizados correctamente' });
-            this.Dialog2 = false;
-            this.isGuardando = false;
-            this.botonesDesactivados = false;
-          },
-          (error) => {
-            console.error('Error actualizando consentimiento:', error);
-            this.messageService.add({ severity: 'warn', summary: 'Datos actualizados pero consentimiento falló' });
-            this.isGuardando = false;
-            this.botonesDesactivados = false;
-          }
-        );
-      },
-      (error) => {
-        console.error('Error al guardar los datos del usuario', error);
-        this.messageService.add({ severity: 'error', summary: 'Error al actualizar los datos basicos', detail: 'Todos los campos son requeridos' });
+    // Validación extra para evitar duplicados
+    this.userService.getPeopleByUserId(this.usuarioId!).subscribe(personas => {
+      if (personas.length > 1) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error de integridad',
+          detail: 'Ya existe más de un registro asociado a este usuario. Contacta al administrador.'
+        });
         this.isGuardando = false;
         this.botonesDesactivados = false;
+        return;
       }
-    );
+
+      const usuarioActualizado: Person = {
+        id: this.usuario.id,
+        user: this.usuarioId,
+        edad: this.usuario.edad,
+        genero: this.usuario.genero,
+        barrio: this.usuario.barrio,
+        estrato: this.usuario.estrato,
+        nombres: this.usuario.nombres,
+        telefono: this.usuario.telefono,
+        updateAt: this.usuario.updateAt,
+        createdAt: this.usuario.createdAt,
+        apellidos: this.usuario.apellidos,
+        grupoEtnico: this.usuario.grupoEtnico,
+        departamento: this.usuario.departamento,
+        estado_civil: this.usuario.estado_civil,
+        document_type: this.usuario.document_type,
+        identificacion: this.usuario.identificacion,
+        nivelFormacion: this.usuario.nivelFormacion,
+        fecha_nacimiento: this.usuario.fecha_nacimiento,
+        ciudad_residencia: this.usuario.ciudad_residencia,
+        ciudad_nacimiento: this.usuario.ciudad_nacimiento,
+        situacion_laboral: this.usuario.situacion_laboral,
+        status: this.usuario.status !== undefined ? this.usuario.status : false
+      };
+
+      this.userService.editarUsuario(usuarioActualizado).subscribe(
+        () => {
+          this.userService.updateConsentimiento(this.usuarioId!, this.user.consentimiento).subscribe(
+            () => {
+              this.messageService.add({ severity: 'success', summary: 'Datos actualizados correctamente' });
+              this.Dialog2 = false;
+              this.isGuardando = false;
+              this.botonesDesactivados = false;
+            },
+            (error) => {
+              console.error('Error actualizando consentimiento:', error);
+              this.messageService.add({ severity: 'warn', summary: 'Datos actualizados pero consentimiento falló' });
+              this.isGuardando = false;
+              this.botonesDesactivados = false;
+            }
+          );
+        },
+        (error) => {
+          console.error('Error al guardar los datos del usuario', error);
+          this.messageService.add({ severity: 'error', summary: 'Error al actualizar los datos basicos', detail: 'Todos los campos son requeridos' });
+          this.isGuardando = false;
+          this.botonesDesactivados = false;
+        }
+      );
+    });
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
