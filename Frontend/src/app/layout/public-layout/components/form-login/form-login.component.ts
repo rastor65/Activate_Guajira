@@ -153,9 +153,6 @@ export class FormLoginComponent implements OnInit {
 
     let dominios = new Array('uniguajira.edu.co');
 
-    // email.addEventListener('blur', function() {
-
-
     if (email.value.email1 == '' || email.value.email1 == 'undefined') {
       return false;
 
@@ -183,6 +180,7 @@ export class FormLoginComponent implements OnInit {
       first_name: ['', [Validators.required]],
       last_name: ['', [Validators.required]],
       email1: ['', [Validators.required]],
+      identificación: ['', [Validators.required]],
       password: ['', [Validators.required]],
       password2: ['', [Validators.required]],
       consentimiento: ['', [Validators.required]],
@@ -193,7 +191,7 @@ export class FormLoginComponent implements OnInit {
     this.showProgressBar = true;
     let email = this.formRegister.value.email1;
     let formValue = {
-      username: email.substring(0, email.indexOf('@')),
+      username: this.formRegister.value.identificación,
       first_name: this.formRegister.value.first_name,
       last_name: this.formRegister.value.last_name,
       email: this.formRegister.value.email1,

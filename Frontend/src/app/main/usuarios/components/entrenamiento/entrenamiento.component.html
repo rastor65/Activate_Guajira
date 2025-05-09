@@ -40,9 +40,10 @@
                                                     <strong>{{ ejercicio.tipo }}</strong>
                                                     <ul
                                                         *ngIf="ejercicio.sugerencias?.[dia] && ejercicio.sugerencias[dia].length">
-                                                        <li *ngFor="let sug of ejercicio.sugerencias[dia]">
-                                                            {{ sug }}
+                                                        <li *ngFor="let sug of ejercicio.sugerencias?.[dia]">
+                                                            <b>{{ sug.nombre }}: </b> {{ sug.descripcion }}
                                                         </li>
+
                                                     </ul>
                                                     <p *ngIf="!ejercicio.sugerencias?.[dia]?.length"
                                                         class="no-sugerencias">

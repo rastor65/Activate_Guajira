@@ -20,13 +20,14 @@ class UsersView(APIView):
         return Response(serializer.data)
 
 
-class UserDetailView(RetrieveAPIView):
+class UserDetailView(APIView):
     serializer_class = ListUserSerializer
     lookup_field = 'id'
 
     def get_queryset(self):
         return (CustomUser.objects
                 .filter(is_active=True)
-                .select_related('person', 'person__genero', 'person__ciudad_residencia')  # <- Aquí también
+                .select_related('person', 'person__genero', 'person__ciudad_residencia')
+                .distinct()
                 .order_by('id'))
 

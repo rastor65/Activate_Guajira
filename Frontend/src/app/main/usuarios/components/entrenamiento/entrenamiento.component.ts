@@ -55,6 +55,7 @@ export class EntrenamientoComponent implements OnInit {
     if (this.usuarioId != undefined) {
       this.entrenadorService.getEntrenamientosPorUsuario(this.usuarioId).subscribe((data) => {
         this.entrenamientos = data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        console.log("Entrenamientos: ", this.entrenamientos)
   
         this.entrenamientos.forEach((entrenamiento: any) => {
           if (entrenamiento.entrenador) {
