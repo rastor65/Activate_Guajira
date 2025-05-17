@@ -63,20 +63,18 @@ export class PerfilComponent implements OnInit {
     console.log("ID USER", this.usuarioId);
 
     if (this.usuarioId !== undefined) {
-      this.loadUserProfile();  // <-- SOLO ESTO
+      this.loadUserProfile();
       this.cargarMediciones();
     }
 
     this.chartLabels = [];
   }
 
-
   loadUserProfile() {
     this.cargando = true;
     if (this.usuarioId !== undefined) {
       this.userService.getUserProfile(this.usuarioId).subscribe(
         (userProfile) => {
-          console.log("User Profile cargado", userProfile);
           this.user.username = userProfile.username;
           this.user.email = userProfile.email;
           this.profileImage = userProfile.avatar_url;
@@ -84,7 +82,7 @@ export class PerfilComponent implements OnInit {
           this.person = {
             nombres: userProfile.first_name,
             apellidos: userProfile.last_name
-          } as Person; // <-- simulamos el objeto Person para tu HTML
+          } as Person;
           this.cargando = false;
           this.cd.detectChanges();
         },

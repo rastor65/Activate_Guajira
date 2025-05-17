@@ -214,8 +214,7 @@ export class FormLoginComponent implements OnInit {
               var minutes = padLeft(date.getMinutes() + "");
               var seconds = padLeft(date.getSeconds() + "");
               if (seconds == '03') {
-                this.showProgressBar = false;
-                this.messageService.add({ severity: 'success', summary: 'Registro', detail: 'Registro exitoso.' });
+                console.log("registro exitoso")
               }
               if (seconds == '01') {
                 this.bandera = false

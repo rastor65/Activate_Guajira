@@ -23,6 +23,9 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    def __str__(self):
+        return f"{self.username} - {self.first_name}"
+
 class BaseModel(models.Model):
     createdAt = models.DateField(auto_now_add=True)
     updateAt = models.DateField(auto_now=True)
@@ -113,13 +116,13 @@ class UserRol(models.Model):
     status = models.BooleanField(default=True)
     userId = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_roles')
     rolesId = models.ForeignKey(Rol, on_delete=models.CASCADE, related_name='role_users')
-
+    
     def __str__(self):
         return f"{self.userId.username} - {self.rolesId.name}"
 
     class Meta:
-        verbose_name = 'User_rols'
-        verbose_name_plural = 'user_rols'
+        verbose_name = 'Asignar rol'
+        verbose_name_plural = 'Asignar roles'
 
 class Resource(BaseModel):
     path = models.CharField(max_length=256)

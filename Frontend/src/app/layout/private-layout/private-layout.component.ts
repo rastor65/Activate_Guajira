@@ -263,6 +263,7 @@ export class PrivateLayoutComponent implements OnInit {
         severity: 'warn',
         summary: 'Debe aceptar el consentimiento informado para continuar.'
       });
+      this.isGuardando = false;
       return;
     }
 
