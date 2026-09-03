@@ -1,84 +1,87 @@
-<h2 class="recursos-title">Asignar Recursos</h2>
+<div class="ag-page">
 
-<div class="role-resource-container">
-  <form (submit)="agregarRecursoRol()">
-    <fieldset>
-      <legend>Asignar un recurso a un rol</legend>
+  <header class="ag-page__header">
+    <div>
+      <p class="ag-overline">Administracion</p>
+      <h1 class="ag-page__title">Asignar recursos</h1>
+      <p class="ag-page__subtitle">Otorga a un rol acceso a un recurso del sistema.</p>
+    </div>
+  </header>
 
-      <div class="input-group">
-        <div class="input-container">
-          <label for="selectRole">Seleccionar un Rol:</label>
-          <p-select id="selectRole" name="selectedRole" [options]="roles" [(ngModel)]="selectedRole"
-            placeholder="Seleccione un rol" optionLabel="name" optionValue="id" [filter]="true"></p-select>
+  <!-- Formulario de asignacion -->
+  <section class="ag-card asignar">
+    <form (submit)="agregarRecursoRol()" class="asignar__form">
+      <div class="asignar__fields">
+        <div class="form__field">
+          <label for="selectRole">Rol</label>
+          <p-select inputId="selectRole" name="selectedRole" [options]="roles" [(ngModel)]="selectedRole"
+            placeholder="Selecciona un rol" optionLabel="name" optionValue="id" [filter]="true"></p-select>
         </div>
 
-        <div class="input-container">
-          <label for="selectResource">Seleccionar un Recurso:</label>
-          <p-select id="selectResource" name="selectResource" [options]="flattenedResources" [(ngModel)]="selectedResource"
-            placeholder="Seleccione un recurso" optionLabel="titulo" optionValue="id" [filter]="true"></p-select>
+        <div class="form__field">
+          <label for="selectResource">Recurso</label>
+          <p-select inputId="selectResource" name="selectResource" [options]="flattenedResources"
+            [(ngModel)]="selectedResource" placeholder="Selecciona un recurso" optionLabel="titulo" optionValue="id"
+            [filter]="true"></p-select>
         </div>
+
+        <button pButton pRipple type="submit" icon="pi pi-check" label="Asignar" class="ag-accent"></button>
       </div>
+    </form>
+  </section>
 
-      <div class="button-container">
-        <button type="submit">
-          <i class="pi pi-check"></i> Asignar
-        </button>
-      </div>
-    </fieldset>
-  </form>
-</div>
+  <!-- Matriz de permisos -->
+  <section class="ag-card" aria-labelledby="titulo-matriz">
+    <div class="ag-card__header">
+      <h2 id="titulo-matriz" class="ag-card__title">Matriz de permisos</h2>
+      <span class="ag-badge ag-badge--neutral">Solo lectura</span>
+    </div>
 
+    <p class="matriz__nota">
+      Refleja los accesos vigentes de cada rol. Para modificarlos usa el formulario de arriba.
+    </p>
 
-<div class="table-container">
-  <table class="resource-role-table">
-    <thead>
-      <tr>
-        <th scope="col">RECURSOS</th>
-        <th scope="colgroup" [colSpan]="roles.length">ROLES</th>
-      </tr>
-      <tr>
-        <th scope="col">Título</th>
-        <th *ngFor="let role of roles" scope="col">{{ role.name }}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <ng-container *ngFor="let resource of resources">
-        <tr class="row">
-          <td>{{ resource.titulo }}</td>
-          <td *ngFor="let role of roles">
-            <label class="custom-checkbox">
-              <input type="checkbox" [checked]="hasAccess(role.id, resource.id)">
-              <span class="custom-label"></span>
-            </label>
-          </td>
-        </tr>
-
-        <!-- Recursos Hijos -->
-        <ng-container *ngFor="let childResource of resource.children">
-          <tr class="child-row">
-            <td>↳ {{ childResource.titulo }}</td>
-            <td *ngFor="let role of roles">
-              <label class="custom-checkbox">
-                <input type="checkbox" [checked]="hasAccess(role.id, childResource.id)">
-                <span class="custom-label"></span>
-              </label>
-            </td>
+    <div class="ag-table-wrap">
+      <table class="ag-table matriz">
+        <caption class="ag-visually-hidden">
+          Recursos del sistema y los roles que tienen acceso a cada uno
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col" class="matriz__recurso">Recurso</th>
+            <th *ngFor="let role of roles" scope="col" class="matriz__rol">{{ role.name }}</th>
           </tr>
-
-          <!-- Recursos Nietos -->
-          <ng-container *ngFor="let grandchildResource of childResource.children">
-            <tr class="grandchild-row">
-              <td>↳↳ {{ grandchildResource.titulo }}</td>
-              <td *ngFor="let role of roles">
-                <label class="custom-checkbox">
-                  <input type="checkbox" [checked]="hasAccess(role.id, grandchildResource.id)">
-                  <span class="custom-label"></span>
-                </label>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let resource of resources">
+            <tr>
+              <th scope="row" class="matriz__recurso matriz__recurso--n0">{{ resource.titulo }}</th>
+              <td *ngFor="let role of roles" class="matriz__celda">
+                <input type="checkbox" [checked]="hasAccess(role.id, resource.id)" disabled
+                  [attr.aria-label]="role.name + ' tiene acceso a ' + resource.titulo">
               </td>
             </tr>
+
+            <ng-container *ngFor="let childResource of resource.children">
+              <tr>
+                <th scope="row" class="matriz__recurso matriz__recurso--n1">{{ childResource.titulo }}</th>
+                <td *ngFor="let role of roles" class="matriz__celda">
+                  <input type="checkbox" [checked]="hasAccess(role.id, childResource.id)" disabled
+                    [attr.aria-label]="role.name + ' tiene acceso a ' + childResource.titulo">
+                </td>
+              </tr>
+
+              <tr *ngFor="let grandchildResource of childResource.children">
+                <th scope="row" class="matriz__recurso matriz__recurso--n2">{{ grandchildResource.titulo }}</th>
+                <td *ngFor="let role of roles" class="matriz__celda">
+                  <input type="checkbox" [checked]="hasAccess(role.id, grandchildResource.id)" disabled
+                    [attr.aria-label]="role.name + ' tiene acceso a ' + grandchildResource.titulo">
+                </td>
+              </tr>
+            </ng-container>
           </ng-container>
-        </ng-container>
-      </ng-container>
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+    </div>
+  </section>
 </div>

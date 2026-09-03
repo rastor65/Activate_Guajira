@@ -1,162 +1,184 @@
-<!-- Botón para abrir el diálogo de categorías -->
-<div class="admin-categorias-btn-container">
-    <button class="btn" (click)="abrirCategorias()">📂 Administrar categorías</button>
-  </div>  
+<div class="ag-page">
 
-<!-- Diálogo de Categorías -->
-<p-dialog [(visible)]="dialogCategoria" [modal]="true" [style]="{ 'width': '50vw' }" [showHeader]="false">
-
-    <ng-template pTemplate="content">
-        <div class="p-3">
-            <h3 class="text-lg font-semibold text-gray-700">📂 Listado de Categorías</h3>
-            <p-table [value]="categorias" [paginator]="true" [rows]="5" [loading]="loading" responsiveLayout="scroll"
-                class="p-datatable-sm custom-table">
-                <ng-template pTemplate="header">
-                    <tr>
-                        <th class="text-center">#</th>
-                        <th>Nombre de la Categoría</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </ng-template>
-                <ng-template pTemplate="body" let-categoria let-index="rowIndex">
-                    <tr>
-                        <td class="text-center">{{ index + 1 }}</td>
-                        <td>{{ categoria.nombre }}</td>
-                        <td class="text-center">
-                            <button pButton type="button" icon="pi pi-pencil"
-                                class="p-button-rounded p-button-text p-button-warning"
-                                (click)="editarCategoria(categoria)"></button>
-                            <button pButton type="button" icon="pi pi-trash"
-                                class="p-button-rounded p-button-text p-button-danger"
-                                (click)="confirmarEliminar(categoria)"></button>
-                        </td>
-                    </tr>
-                </ng-template>
-            </p-table>
-            <p *ngIf="categorias.length === 0 && !loading" class="text-center text-gray-500 mt-3">⚠ No hay categorías
-                disponibles.</p>
+    <header class="ag-page__header">
+        <div>
+            <p class="ag-overline">Administracion</p>
+            <h1 class="ag-page__title">Tabla maestra</h1>
+            <p class="ag-page__subtitle">
+                Valores parametricos del sistema, agrupados por categoria.
+            </p>
         </div>
-    </ng-template>
 
-    <ng-template pTemplate="footer">
-        <button pButton type="button" label="Agregar Categoría" icon="pi pi-plus" class="p-button-success"
-            (click)="nuevaCategoria()">
-        </button>
-        <div class="text-right">
-            <button pButton type="button" label="Cerrar" class="p-button-text p-button-secondary"
-                (click)="cerrarCategorias()"></button>
+        <div class="ag-page__actions">
+            <button pButton pRipple type="button" icon="pi pi-folder" label="Administrar categorias"
+                class="p-button-outlined" (click)="abrirCategorias()"></button>
+            <button pButton pRipple type="button" icon="pi pi-plus" label="Agregar registro" class="ag-accent"
+                (click)="abrirDialogMaestra()"></button>
         </div>
-    </ng-template>
-</p-dialog>
+    </header>
 
-<p-dialog [(visible)]="dialogEditCategoria" [modal]="true" [style]="{ 'width': '40vw' }" [showHeader]="false">
-    <ng-template pTemplate="content">
-        <h3 class="text-lg font-semibold text-gray-700">
-            {{ selectedCategoria?.id ? '✏ Editar Categoría' : '➕ Nueva Categoría' }}
-        </h3>
-        <div class="p-3">
-            <div class="p-fluid">
-                <div class="field">
-                    <label for="nombreCategoria">Nombre de la Categoría: </label>
-                    <input id="nombreCategoria" type="text" pInputText [(ngModel)]="selectedCategoria.nombre" />
-                </div>
+    <section class="ag-card">
+        <div class="filtros">
+            <div class="filtros__search">
+                <i class="pi pi-search" aria-hidden="true"></i>
+                <input type="text" pInputText [(ngModel)]="searchTabla" (input)="filtrarTablas()"
+                    placeholder="Buscar por nombre o categoria" aria-label="Buscar registro">
             </div>
         </div>
-    </ng-template>
 
-    <ng-template pTemplate="footer">
-        <div class="text-right">
-            <button pButton type="button" label="Guardar" class="p-button-success" (click)="guardarCategoria()">
-            </button>
-            <button pButton type="button" label="Cancelar" class="p-button-text p-button-secondary"
-                (click)="cerrarDialogEditCategoria()">
-            </button>
-        </div>
-    </ng-template>
-</p-dialog>
+        <p-table [value]="tablasFiltradas" [paginator]="true" [rows]="25" [rowsPerPageOptions]="[25, 50, 100]"
+            [loading]="loading" styleClass="p-datatable-sm" [showCurrentPageReport]="true"
+            currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros">
 
-
-<!-- Confirmación para eliminar -->
-
-<p-confirmDialog icon="pi pi-exclamation-triangle" class="custom-confirm-dialog"></p-confirmDialog>
-
-<div class="card">
-    <!-- Botón para agregar nuevo registro -->
-    <div style="display: flex; width: 100%; justify-content: center; align-items: center; margin: auto; margin: 20px;">
-        <button class="btn" style="width: 50%;" (click)="abrirDialogMaestra()">Agregar Registro</button>
-    </div>
-
-    <div class="p-personas-controls">
-        <div class="p-personas-search">
-            <span class="search-icon-container">
-                <i class="pi pi-search search-icon"></i>
-            </span>
-            <input type="text" pInputText [(ngModel)]="searchTabla" (input)="filtrarTablas()" class="search-box"
-                placeholder="Buscar categoría..." />
-        </div>
-    </div>
-
-    <!-- Tabla -->
-    <div class="table-container">
-        <p-table [value]="tablasFiltradas" [paginator]="true" [rows]="100000000" [loading]="loading"
-            responsiveLayout="scroll" class="p-datatable-sm custom-table">
             <ng-template pTemplate="header">
                 <tr>
-                    <th>Nombre</th>
-                    <th>Categoría</th>
-                    <th>Acciones</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col"><span class="ag-visually-hidden">Acciones</span></th>
                 </tr>
             </ng-template>
+
             <ng-template pTemplate="body" let-item>
                 <tr>
                     <td>{{ item.nombre }}</td>
-                    <td>{{ getCategoriaNombre(item.categoria) }}</td>
+                    <td><span class="ag-badge ag-badge--neutral">{{ getCategoriaNombre(item.categoria) }}</span></td>
                     <td>
-                        <button pButton type="button" icon="pi pi-pencil" class="p-button-warning p-mr-2"
-                            (click)="abrirDialogMaestra(item)"></button>
-                        <button pButton type="button" icon="pi pi-trash" class="p-button-danger"
-                            (click)="eliminarMaestra(item.id)"></button>
+                        <div class="ag-row-actions">
+                            <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                                pTooltip="Editar" [attr.aria-label]="'Editar ' + item.nombre"
+                                (click)="abrirDialogMaestra(item)"></button>
+                            <button pButton pRipple type="button" icon="pi pi-trash"
+                                class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar"
+                                [attr.aria-label]="'Eliminar ' + item.nombre"
+                                (click)="eliminarMaestra(item.id)"></button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="3">
+                        <div class="ag-empty">
+                            <span class="ag-empty__icon"><i class="pi pi-database" aria-hidden="true"></i></span>
+                            <h2 class="ag-empty__title">Sin registros</h2>
+                            <p class="ag-empty__text">
+                                No hay valores que coincidan con la busqueda. Agrega un registro o ajusta el filtro.
+                            </p>
+                        </div>
                     </td>
                 </tr>
             </ng-template>
         </p-table>
+    </section>
+</div>
+
+
+<!-- ============ CATEGORIAS ============ -->
+<p-dialog [(visible)]="dialogCategoria" header="Categorias" [modal]="true" [resizable]="false"
+    [draggable]="false" [style]="{ width: '38rem' }" [breakpoints]="{ '640px': '94vw' }">
+
+    <p-table [value]="categorias" [paginator]="true" [rows]="8" [loading]="loading" styleClass="p-datatable-sm">
+        <ng-template pTemplate="header">
+            <tr>
+                <th scope="col" class="col-num">#</th>
+                <th scope="col">Nombre de la categoria</th>
+                <th scope="col"><span class="ag-visually-hidden">Acciones</span></th>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-categoria let-index="rowIndex">
+            <tr>
+                <td class="col-num">{{ index + 1 }}</td>
+                <td>{{ categoria.nombre }}</td>
+                <td>
+                    <div class="ag-row-actions">
+                        <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                            pTooltip="Editar" [attr.aria-label]="'Editar la categoria ' + categoria.nombre"
+                            (click)="editarCategoria(categoria)"></button>
+                        <button pButton pRipple type="button" icon="pi pi-trash"
+                            class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar"
+                            [attr.aria-label]="'Eliminar la categoria ' + categoria.nombre"
+                            (click)="confirmarEliminar(categoria)"></button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="3">
+                    <div class="ag-empty">
+                        <span class="ag-empty__icon"><i class="pi pi-folder-open" aria-hidden="true"></i></span>
+                        <h2 class="ag-empty__title">Sin categorias</h2>
+                        <p class="ag-empty__text">Crea la primera categoria para agrupar los valores.</p>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Cerrar" class="p-button-text"
+            (click)="cerrarCategorias()"></button>
+        <button pButton pRipple type="button" label="Agregar categoria" icon="pi pi-plus"
+            (click)="nuevaCategoria()"></button>
+    </ng-template>
+</p-dialog>
+
+
+<!-- ============ EDITAR CATEGORIA ============ -->
+<p-dialog [(visible)]="dialogEditCategoria" [header]="selectedCategoria?.id ? 'Editar categoria' : 'Nueva categoria'"
+    [modal]="true" [resizable]="false" [draggable]="false" [style]="{ width: '26rem' }"
+    [breakpoints]="{ '640px': '92vw' }">
+
+    <div class="form__field">
+        <label for="nombreCategoria">Nombre de la categoria</label>
+        <input id="nombreCategoria" type="text" pInputText [(ngModel)]="selectedCategoria.nombre"
+            placeholder="Ej. Estado civil">
     </div>
 
-    <p-dialog [(visible)]="dialogMaestra" [modal]="true" [style]="{ 'width': '50vw' }" [draggable]="false"
-        class="custom-dialog" [showHeader]="false">
-        <!-- Formulario para agregar/editar -->
-        <div *ngIf="dialogMaestra" class="form-container">
-            <h3>{{ selectedRegistro?.id ? 'Editar Registro' : 'Nuevo Registro' }}</h3>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
+            (click)="cerrarDialogEditCategoria()"></button>
+        <button pButton pRipple type="button" label="Guardar" icon="pi pi-check"
+            (click)="guardarCategoria()"></button>
+    </ng-template>
+</p-dialog>
 
 
-            <div class="form-container">
-                <div class="p-fluid">
-                    <div class="p-field">
-                        <label for="nombre">Nombre</label>
-                        <input pInputText id="nombre" [(ngModel)]="selectedRegistro.nombre" class="custom-input" required />
-                    </div>
+<!-- ============ REGISTRO ============ -->
+<p-dialog [(visible)]="dialogMaestra" [header]="selectedRegistro?.id ? 'Editar registro' : 'Nuevo registro'"
+    [modal]="true" [resizable]="false" [draggable]="false" [style]="{ width: '30rem' }"
+    [breakpoints]="{ '640px': '92vw' }">
 
-                    <div class="p-field">
-                        <label for="categoria">Categoría</label>
-                        <p-select [options]="categorias" optionLabel="nombre" optionValue="id"
-                            [(ngModel)]="selectedRegistro.categoria" placeholder="Seleccionar..."
-                            [filter]="true"></p-select>
-                    </div>
-
-                    <div class="p-field">
-                        <label for="codigo">Código</label>
-                        <input pInputText id="codigo" type="text" [(ngModel)]="selectedRegistro.codigo" class="custom-input" required />
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-grid p-nogutter p-align-center header-container"></div>
-            <div class="button-container">
-                <button class="btn" (click)="guardarMaestra()">
-                    <i class="pi pi-check"></i> Guardar Cambios</button>
-                <button class="btn" (click)="cerrarDialogMaestra()">
-                    <i class="pi pi-times"></i> Cancelar</button>
-            </div>
+    <div class="form">
+        <div class="form__field">
+            <label for="nombre">Nombre</label>
+            <input pInputText id="nombre" [(ngModel)]="selectedRegistro.nombre" required>
         </div>
-    </p-dialog>
-</div>
+
+        <div class="form__field">
+            <label for="categoria">Categoria</label>
+            <p-select inputId="categoria" [options]="categorias" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="selectedRegistro.categoria" placeholder="Selecciona una categoria" [filter]="true"
+                appendTo="body"></p-select>
+        </div>
+
+        <div class="form__field">
+            <label for="codigo">Codigo</label>
+            <input pInputText id="codigo" type="text" [(ngModel)]="selectedRegistro.codigo" required>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
+            (click)="cerrarDialogMaestra()"></button>
+        <button pButton pRipple type="button" label="Guardar cambios" icon="pi pi-check"
+            (click)="guardarMaestra()"></button>
+    </ng-template>
+</p-dialog>
+
+
+<p-confirmDialog icon="pi pi-exclamation-triangle" [style]="{ width: '26rem' }"
+    [breakpoints]="{ '640px': '92vw' }"></p-confirmDialog>

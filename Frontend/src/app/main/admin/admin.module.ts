@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
 import { RolesRecursosComponent } from './components/roles-recursos/roles-recursos.component';
@@ -33,6 +34,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
   ]
   ,
   imports: [
+    TooltipModule,
     CommonModule,
     SelectModule,
     AdminRoutingModule,

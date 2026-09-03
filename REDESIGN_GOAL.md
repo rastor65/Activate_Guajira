@@ -46,13 +46,13 @@ sin errores. No parar hasta que todas las fases estén en DONE.
 - [x] F3.6 Entrenamiento
 - [x] F3.7 Alimentación
 - [x] F3.8 Personas (crear/editar/ver/eliminar)
-- [ ] F3.9 Admin: usuarios
+- [x] F3.9 Admin: usuarios
 - [x] F3.10 Admin: roles + roles/ver
-- [ ] F3.11 Admin: recursos + recursos/ver
-- [~] F3.12 Admin: user-roles hecho; roles-recursos pendiente
-- [ ] F3.13 Admin: tabla maestra
-- [ ] F3.14 Dashboard
-- [ ] F3.15 Mantenimiento + diálogos globales (toast, confirm)
+- [x] F3.11 Admin: recursos + recursos/ver
+- [x] F3.12 Admin: roles-recursos + user-roles
+- [x] F3.13 Admin: tabla maestra
+- [x] F3.14 Dashboard
+- [x] F3.15 Mantenimiento + diálogos globales (toast, confirm)
 
 ## FASE 4 — QA
 - [ ] F4.1 `ng build` producción verde
@@ -104,3 +104,16 @@ sin errores. No parar hasta que todas las fases estén en DONE.
   [label] de p-checkbox, eliminado en PrimeNG 20, dejaba las casillas sin texto), y
   los roles asignados se muestran como insignias. Siguiente: F3.9 admin usuarios,
   F3.11 recursos, resto de F3.12, F3.13 tabla maestra, F3.14 dashboard, F3.15 mantenimiento.
+- **FASE 3 COMPLETA.** Admin usuarios: zona de carga CSV con vista previa, avisos con
+  rol/aria-live, tabla de errores y dialogo de edicion reorganizado. Recursos: tabla
+  con paginador, rutas en monoespaciado, estado vacio y un unico dialogo por accion.
+  Roles-recursos: matriz de permisos con primera columna fija al hacer scroll,
+  jerarquia por sangria (antes solo flechitas) y aria-label por celda. OJO: los
+  checkboxes de esa matriz nunca tuvieron handler de cambio, asi que son de solo
+  lectura; se marcaron como tal en vez de simular interactividad. Tabla maestra:
+  tres dialogos con cabecera y pie propios, paginador razonable (antes rows=100000000).
+  Mantenimiento: dejo de ser un p-dialog con un video desplazado fuera de pantalla y
+  ahora es una pagina real con video de fondo que respeta prefers-reduced-motion.
+  Dashboard solo contiene router-outlet: nada que redisenar. TooltipModule anadido a
+  los modulos admin/recursos/roles. Build de produccion verde: 2.35 MB / 505 kB gz.
+  Siguiente: FASE 4 (QA).

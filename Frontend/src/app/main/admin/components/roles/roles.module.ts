@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RolesRoutingModule } from './roles-routing.module';
 import { VerComponent } from './components/ver/ver.component';
@@ -24,6 +25,7 @@ import { CardModule } from 'primeng/card';
     // ConfirmationService
   ],
   imports: [
+    TooltipModule,
     CommonModule,
     RolesRoutingModule,
 

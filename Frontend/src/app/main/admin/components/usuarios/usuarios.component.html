@@ -1,185 +1,235 @@
-<div class="csv-container">
-    <h2>📂 Carga masiva de usuarios (CSV)</h2>
+<div class="ag-page">
 
-    <label class="custom-file-upload">
-        <input type="file" (change)="onFileChange($event)" accept=".csv">
-        📥 Seleccionar Archivo CSV
-    </label>
+    <header class="ag-page__header">
+        <div>
+            <p class="ag-overline">Administracion</p>
+            <h1 class="ag-page__title">Usuarios</h1>
+            <p class="ag-page__subtitle">Carga usuarios de forma masiva desde un CSV y gestiona los existentes.</p>
+        </div>
+    </header>
 
-    <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    <!-- ============ CARGA MASIVA ============ -->
+    <section class="ag-card carga" aria-labelledby="titulo-carga">
+        <div class="ag-card__header">
+            <h2 id="titulo-carga" class="ag-card__title">Carga masiva por CSV</h2>
+        </div>
 
-    <div class="table-wrapper" *ngIf="data.length > 0">
-        <table class="csv-table">
-            <thead>
-                <tr>
-                    <th *ngFor="let header of headers">{{ header }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let row of data">
-                    <td *ngFor="let header of headers">{{ row[header] }}</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+        <label class="file-drop" for="csvFile">
+            <i class="pi pi-file-import" aria-hidden="true"></i>
+            <span class="file-drop__title">Seleccionar archivo CSV</span>
+            <span class="file-drop__hint">El archivo debe incluir nombres, apellidos, correo y contrasena.</span>
+            <input type="file" id="csvFile" (change)="onFileChange($event)" accept=".csv">
+        </label>
 
-    <!-- Botón para crear usuarios -->
-    <button *ngIf="data.length > 0" (click)="crearUsuarios()" class="btn-crear">
-        🆕 Crear Usuarios
-    </button>
+        <p *ngIf="errorMessage" class="alerta alerta--error" role="alert">
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i> {{ errorMessage }}
+        </p>
+        <p *ngIf="successMessage" class="alerta alerta--ok" role="status">
+            <i class="pi pi-check-circle" aria-hidden="true"></i> {{ successMessage }}
+        </p>
+        <p *ngIf="errorCrearMessage" class="alerta alerta--error" role="alert">
+            <i class="pi pi-exclamation-circle" aria-hidden="true"></i> {{ errorCrearMessage }}
+        </p>
 
-    <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
-    <p *ngIf="errorCrearMessage" class="error-message">{{ errorCrearMessage }}</p>
+        <!-- Vista previa -->
+        <ng-container *ngIf="data.length > 0">
+            <div class="carga__preview-head">
+                <h3 class="carga__preview-title">Vista previa</h3>
+                <span class="ag-badge ag-badge--neutral">{{ data.length }} filas</span>
+            </div>
+
+            <div class="ag-table-wrap">
+                <table class="ag-table">
+                    <thead>
+                        <tr>
+                            <th scope="col" *ngFor="let header of headers">{{ header }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let row of data">
+                            <td *ngFor="let header of headers">{{ row[header] }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="carga__actions">
+                <button pButton pRipple type="button" icon="pi pi-users" label="Crear usuarios" class="ag-accent"
+                    (click)="crearUsuarios()"></button>
+            </div>
+        </ng-container>
+    </section>
+
+    <!-- ============ ERRORES DE CARGA ============ -->
+    <section class="ag-card" *ngIf="failedUsers.length > 0" aria-labelledby="titulo-errores">
+        <div class="ag-card__header">
+            <h2 id="titulo-errores" class="ag-card__title">Errores al cargar usuarios</h2>
+            <span class="ag-badge ag-badge--danger">{{ failedUsers.length }} fallidos</span>
+        </div>
+
+        <div class="ag-table-wrap">
+            <table class="ag-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col">Motivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let userData of failedUsers">
+                        <td data-label="Nombre">{{ userData.first_name }} {{ userData.last_name }}</td>
+                        <td data-label="Correo">{{ userData.email }}</td>
+                        <td data-label="Motivo" class="celda-error">{{ userData.error.error.error }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============ USUARIOS EXISTENTES ============ -->
+    <section class="ag-card" aria-labelledby="titulo-listado">
+        <div class="ag-card__header">
+            <h2 id="titulo-listado" class="ag-card__title">Usuarios registrados</h2>
+        </div>
+
+        <div class="filtros">
+            <div class="filtros__search">
+                <i class="pi pi-search" aria-hidden="true"></i>
+                <input type="text" pInputText [(ngModel)]="searchValue" (input)="filtrarUsuarios()"
+                    placeholder="Buscar por usuario o correo" aria-label="Buscar usuario">
+            </div>
+        </div>
+
+        <div *ngIf="cargando" class="ag-empty" role="status" aria-live="polite">
+            <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+            <p class="ag-empty__text">Cargando usuarios...</p>
+        </div>
+
+        <div class="ag-table-wrap" *ngIf="!cargando && usuariosFiltrados.length">
+            <table class="ag-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col">Roles</th>
+                        <th scope="col"><span class="ag-visually-hidden">Acciones</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let usuario of usuariosFiltrados">
+                        <td data-label="Usuario">{{ usuario.username }}</td>
+                        <td data-label="Correo">{{ usuario.email }}</td>
+                        <td data-label="Roles">
+                            <span class="ag-badge ag-badge--neutral" *ngFor="let rol of usuario.roles">{{ rol }}</span>
+                        </td>
+                        <td data-label="Acciones">
+                            <div class="ag-row-actions">
+                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-text p-button-sm" pTooltip="Editar"
+                                    [attr.aria-label]="'Editar a ' + usuario.username"
+                                    (click)="vereditarUsuario(usuario)"></button>
+                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar"
+                                    [attr.aria-label]="'Eliminar a ' + usuario.username"
+                                    (click)="eliminarUsuario(usuario)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="ag-empty" *ngIf="!cargando && !usuariosFiltrados.length">
+            <span class="ag-empty__icon"><i class="pi pi-users" aria-hidden="true"></i></span>
+            <h3 class="ag-empty__title">Sin usuarios que coincidan</h3>
+            <p class="ag-empty__text">Ajusta la busqueda para ver mas resultados.</p>
+        </div>
+    </section>
 </div>
 
-<p-dialog header="Procesando usuarios" [(visible)]="isLoading" [modal]="true" [closable]="false" [showHeader]="false">
-    <div class="text-center">
-        <p-progressSpinner></p-progressSpinner>
-        <p>Por favor, espera mientras se crean los usuarios...</p>
-        <strong>No te salgas...</strong>
+
+<!-- ============ PROCESANDO ============ -->
+<p-dialog [(visible)]="isLoading" header="Creando usuarios" [modal]="true" [closable]="false" [resizable]="false"
+    [draggable]="false" [style]="{ width: '24rem' }">
+    <div class="procesando" role="status" aria-live="polite">
+        <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+        <p>Estamos creando los usuarios. No cierres esta ventana.</p>
     </div>
 </p-dialog>
 
-<div class="error-container" *ngIf="failedUsers.length > 0">
-    <h2>⚠️ Errores al cargar usuarios</h2>
-    <p-table [value]="failedUsers" class="csv-table">
-        <ng-template pTemplate="header">
-            <tr>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Contraseña</th>
-                <th>Error</th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-userData>
-            <tr>
-                <td>{{ userData.first_name }} {{ userData.last_name }}</td>
-                <td>{{ userData.email }}</td>
-                <td>{{ userData.password }}</td>
-                <td style="color: red;">{{ userData.error.error.error }}</td>
-            </tr>
-        </ng-template>
-    </p-table>
-</div>
 
+<!-- ============ EDITAR USUARIO ============ -->
+<p-dialog [(visible)]="dialogUsuario" header="Editar usuario" [modal]="true" [resizable]="false" [draggable]="false"
+    [style]="{ width: '42rem' }" [breakpoints]="{ '768px': '94vw' }">
 
-<div class="p-personas-controls">
-    <div class="p-personas-search">
-        <span class="search-icon-container">
-            <i class="pi pi-search search-icon"></i>
-        </span>
-        <input type="text" pInputText [(ngModel)]="searchValue" (input)="filtrarUsuarios()" class="search-box"
-            placeholder="Buscar usuario..." />
-    </div>
-</div>
-
-<div class="user-list">
-    <div *ngIf="cargando" class="loading-container">
-        <p-progressSpinner styleClass="spinner"></p-progressSpinner>
-        <span class="loading-text">Cargando usuarios...</span>
-    </div>
-
-    <table *ngIf="!cargando">
-        <thead>
-            <tr>
-                <th>Usuario</th>
-                <th>Email</th>
-                <th>Rol (roles)</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngFor="let usuario of usuariosFiltrados">
-                <tr>
-                    <td>{{ usuario.username }}</td>
-                    <td>{{ usuario.email }}</td>
-                    <td>{{ usuario.roles.join(', ') }}</td>
-                    <td>
-                        <button pButton icon="pi pi-pencil" class="btn-editar"
-                            (click)="vereditarUsuario(usuario)"></button>
-                        <button pButton icon="pi pi-trash" class="btn-eliminar"
-                            (click)="eliminarUsuario(usuario)"></button>
-                    </td>
-                </tr>
-            </ng-container>
-        </tbody>
-    </table>
-</div>
-
-<p-dialog [(visible)]="dialogUsuario" [style]="{'width': '60vw', 'height': '80%'}" [modal]="true" [closable]="false"
-    [showHeader]="false">
-
-    <div class="overlay-spinner" *ngIf="CargandoUsuario">
+    <div class="ag-overlay" *ngIf="CargandoUsuario" role="status" aria-live="polite">
         <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
-        <p class="loading-text">Cargando datos...</p>
+        <p class="ag-overlay__text">Cargando datos</p>
     </div>
 
-    <form *ngIf="!CargandoUsuario" [formGroup]="formUsuario">
-        <div class="p-fluid">
-
-            <div class="row">
-                <div class="p-field col">
-                    <label for="first_name">Nombres</label>
-                    <input id="first_name" type="text" pInputText formControlName="first_name" />
-                </div>
-                <div class="p-field col">
-                    <label for="last_name">Apellidos</label>
-                    <input id="last_name" type="text" pInputText formControlName="last_name" />
-                </div>
+    <form *ngIf="!CargandoUsuario" [formGroup]="formUsuario" class="form">
+        <div class="form__row">
+            <div class="form__field">
+                <label for="first_name">Nombres</label>
+                <input id="first_name" type="text" pInputText formControlName="first_name">
             </div>
-
-            <div class="p-field">
-                <label for="username">Username</label>
-                <input id="username" type="text" pInputText formControlName="username" />
+            <div class="form__field">
+                <label for="last_name">Apellidos</label>
+                <input id="last_name" type="text" pInputText formControlName="last_name">
             </div>
+        </div>
 
-            <div class="p-field">
-                <label for="email">Correo</label>
-                <input id="email" type="email" pInputText formControlName="email" />
+        <div class="form__field">
+            <label for="username">Nombre de usuario</label>
+            <input id="username" type="text" pInputText formControlName="username">
+        </div>
+
+        <div class="form__field">
+            <label for="email">Correo</label>
+            <input id="email" type="email" pInputText formControlName="email">
+        </div>
+
+        <div class="form__field">
+            <label for="password">Nueva contrasena</label>
+            <div class="p-inputgroup">
+                <input id="password" [type]="verPassword ? 'text' : 'password'" pInputText formControlName="password">
+                <button pButton type="button" class="p-button-text p-button-plain"
+                    [icon]="verPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                    [attr.aria-label]="verPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'"
+                    (click)="verPassword = !verPassword"></button>
             </div>
+            <small class="form__hint">Dejala vacia para conservar la contrasena actual.</small>
+        </div>
 
-            <div class="p-field password-toggle">
-                <label for="password">Nueva contraseña</label>
-                <div class="p-inputgroup">
-                    <input id="password" [type]="verPassword ? 'text' : 'password'" pInputText
-                        formControlName="password" />
-                    <button pButton type="button" icon="{{ verPassword ? 'pi pi-eye-slash' : 'pi pi-eye' }}"
-                        class="p-button-text p-button-plain" (click)="verPassword = !verPassword"
-                        [attr.aria-label]="verPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"></button>
-                </div>
+        <div class="form__row">
+            <div class="form__field">
+                <label for="last_login">Ultimo acceso</label>
+                <input id="last_login" type="text" pInputText formControlName="last_login" readonly>
             </div>
-
-            <div class="p-field">
-                <label for="last_login">Último acceso</label>
-                <input id="last_login" type="text" pInputText formControlName="last_login" readonly />
-            </div>
-
-            <div class="p-field">
+            <div class="form__field">
                 <label for="date_joined">Fecha de registro</label>
-                <input id="date_joined" type="text" pInputText formControlName="date_joined" readonly />
+                <input id="date_joined" type="text" pInputText formControlName="date_joined" readonly>
             </div>
+        </div>
 
-            <div class="p-field">
-                <label for="consentimiento">Consentimiento</label>
-                <p-toggleSwitch id="consentimiento" formControlName="consentimiento"></p-toggleSwitch>
-            </div>
-            
-            <div class="p-field">
-                <label for="roles">Roles</label>
-                <p-multiSelect id="roles" formControlName="roles" [options]="roles" optionLabel="name" optionValue="id"
-                    defaultLabel="Seleccionar roles" [readonly]="true">
-                </p-multiSelect>
-            </div>
+        <div class="form__field form__field--inline">
+            <p-toggleSwitch inputId="consentimiento" formControlName="consentimiento"></p-toggleSwitch>
+            <label for="consentimiento">Consentimiento informado aceptado</label>
+        </div>
 
+        <div class="form__field">
+            <label for="roles">Roles</label>
+            <p-multiSelect inputId="roles" formControlName="roles" [options]="roles" optionLabel="name"
+                optionValue="id" defaultLabel="Sin roles asignados" [readonly]="true" appendTo="body"></p-multiSelect>
+            <small class="form__hint">Los roles se editan desde la pantalla de asignacion de roles.</small>
         </div>
     </form>
 
-    <div class="button-container">
-        <button class="btn" (click)="guardarUsuario()">
-            <i class="pi pi-check"></i> Guardar Cambios
-        </button>
-        <button class="btn" (click)="cerrareditarUsuario()">
-            <i class="pi pi-times"></i> Cancelar
-        </button>
-    </div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
+            (click)="cerrareditarUsuario()"></button>
+        <button pButton pRipple type="button" label="Guardar cambios" icon="pi pi-check"
+            (click)="guardarUsuario()"></button>
+    </ng-template>
 </p-dialog>

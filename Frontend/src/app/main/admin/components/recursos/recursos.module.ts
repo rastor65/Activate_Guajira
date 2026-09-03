@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 import { VerComponent } from './components/ver/ver.component';
 
 
@@ -28,6 +29,7 @@ import { RecursosComponent } from './recursos.component';
     RecursosComponent
   ],
   imports: [
+    TooltipModule,
     CommonModule,
     RecursosRoutingModule,
 

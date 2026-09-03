@@ -1,9 +1,17 @@
-<p-dialog [(visible)]="mantenimiento" [modal]="true"
-  [style]="{'width': '98vw','text-align': 'center','background':'#333333'}" contentStyleClass="overflow-y-hidden"
-  [closable]="false" [closeOnEscape]="false" [resizable]="false" zindex="10000" [showHeader]="false">
-  <section id="sect1" class="sect">
-    <video src="{{video}}" autoplay="true" muted="true" loop="true" min-width="100px"
-      style="transform: translate(calc((100% - 190vw) / 2));" poster="{{video}}"></video>
+<main class="mantenimiento">
+  <video class="mantenimiento__video" [src]="video" [poster]="construccion" autoplay muted loop playsinline
+    aria-hidden="true"></video>
+
+  <div class="mantenimiento__scrim" aria-hidden="true"></div>
+
+  <section class="mantenimiento__panel">
+    <span class="mantenimiento__icon"><i class="pi pi-wrench" aria-hidden="true"></i></span>
+
+    <p class="mantenimiento__eyebrow">Activate Guajira</p>
+    <h1 class="mantenimiento__title">Estamos en mantenimiento</h1>
+    <p class="mantenimiento__text">
+      Estamos aplicando mejoras a la plataforma. Vuelve en unos minutos:
+      tus mediciones y tus planes siguen guardados.
+    </p>
   </section>
-  <img src="{{construccion}}" alt="" srcset="" width="70%" height="70%">
-</p-dialog>
+</main>
