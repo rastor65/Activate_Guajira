@@ -1,237 +1,309 @@
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<div class="overlay-spinner" *ngIf="cargando">
+<div class="ag-overlay" *ngIf="cargando" role="status" aria-live="polite">
     <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
-    <p class="loading-text">Cargando...</p>
+    <p class="ag-overlay__text">Cargando</p>
 </div>
 
-<div class="container" *ngIf="person">
-    <img [src]="profileImage" alt="Avatar de usuario" class="user-avatar">
-    <h2>{{ person.nombres }} {{ person.apellidos }}</h2>
-    <button appPreventMultipleClicks pButton icon="pi pi-chart-bar" label="Estadisticas" class="btn-medicion"
-        style="width: 250px; justify-content: right;" (click)="abrirEstadisticas()"></button>
+<div class="ag-page perfil">
+
+    <!-- Cabecera del perfil -->
+    <header class="perfil__header" *ngIf="person">
+        <img [src]="profileImage" alt="" class="perfil__avatar">
+
+        <div class="perfil__identity">
+            <p class="ag-overline">Mi perfil</p>
+            <h1 class="perfil__name">{{ person.nombres }} {{ person.apellidos }}</h1>
+        </div>
+
+        <div class="perfil__actions">
+            <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-chart-bar"
+                label="Estadisticas" class="p-button-outlined" (click)="abrirEstadisticas()"></button>
+            <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-plus"
+                label="Agregar medicion" class="ag-accent" (click)="abrirMedicion()"></button>
+        </div>
+    </header>
+
+    <!-- Resumen de la ultima medicion -->
+    <section class="perfil__summary" *ngIf="ultimaMedicion" aria-label="Ultima medicion registrada">
+        <article class="ag-stat">
+            <p class="ag-stat__label">Indice de masa corporal</p>
+            <p class="ag-stat__value">{{ ultimaMedicion.imc }}</p>
+            <p class="ag-stat__caption">
+                <span class="ag-badge" [ngClass]="'badge--' + getIMCClass(ultimaMedicion.imc)">
+                    {{ getIMCLabel(ultimaMedicion.imc) }}
+                </span>
+            </p>
+        </article>
+
+        <article class="ag-stat">
+            <p class="ag-stat__label">Indice cintura-cadera</p>
+            <p class="ag-stat__value">{{ ultimaMedicion.icc }}</p>
+            <p class="ag-stat__caption">
+                <span class="ag-badge" [ngClass]="'badge--' + getICCClass(ultimaMedicion.icc)">
+                    Riesgo {{ getICCLabel(ultimaMedicion.icc) }}
+                </span>
+            </p>
+        </article>
+
+        <article class="ag-stat">
+            <p class="ag-stat__label">Grasa corporal</p>
+            <p class="ag-stat__value">
+                {{ ultimaMedicion.grasa_corporal }}<span class="ag-stat__unit">%</span>
+            </p>
+            <p class="ag-stat__caption">
+                <span class="ag-badge" [ngClass]="'badge--' + getGrasaClass(ultimaMedicion.grasa_corporal)">
+                    {{ getGrasaLabel(ultimaMedicion.grasa_corporal) }}
+                </span>
+            </p>
+        </article>
+
+        <article class="ag-stat">
+            <p class="ag-stat__label">Peso actual</p>
+            <p class="ag-stat__value">
+                {{ ultimaMedicion.peso }}<span class="ag-stat__unit">kg</span>
+            </p>
+            <p class="ag-stat__caption">Registrado el {{ ultimaMedicion.fecha }}</p>
+        </article>
+    </section>
+
+    <!-- Historial -->
+    <section class="ag-card" aria-labelledby="titulo-mediciones">
+        <div class="ag-card__header">
+            <h2 id="titulo-mediciones" class="ag-card__title">Mis mediciones</h2>
+            <span class="ag-badge ag-badge--neutral" *ngIf="mediciones.length">
+                {{ mediciones.length }} registros
+            </span>
+        </div>
+
+        <div class="imc-message" *ngIf="estado" role="status">
+            <i class="pi pi-info-circle" aria-hidden="true"></i>
+            <strong>{{ estado }}</strong>
+        </div>
+
+        <div class="ag-table-wrap" *ngIf="mediciones.length; else sinMediciones">
+            <table class="ag-table mediciones">
+                <caption class="ag-visually-hidden">
+                    Historial de mediciones antropometricas ordenado por fecha
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Fecha</th>
+                        <th scope="col" class="ag-num">Altura (m)</th>
+                        <th scope="col" class="ag-num">Peso (kg)</th>
+                        <th scope="col">IMC</th>
+                        <th scope="col">ICC</th>
+                        <th scope="col">Grasa corporal</th>
+                        <th scope="col"><span class="ag-visually-hidden">Acciones</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let medicion of mediciones">
+                        <td data-label="Fecha">{{ medicion.fecha }}</td>
+                        <td data-label="Altura" class="ag-num">{{ medicion.talla }}</td>
+                        <td data-label="Peso" class="ag-num">{{ medicion.peso }}</td>
+
+                        <td data-label="IMC">
+                            <button type="button" class="valor"
+                                (click)="mostrarEstadoIMC(medicion.imc)"
+                                [attr.aria-label]="'IMC ' + medicion.imc + ', ' + getIMCLabel(medicion.imc) + '. Ver explicacion'">
+                                <span class="valor__num">{{ medicion.imc }}</span>
+                                <span class="ag-badge" [ngClass]="'badge--' + getIMCClass(medicion.imc)">
+                                    {{ getIMCLabel(medicion.imc) }}
+                                </span>
+                            </button>
+                        </td>
+
+                        <td data-label="ICC">
+                            <button type="button" class="valor"
+                                (click)="mostrarEstadoICC(medicion.icc)"
+                                [attr.aria-label]="'ICC ' + medicion.icc + ', riesgo ' + getICCLabel(medicion.icc) + '. Ver explicacion'">
+                                <span class="valor__num">{{ medicion.icc }}</span>
+                                <span class="ag-badge" [ngClass]="'badge--' + getICCClass(medicion.icc)">
+                                    {{ getICCLabel(medicion.icc) }}
+                                </span>
+                            </button>
+                        </td>
+
+                        <td data-label="Grasa corporal">
+                            <button type="button" class="valor"
+                                (click)="mostrarEstadoGrasa(medicion.grasa_corporal)"
+                                [attr.aria-label]="'Grasa corporal ' + medicion.grasa_corporal + ' por ciento, ' + getGrasaLabel(medicion.grasa_corporal) + '. Ver explicacion'">
+                                <span class="valor__num">{{ medicion.grasa_corporal }}%</span>
+                                <span class="ag-badge" [ngClass]="'badge--' + getGrasaClass(medicion.grasa_corporal)">
+                                    {{ getGrasaLabel(medicion.grasa_corporal) }}
+                                </span>
+                            </button>
+                        </td>
+
+                        <td data-label="Acciones">
+                            <div class="ag-row-actions">
+                                <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-pencil"
+                                    class="p-button-text p-button-sm" aria-label="Editar medicion"
+                                    pTooltip="Editar" (click)="editarMedicion(medicion)"></button>
+                                <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-trash"
+                                    class="p-button-text p-button-sm p-button-danger" aria-label="Eliminar medicion"
+                                    pTooltip="Eliminar" (click)="eliminarMedicion(medicion)"></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <ng-template #sinMediciones>
+            <div class="ag-empty">
+                <span class="ag-empty__icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
+                <h3 class="ag-empty__title">Todavia no hay mediciones</h3>
+                <p class="ag-empty__text">
+                    Registra tu primera medicion para empezar a seguir tu composicion corporal
+                    y tu progreso en el tiempo.
+                </p>
+                <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-plus"
+                    label="Agregar medicion" class="ag-accent" (click)="abrirMedicion()"></button>
+            </div>
+        </ng-template>
+    </section>
 </div>
-<div class="medicion">
-    <button appPreventMultipleClicks pButton icon="pi pi-plus" label="Agregar medición" class="btn-medicion"
-        (click)="abrirMedicion()"></button>
-</div>
 
-<br>
 
-<div class="card">
-    <h2>Mis Mediciones</h2>
-    <div *ngIf="estado" class="imc-message">
-        <strong>{{ estado }}</strong>
-    </div>
-    <div class="mediciones-wrapper">
-        <table class="mediciones-table">
-            <thead>
-                <tr>
-                    <th>Fecha</th>
-                    <th>Altura (m)</th>
-                    <th>Peso (Kg)</th>
-                    <th>IMC</th>
-                    <th>ICC</th>
-                    <th>Grasa corporal</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let medicion of mediciones">
-                    <td>{{ medicion.fecha }}</td>
-                    <td>{{ medicion.talla }}</td>
-                    <td>{{ medicion.peso }}</td>
-                    <td [ngClass]="getIMCClass(medicion.imc)" class="valor-cell"
-                        (click)="mostrarEstadoIMC(medicion.imc)">
-                        {{ medicion.imc }}
-                    </td>
-                    <td [ngClass]="getICCClass(medicion.icc)" class="valor-cell"
-                        (click)="mostrarEstadoICC(medicion.icc)">
-                        {{ medicion.icc }}
-                    </td>
-                    <td [ngClass]="getGrasaClass(medicion.grasa_corporal)" class="valor-cell"
-                        (click)="mostrarEstadoGrasa(medicion.grasa_corporal)">
-                        {{ medicion.grasa_corporal }}
-                    </td>
-                    <td>
-                        <button appPreventMultipleClicks pButton icon="pi pi-pencil" class="btn-editar"
-                            (click)="editarMedicion(medicion)"></button>
-                        <button appPreventMultipleClicks pButton icon="pi pi-trash" class="btn-eliminar"
-                            (click)="eliminarMedicion(medicion)"></button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+<!-- ===================== MEDICION ===================== -->
+<p-dialog [(visible)]="dialogMedicion" [header]="esEdicion ? 'Editar medicion' : 'Detalles de la medicion'"
+    [modal]="true" [resizable]="false" [draggable]="false" [style]="{ width: '68rem' }"
+    [breakpoints]="{ '1024px': '94vw' }">
 
-<p-dialog [(visible)]="dialogMedicion" [style]="{'width': '80vw'}" [resizable]="false" zindex="10000"
-    [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
-
-    <div class="p-grid p-nogutter p-align-center header-container">
-        <h3>{{ esEdicion ? 'Editar Medición' : 'Detalles de la Medición' }}</h3>
-    </div>
-    <div class="p-grid p-fluid">
-        <div class="form-container">
-            <div class="form-group">
+    <div class="form-grid">
+        <fieldset class="form-section">
+            <legend>Antropometria</legend>
+            <div class="form__field">
                 <label for="talla">Altura (m)</label>
-                <input type="number" id="talla" placeholder="Talla" pInputText [(ngModel)]="formData.talla">
+                <input type="number" step="0.01" id="talla" placeholder="1.72" pInputText [(ngModel)]="formData.talla">
             </div>
-
-            <div class="form-group">
-                <label for="peso">Peso (Kg)</label>
-                <input type="number" id="peso" placeholder="Peso" pInputText [(ngModel)]="formData.peso">
+            <div class="form__field">
+                <label for="peso">Peso (kg)</label>
+                <input type="number" step="0.1" id="peso" placeholder="68.5" pInputText [(ngModel)]="formData.peso">
             </div>
-
-            <div class="form-group">
-                <label for="perimetro_cintura">Perímetro Cintura</label>
-                <input type="number" id="perimetro_cintura" placeholder="Perímetro Cintura" pInputText
+            <div class="form__field">
+                <label for="perimetro_cintura">Perimetro de cintura (cm)</label>
+                <input type="number" id="perimetro_cintura" placeholder="80" pInputText
                     [(ngModel)]="formData.perimetro_cintura">
             </div>
-
-            <div class="form-group">
-                <label for="perimetro_cadera">Perímetro Cadera</label>
-                <input type="number" id="perimetro_cadera" placeholder="Perímetro Cadera" pInputText
+            <div class="form__field">
+                <label for="perimetro_cadera">Perimetro de cadera (cm)</label>
+                <input type="number" id="perimetro_cadera" placeholder="95" pInputText
                     [(ngModel)]="formData.perimetro_cadera">
             </div>
+        </fieldset>
 
-            <div *ngIf="genero === 'Masculino'" class="form-group">
-                <label for="pliegue_pectoral">Pliegue Pectoral</label>
-                <input type="number" id="pliegue_pectoral" placeholder="Pliegue Pectoral" pInputText
-                    [(ngModel)]="formData.pliegue_pectoral">
+        <fieldset class="form-section">
+            <legend>Pliegues cutaneos</legend>
+            <div class="form__field" *ngIf="genero === 'Masculino'">
+                <label for="pliegue_pectoral">Pliegue pectoral (mm)</label>
+                <input type="number" id="pliegue_pectoral" pInputText [(ngModel)]="formData.pliegue_pectoral">
             </div>
-
-            <div *ngIf="genero === 'Masculino'" class="form-group">
-                <label for="pliegue_abdominal">Pliegue Abdominal</label>
-                <input type="number" id="pliegue_abdominal" placeholder="Pliegue Abdominal" pInputText
-                    [(ngModel)]="formData.pliegue_abdominal">
+            <div class="form__field" *ngIf="genero === 'Masculino'">
+                <label for="pliegue_abdominal">Pliegue abdominal (mm)</label>
+                <input type="number" id="pliegue_abdominal" pInputText [(ngModel)]="formData.pliegue_abdominal">
             </div>
-
-            <div *ngIf="genero === 'Femenino'" class="form-group">
-                <label for="pliegue_tricipal">Pliegue Tricipal</label>
-                <input type="number" id="pliegue_tricipal" placeholder="Pliegue Tricipal" pInputText
-                    [(ngModel)]="formData.pliegue_tricipal">
+            <div class="form__field" *ngIf="genero === 'Femenino'">
+                <label for="pliegue_tricipal">Pliegue tricipal (mm)</label>
+                <input type="number" id="pliegue_tricipal" pInputText [(ngModel)]="formData.pliegue_tricipal">
             </div>
-
-            <div *ngIf="genero === 'Femenino'" class="form-group">
-                <label for="pliegue_iliocrestal">Pliegue Iliocrestal</label>
-                <input type="number" id="pliegue_iliocrestal" placeholder="Pliegue Iliocrestal" pInputText
-                    [(ngModel)]="formData.pliegue_iliocrestal">
+            <div class="form__field" *ngIf="genero === 'Femenino'">
+                <label for="pliegue_iliocrestal">Pliegue iliocrestal (mm)</label>
+                <input type="number" id="pliegue_iliocrestal" pInputText [(ngModel)]="formData.pliegue_iliocrestal">
             </div>
-
-            <div class="form-group">
-                <label for="pliegue_antemuslo">Pliegue Antemuslo</label>
-                <input type="number" id="pliegue_antemuslo" placeholder="Pliegue Antemuslo" pInputText
-                    [(ngModel)]="formData.pliegue_antemuslo">
+            <div class="form__field">
+                <label for="pliegue_antemuslo">Pliegue antemuslo (mm)</label>
+                <input type="number" id="pliegue_antemuslo" pInputText [(ngModel)]="formData.pliegue_antemuslo">
             </div>
+        </fieldset>
 
-            <div class="form-group">
-                <label for="fuerza_manoderecha">Fuerza Mano Derecha</label>
-                <input type="number" id="fuerza_manoderecha" placeholder="Fuerza Mano Derecha" pInputText
-                    [(ngModel)]="formData.fuerza_manoderecha">
+        <fieldset class="form-section">
+            <legend>Fuerza</legend>
+            <div class="form__field">
+                <label for="fuerza_manoderecha">Fuerza mano derecha (kg)</label>
+                <input type="number" id="fuerza_manoderecha" pInputText [(ngModel)]="formData.fuerza_manoderecha">
             </div>
-
-            <div class="form-group">
-                <label for="fuerza_manoizquierda">Fuerza Mano Izquierda</label>
-                <input type="number" id="fuerza_manoizquierda" placeholder="Fuerza Mano Izquierda" pInputText
-                    [(ngModel)]="formData.fuerza_manoizquierda">
+            <div class="form__field">
+                <label for="fuerza_manoizquierda">Fuerza mano izquierda (kg)</label>
+                <input type="number" id="fuerza_manoizquierda" pInputText [(ngModel)]="formData.fuerza_manoizquierda">
             </div>
-
-            <div class="form-group">
-                <label for="equilibrio">Equilibrio</label>
-                <input type="number" id="equilibrio" placeholder="Equilibrio" pInputText
-                    [(ngModel)]="formData.equilibrio">
+            <div class="form__field">
+                <label for="fuerza_explosiva_i">Fuerza explosiva inicial</label>
+                <input type="number" id="fuerza_explosiva_i" pInputText [(ngModel)]="formData.fuerza_explosiva_i">
             </div>
-
-            <div class="form-group">
-                <label for="resistencia_abdominal">Resistencia Abdominal</label>
-                <input type="number" id="resistencia_abdominal" placeholder="Resistencia Abdominal" pInputText
+            <div class="form__field">
+                <label for="fuerza_explosiva_f">Fuerza explosiva final</label>
+                <input type="number" id="fuerza_explosiva_f" pInputText [(ngModel)]="formData.fuerza_explosiva_f">
+            </div>
+            <div class="form__field">
+                <label for="resistencia_abdominal">Resistencia abdominal</label>
+                <input type="number" id="resistencia_abdominal" pInputText
                     [(ngModel)]="formData.resistencia_abdominal">
             </div>
+        </fieldset>
 
-            <div class="form-group">
-                <label for="fuerza_explosiva_i">Fuerza Explosiva Inicial</label>
-                <input type="number" id="fuerza_explosiva_i" placeholder="Fuerza Explosiva Inicial" pInputText
-                    [(ngModel)]="formData.fuerza_explosiva_i">
+        <fieldset class="form-section">
+            <legend>Capacidad funcional</legend>
+            <div class="form__field">
+                <label for="equilibrio">Equilibrio</label>
+                <input type="number" id="equilibrio" pInputText [(ngModel)]="formData.equilibrio">
             </div>
-
-            <div class="form-group">
-                <label for="fuerza_explosiva_f">Fuerza Explosiva Final</label>
-                <input type="number" id="fuerza_explosiva_f" placeholder="Fuerza Explosiva Final" pInputText
-                    [(ngModel)]="formData.fuerza_explosiva_f">
+            <div class="form__field">
+                <label for="flexibilidad">Flexibilidad (cm)</label>
+                <input type="number" id="flexibilidad" pInputText [(ngModel)]="formData.flexibilidad">
             </div>
-
-            <div class="form-group">
-                <label for="resistencia_cardiorespiratoria">Resistencia Cardiorespiratoria</label>
-                <input type="number" id="resistencia_cardiorespiratoria" placeholder="Resistencia Cardiorespiratoria"
-                    pInputText [(ngModel)]="formData.resistencia_cardiorespiratoria">
+            <div class="form__field">
+                <label for="resistencia_cardiorespiratoria">Resistencia cardiorrespiratoria</label>
+                <input type="number" id="resistencia_cardiorespiratoria" pInputText
+                    [(ngModel)]="formData.resistencia_cardiorespiratoria">
             </div>
-
-            <div class="form-group">
-                <label for="tiempo_resistencia_cardiorespiratoria">Tiempo Resistencia Cardiorespiratoria</label>
-                <input type="number" id="tiempo_resistencia_cardiorespiratoria"
-                    placeholder="Tiempo Resistencia Cardiorespiratoria" pInputText
+            <div class="form__field">
+                <label for="tiempo_resistencia_cardiorespiratoria">Tiempo de resistencia (min)</label>
+                <input type="number" id="tiempo_resistencia_cardiorespiratoria" pInputText
                     [(ngModel)]="formData.tiempo_resistencia_cardiorespiratoria">
             </div>
-
-            <div class="form-group">
-                <label for="frecuencia_cardiaca">Frecuencia Cardiaca</label>
-                <input type="number" id="frecuencia_cardiaca" placeholder="Frecuencia Cardiaca" pInputText
-                    [(ngModel)]="formData.frecuencia_cardiaca">
+            <div class="form__field">
+                <label for="frecuencia_cardiaca">Frecuencia cardiaca (ppm)</label>
+                <input type="number" id="frecuencia_cardiaca" pInputText [(ngModel)]="formData.frecuencia_cardiaca">
             </div>
-
-            <div class="form-group">
-                <label for="volumen_max_oxigeno">Volumen Máximo de Oxígeno</label>
-                <input type="number" id="volumen_max_oxigeno" placeholder="Volumen Máximo de Oxígeno" pInputText
-                    [(ngModel)]="formData.volumen_max_oxigeno">
+            <div class="form__field">
+                <label for="volumen_max_oxigeno">Volumen maximo de oxigeno</label>
+                <input type="number" id="volumen_max_oxigeno" pInputText [(ngModel)]="formData.volumen_max_oxigeno">
             </div>
-
-            <div class="form-group">
-                <label for="flexibilidad">Flexibilidad</label>
-                <input type="number" id="flexibilidad" placeholder="Flexibilidad" pInputText
-                    [(ngModel)]="formData.flexibilidad">
-            </div>
-
-            <div class="form-group">
+            <div class="form__field">
                 <label for="caff">CAFF</label>
-                <input type="number" id="caff" placeholder="CAFF" pInputText [(ngModel)]="formData.caff">
+                <input type="number" id="caff" pInputText [(ngModel)]="formData.caff">
             </div>
-
-            <div class="p-grid p-nogutter p-align-center header-container"></div>
-            <div class="button-container">
-                <button class="btn" (click)="guardarMedicion()" [disabled]="botonesDesactivados">
-                    <i *ngIf="!isGuardando" class="pi pi-check"></i>
-                    <i *ngIf="isGuardando" class="pi pi-spin pi-spinner"></i>Guardar Cambios
-                </button>
-                <button class="btn" (click)="cerrarMedicion()" [disabled]="botonesDesactivados">
-                    <i class="pi pi-times"></i> Cancelar
-                </button>
-            </div>
-        </div>
+        </fieldset>
     </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Cancelar" class="p-button-text" (click)="cerrarMedicion()"
+            [disabled]="botonesDesactivados"></button>
+        <button pButton pRipple type="button" label="Guardar cambios" (click)="guardarMedicion()"
+            [disabled]="botonesDesactivados"
+            [icon]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'"></button>
+    </ng-template>
 </p-dialog>
 
-<p-dialog [(visible)]="dialogEstadisticas" [style]="{'width': '80vw'}" [resizable]="false" zindex="10000"
-    [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true" class="custom-dialog">
 
-    <div class="dialog-header">
-        <h2>📊 Estadísticas de Seguimiento</h2>
+<!-- ===================== ESTADISTICAS ===================== -->
+<p-dialog [(visible)]="dialogEstadisticas" header="Estadisticas de seguimiento" [modal]="true" [resizable]="false"
+    [draggable]="false" [style]="{ width: '72rem' }" [breakpoints]="{ '1024px': '94vw' }">
+
+    <div class="charts">
+        <article class="chart-card">
+            <h3 class="chart-card__title">Peso a lo largo del tiempo</h3>
+            <div class="chart-card__canvas"><canvas id="pesoChart"></canvas></div>
+        </article>
+        <article class="chart-card">
+            <h3 class="chart-card__title">Indice de masa corporal</h3>
+            <div class="chart-card__canvas"><canvas id="imcChart"></canvas></div>
+        </article>
     </div>
 
-    <div class="charts-container">
-        <div class="chart-card">
-            <h3>Peso a lo largo del tiempo</h3>
-            <canvas id="pesoChart"></canvas>
-        </div>
-        <div class="chart-card">
-            <h3>Índice de Masa Corporal (IMC)</h3>
-            <canvas id="imcChart"></canvas>
-        </div>
-    </div>
-
-    <div class="button-container">
-        <button appPreventMultipleClicks class="btn-close" (click)="cerrarEstadisticas()">
-            <i class="pi pi-times"></i> Cerrar
-        </button>
-    </div>
+    <ng-template pTemplate="footer">
+        <button appPreventMultipleClicks pButton pRipple type="button" label="Cerrar" class="p-button-text"
+            (click)="cerrarEstadisticas()"></button>
+    </ng-template>
 </p-dialog>

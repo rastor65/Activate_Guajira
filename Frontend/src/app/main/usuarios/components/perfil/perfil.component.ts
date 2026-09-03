@@ -238,6 +238,36 @@ export class PerfilComponent implements OnInit {
     }
   }
 
+  /**
+   * Etiquetas de clasificacion. El design system prohibe comunicar un estado
+   * solo con color: cada valor va acompanado de su palabra.
+   */
+  getIMCLabel(imc: number): string {
+    if (imc < 18.5) return 'Bajo peso';
+    if (imc <= 24.9) return 'Normal';
+    if (imc <= 29.9) return 'Sobrepeso';
+    return 'Obesidad';
+  }
+
+  getICCLabel(icc: number): string {
+    const clase = this.getICCClass(icc);
+    if (clase === 'icc-bajo') return 'Bajo';
+    if (clase === 'icc-moderado') return 'Moderado';
+    return 'Alto';
+  }
+
+  getGrasaLabel(grasa: number): string {
+    const clase = this.getGrasaClass(grasa);
+    if (clase === 'grasa-bajo') return 'Baja';
+    if (clase === 'grasa-normal') return 'Normal';
+    return 'Alta';
+  }
+
+  /** Ultima medicion registrada, para las fichas de resumen. */
+  get ultimaMedicion(): any {
+    return this.mediciones && this.mediciones.length ? this.mediciones[0] : null;
+  }
+
   getIMCClass(imc: number): string {
     if (imc < 18.5) {
       return 'bajo-peso';

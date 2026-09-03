@@ -41,7 +41,7 @@ sin errores. No parar hasta que todas las fases estén en DONE.
 - [x] F3.1 Login / registro (public layout)
 - [x] F3.2 Layout privado: sidebar + topbar + menú
 - [x] F3.3 Landing (hub de módulos)
-- [ ] F3.4 Perfil + mediciones + estadísticas
+- [x] F3.4 Perfil + mediciones + estadísticas
 - [ ] F3.5 Entrenador (mediciones/components/entrenador — 855 líneas)
 - [ ] F3.6 Entrenamiento
 - [ ] F3.7 Alimentación
@@ -82,3 +82,10 @@ sin errores. No parar hasta que todas las fases estén en DONE.
   barra superior pegajosa, cajon en movil con velo, dialogos con cabecera visible
   y secciones agrupadas) y landing (hero + rejilla de modulos con tonos por
   posicion y estado vacio). Siguiente: F3.4 perfil y mediciones.
+- **F3.4 perfil y mediciones.** Cabecera de perfil, cuatro fichas de resumen de la
+  ultima medicion (IMC, ICC, grasa, peso), historial con insignias que combinan
+  color + palabra (requisito de accesibilidad: nunca solo color), celdas
+  clasificadas convertidas en botones reales con aria-label descriptivo, estado
+  vacio con accion, dialogo de medicion reagrupado en cuatro fieldsets tematicos
+  y dialogo de estadisticas con cabecera visible. En movil la tabla se convierte
+  en lista de tarjetas via data-label. Siguiente: F3.5 entrenador (855 lineas).

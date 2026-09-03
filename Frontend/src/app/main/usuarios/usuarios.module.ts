@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { UsuariosRoutingModule } from './usuarios-routing.module';
 import { UsuariosComponent } from './usuarios.component';
@@ -22,6 +23,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   ],
   imports: [
     CommonModule,
+    TooltipModule,
     UsuariosRoutingModule,
     DialogModule,
     ButtonModule,
