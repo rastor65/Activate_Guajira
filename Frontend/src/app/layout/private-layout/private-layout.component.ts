@@ -187,8 +187,34 @@ export class PrivateLayoutComponent implements OnInit {
   /** Cajon de navegacion en movil. En escritorio la barra lateral es fija. */
   public menuAbierto = false;
 
+  /** Barra lateral expandida (con rotulos) o contraida (riel de iconos). */
+  public sidebarExpandido = this.leerPreferenciaSidebar();
+
+  private static readonly CLAVE_SIDEBAR = 'ag_sidebar_expandido';
+
   alternarMenu() { this.menuAbierto = !this.menuAbierto; }
   cerrarMenu() { this.menuAbierto = false; }
+
+  alternarSidebar() {
+    this.sidebarExpandido = !this.sidebarExpandido;
+    try {
+      localStorage.setItem(
+        PrivateLayoutComponent.CLAVE_SIDEBAR,
+        this.sidebarExpandido ? '1' : '0'
+      );
+    } catch {
+      // Modo privado o almacenamiento bloqueado: la preferencia no persiste,
+      // pero la barra sigue funcionando.
+    }
+  }
+
+  private leerPreferenciaSidebar(): boolean {
+    try {
+      return localStorage.getItem(PrivateLayoutComponent.CLAVE_SIDEBAR) === '1';
+    } catch {
+      return false;
+    }
+  }
 
   save(id: string) { }
   ocultarMenu(boolean: boolean) { this.cerrarMenu(); }

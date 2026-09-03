@@ -1,26 +1,42 @@
-<div class="shell" [class.shell--menu-open]="menuAbierto">
+<div class="shell" [class.shell--menu-open]="menuAbierto" [class.shell--expandido]="sidebarExpandido">
 
   <!-- ===================== BARRA LATERAL ===================== -->
   <aside class="shell__sidebar" *ngIf="isLoggedIn === true">
-    <a class="shell__brand" [routerLink]="['/landing']">
-      <img src="assets/peakfit.png" alt="">
-      <span class="shell__brand-text">
-        <strong>Activate</strong>
-        <em>Guajira</em>
-      </span>
-    </a>
+    <div class="shell__sidebar-head">
+      <a class="shell__brand" [routerLink]="['/landing']">
+        <img src="assets/peakfit.png" alt="">
+        <span class="shell__brand-text">
+          <strong>Activate</strong>
+          <em>Guajira</em>
+        </span>
+      </a>
+
+      <button type="button" class="shell__toggle" (click)="alternarSidebar()"
+        [attr.aria-expanded]="sidebarExpandido"
+        [attr.aria-label]="sidebarExpandido ? 'Contraer menu lateral' : 'Expandir menu lateral'"
+        [pTooltip]="sidebarExpandido ? 'Contraer' : 'Expandir'" tooltipPosition="right">
+        <i class="pi" [ngClass]="sidebarExpandido ? 'pi-angle-double-left' : 'pi-angle-double-right'"
+          aria-hidden="true"></i>
+      </button>
+    </div>
 
     <nav class="shell__nav" aria-label="Navegacion principal">
-      <app-menu [menu]="menu1" (funcion)="ocultarMenu($event)"></app-menu>
+      <app-menu [menu]="menu1" [expandido]="sidebarExpandido" (funcion)="ocultarMenu($event)"></app-menu>
     </nav>
 
     <div class="shell__sidebar-footer">
-      <button pButton pRipple type="button" icon="pi pi-cog" class="p-button-text shell__icon-btn"
-        (click)="menu.toggle($event)" aria-label="Ajustes de cuenta" pTooltip="Ajustes"></button>
+      <button type="button" class="shell__accion" (click)="menu.toggle($event)" aria-label="Ajustes de cuenta"
+        [pTooltip]="sidebarExpandido ? '' : 'Ajustes'" tooltipPosition="right">
+        <i class="pi pi-cog" aria-hidden="true"></i>
+        <span class="shell__accion-texto">Ajustes</span>
+      </button>
       <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
 
-      <button pButton pRipple type="button" icon="pi pi-sign-out" class="p-button-text shell__icon-btn"
-        (click)="showConfirm()" aria-label="Cerrar sesion" pTooltip="Cerrar sesion"></button>
+      <button type="button" class="shell__accion shell__accion--salir" (click)="showConfirm()"
+        aria-label="Cerrar sesion" [pTooltip]="sidebarExpandido ? '' : 'Cerrar sesion'" tooltipPosition="right">
+        <i class="pi pi-sign-out" aria-hidden="true"></i>
+        <span class="shell__accion-texto">Cerrar sesion</span>
+      </button>
     </div>
   </aside>
 

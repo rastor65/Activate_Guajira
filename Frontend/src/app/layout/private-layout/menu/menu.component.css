@@ -1,4 +1,5 @@
-/* Riel de navegacion de la barra lateral, con submenu flotante al pasar el cursor. */
+/* Navegacion de la barra lateral.
+   Dos modos: riel de iconos (contraido) y lista con rotulos (expandido). */
 
 .nav {
   display: flex;
@@ -10,27 +11,47 @@
   list-style: none;
 }
 
+.nav--expandido { align-items: stretch; }
+
 .nav__item {
   position: relative;
   width: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
+.nav--expandido .nav__item { align-items: stretch; }
+
+/* --------------------------------------------------------------------------
+   Item principal
+   -------------------------------------------------------------------------- */
 .nav__link {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--ag-space-3);
   width: 44px;
   height: 44px;
+  padding: 0;
+  border: 0;
   border-radius: var(--ag-radius-md);
+  background: transparent;
   color: rgba(255, 255, 255, 0.66);
+  font-family: var(--ag-font-body);
   font-size: 1.15rem;
+  text-align: left;
   text-decoration: none;
   cursor: pointer;
   transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
               color var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.nav--expandido .nav__link {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0 var(--ag-space-3);
 }
 
 .nav__link:hover {
@@ -39,7 +60,38 @@
   text-decoration: none;
 }
 
-/* El estado activo se marca con barra lima + relleno, nunca solo con color */
+.nav__link:focus-visible {
+  outline: 2px solid var(--ag-action-accent);
+  outline-offset: 2px;
+}
+
+.nav__icon {
+  flex: none;
+  width: 1.3rem;
+  text-align: center;
+  font-size: 1.15rem;
+}
+
+/* El rotulo solo existe en modo expandido */
+.nav__texto {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0;
+  width: 0;
+  transition: opacity var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.nav--expandido .nav__texto { opacity: 1; width: auto; }
+
+/* --------------------------------------------------------------------------
+   Estado activo: barra lima + relleno, nunca solo color
+   -------------------------------------------------------------------------- */
 .nav__link.is-active {
   background: rgba(198, 242, 78, 0.14);
   color: var(--ag-action-accent);
@@ -57,21 +109,100 @@
   background: var(--ag-action-accent);
 }
 
-.nav__link:focus-visible {
-  outline: 2px solid var(--ag-action-accent);
-  outline-offset: 2px;
+.nav--expandido .nav__link.is-active::before { left: 0; }
+
+/* --------------------------------------------------------------------------
+   Flecha del grupo
+   -------------------------------------------------------------------------- */
+.nav__caret {
+  flex: none;
+  font-size: 0.7rem;
+  opacity: 0;
+  width: 0;
+  transition: transform var(--ag-dur-base) var(--ag-ease-standard),
+              opacity var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.nav__caret {
+.nav--expandido .nav__caret { opacity: 0.75; width: auto; }
+
+.nav--expandido .nav__link.is-open .nav__caret { transform: rotate(180deg); }
+
+.nav--expandido .nav__link.is-open {
+  color: var(--ag-text-inverse);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* En modo riel, un punto marca que el item tiene hijos */
+.nav:not(.nav--expandido) .nav__link:has(.nav__caret)::after {
+  content: '';
   position: absolute;
-  right: 2px;
-  bottom: 2px;
-  font-size: 0.6rem;
+  right: 5px;
+  bottom: 6px;
+  width: 4px;
+  height: 4px;
+  border-radius: var(--ag-radius-full);
+  background: currentColor;
   opacity: 0.7;
 }
 
 /* --------------------------------------------------------------------------
-   Submenu flotante
+   Submenu en acordeon (barra expandida)
+   -------------------------------------------------------------------------- */
+.nav__sub {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: var(--ag-space-1) 0 var(--ag-space-2) 0;
+  padding: 0 0 0 var(--ag-space-6);
+  list-style: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+  margin-left: var(--ag-space-5);
+  animation: nav-abrir var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+@keyframes nav-abrir {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.nav__sub-link {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-2);
+  min-height: 38px;
+  padding: var(--ag-space-2) var(--ag-space-3);
+  border-radius: var(--ag-radius-sm);
+  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--ag-text-sm);
+  text-decoration: none;
+  transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
+              color var(--ag-dur-fast) var(--ag-ease-standard);
+}
+
+.nav__sub-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ag-text-inverse);
+  text-decoration: none;
+}
+
+.nav__sub-link.is-active {
+  background: rgba(198, 242, 78, 0.14);
+  color: var(--ag-action-accent);
+}
+
+.nav__sub-punto {
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: var(--ag-radius-full);
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.nav__sub-link.is-active .nav__sub-punto { opacity: 1; }
+
+/* --------------------------------------------------------------------------
+   Submenu flotante (barra contraida)
    -------------------------------------------------------------------------- */
 .nav__flyout {
   position: absolute;
@@ -92,7 +223,7 @@
   to   { opacity: 1; transform: none; }
 }
 
-/* Puente invisible para que el cursor pueda cruzar sin cerrar el submenu */
+/* Puente invisible: permite cruzar el hueco sin que se cierre */
 .nav__flyout::before {
   content: '';
   position: absolute;
@@ -147,14 +278,3 @@
 }
 
 .nav__flyout-link.is-active i { color: var(--ag-action-accent); }
-
-/* En movil el cajon ya esta desplegado: el submenu se apila debajo */
-@media (max-width: 900px) {
-  .nav__flyout {
-    position: static;
-    min-width: 0;
-    margin-top: var(--ag-space-2);
-    box-shadow: none;
-    animation: none;
-  }
-}
