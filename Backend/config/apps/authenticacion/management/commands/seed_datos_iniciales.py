@@ -177,6 +177,14 @@ class Command(BaseCommand):
             action="store_true",
             help="Asigna el rol Estudiante a los usuarios que no tengan ninguno.",
         )
+        parser.add_argument(
+            "--admin-pruebas",
+            action="store_true",
+            help=(
+                "Crea un administrador de pruebas con contrasena conocida. "
+                "Solo para desarrollo local: NUNCA usar en produccion."
+            ),
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -190,6 +198,9 @@ class Command(BaseCommand):
 
         if options["reasignar"]:
             self._reasignar_roles()
+
+        if options["admin_pruebas"]:
+            self._admin_pruebas()
 
         self.stdout.write(self.style.SUCCESS("\nListo. La base ya tiene lo minimo para operar."))
 
@@ -266,6 +277,56 @@ class Command(BaseCommand):
             creadas += 1
         if creadas:
             self.stdout.write(f"  Personas:     {creadas} creadas para usuarios que no tenian")
+
+    # -- Admin de pruebas ---------------------------------------------------
+    def _admin_pruebas(self):
+        """Crea un administrador con credenciales conocidas para desarrollo local.
+
+        Se activa solo con --admin-pruebas. La contrasena queda en el codigo a
+        proposito: es una cuenta de desarrollo, no debe existir en produccion.
+        """
+        from django.conf import settings
+
+        if not settings.DEBUG:
+            self.stdout.write(
+                self.style.ERROR(
+                    "  Omitido: DEBUG=False. No se crean credenciales conocidas fuera de desarrollo."
+                )
+            )
+            return
+
+        email = "admin.test@uniguajira.edu.co"
+        username = "1000000001"
+        password = "Admin2026*"
+
+        user, creado = CustomUser.objects.get_or_create(
+            email=email,
+            defaults={
+                "username": username,
+                "first_name": "Admin",
+                "last_name": "Pruebas",
+                "consentimiento": True,
+            },
+        )
+        user.set_password(password)
+        user.is_active = True
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+
+        Person.objects.get_or_create(
+            user=user, defaults={"identificacion": username, "status": True}
+        )
+
+        for rol in Rol.objects.filter(pk__in=[ROL_ADMIN, ROL_ESTUDIANTE, ROL_ENTRENADOR]):
+            UserRol.objects.get_or_create(userId=user, rolesId=rol, defaults={"status": True})
+
+        self.stdout.write(
+            self.style.WARNING(
+                "  Admin pruebas: %s / %s  (%s)"
+                % (email, password, "creado" if creado else "contrasena restablecida")
+            )
+        )
 
     # -- Reasignacion -------------------------------------------------------
     def _reasignar_roles(self):
