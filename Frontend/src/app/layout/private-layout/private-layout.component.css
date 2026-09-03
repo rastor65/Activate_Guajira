@@ -261,6 +261,77 @@
   gap: var(--ag-space-5);
 }
 
+/* --------------------------------------------------------------------------
+   Dialogo de perfil por pestanas
+   -------------------------------------------------------------------------- */
+
+/* Altura estable: al cambiar de pestana el dialogo no debe saltar */
+:host ::ng-deep .dialog-perfil .p-tabpanels {
+  min-height: 17rem;
+  padding: var(--ag-space-5) 0 0 0;
+  background: transparent;
+}
+
+:host ::ng-deep .dialog-perfil .p-tablist {
+  border-bottom: 1px solid var(--ag-border-subtle);
+}
+
+:host ::ng-deep .dialog-perfil .p-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ag-space-2);
+  padding: var(--ag-space-3) var(--ag-space-4);
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+  white-space: nowrap;
+}
+
+:host ::ng-deep .dialog-perfil .p-tab:hover {
+  color: var(--ag-text-brand);
+  background: var(--ag-bg-tinted);
+}
+
+:host ::ng-deep .dialog-perfil .p-tab[data-p-active='true'],
+:host ::ng-deep .dialog-perfil .p-tab.p-tab-active {
+  color: var(--ag-text-brand);
+  background: transparent;
+}
+
+/* Barra indicadora en el acento de marca */
+:host ::ng-deep .dialog-perfil .p-tablist-active-bar {
+  height: 3px;
+  background: var(--ag-action-accent);
+}
+
+:host ::ng-deep .dialog-perfil .p-tab i {
+  font-size: 0.95rem;
+}
+
+/* Rejilla de campos dentro de cada pestana */
+.tab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--ag-space-4) var(--ag-space-5);
+  align-content: start;
+}
+
+.form__hint {
+  font-size: var(--ag-text-xs);
+  color: var(--ag-text-muted);
+}
+
+@media (max-width: 640px) {
+  /* En movil solo se muestra el icono: los rotulos no caben */
+  :host ::ng-deep .dialog-perfil .p-tab span { display: none; }
+  :host ::ng-deep .dialog-perfil .p-tab { padding: var(--ag-space-3); }
+
+  .tab-grid { grid-template-columns: 1fr; }
+}
+
 .form-section {
   display: flex;
   flex-direction: column;

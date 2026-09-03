@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TooltipModule } from 'primeng/tooltip';
+import { TabsModule } from 'primeng/tabs';
 
 import { PrivateLayoutRoutingModule } from './private-layout-routing.module';
 import { PrivateLayoutComponent } from './private-layout.component';
@@ -68,6 +69,7 @@ import { AdminRoutingModule } from 'src/app/main/admin/admin-routing.module';
     CommonModule,
     ProgressBarModule,
     TooltipModule,
+    TabsModule,
     ReactiveFormsModule,
     DataViewModule,
     DashboardRoutingModule,
