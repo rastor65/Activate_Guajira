@@ -17,6 +17,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Usuario, Rol } from 'src/app/models/user/person';
 
 @Component({
+  standalone: false,
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
   styleUrls: ['./usuarios.component.css']

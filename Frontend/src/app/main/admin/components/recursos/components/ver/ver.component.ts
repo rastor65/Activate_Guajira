@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { RecursosService } from 'src/app/core/services/admin/recursos.service';
 import { DialogService } from 'primeng/dynamicdialog';
-import { PrimeNGConfig } from 'primeng/api';
 import { MessageService } from 'primeng/api';
 
 @Component({
+  standalone: false,
   selector: 'app-ver',
   templateUrl: './ver.component.html',
   styleUrls: ['./ver.component.css']
@@ -18,12 +18,10 @@ export class VerComponent implements OnInit {
   dialogType = 'create';
   dialogHeader: string = '';
 
-  constructor(private RecursosService: RecursosService, private dialogService: DialogService, 
-    private primengConfig: PrimeNGConfig) { }
+  constructor(private RecursosService: RecursosService, private dialogService: DialogService) { }
 
   ngOnInit(): void {
     this.loadResources();
-    this.primengConfig.ripple = true; 
   }
 
   loadResources(): void {

@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 
 
 @Component({
+  standalone: false,
   selector: 'app-alimentacion',
   templateUrl: './alimentacion.component.html',
   styleUrls: ['./alimentacion.component.css']

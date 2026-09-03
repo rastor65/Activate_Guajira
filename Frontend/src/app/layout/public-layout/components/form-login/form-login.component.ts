@@ -12,18 +12,16 @@ import { HttpHeaders } from '@angular/common/http';
 import { Person } from 'src/app/models/user/person';
 
 @Component({
+  standalone: false,
   selector: 'app-form-login',
   templateUrl: './form-login.component.html',
   styleUrls: ['./form-login.component.css']
 })
 export class FormLoginComponent implements OnInit {
   displayMaximizable: boolean = true
-  public formLogin: FormGroup = this.formBuilder.group({
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required]],
-  });
+  public formLogin: FormGroup;
   public motrar: boolean = false
-  public formRegister: FormGroup = this.formBuilder.group({});
+  public formRegister: FormGroup;
   public mostrar: boolean = false;
   selectedCities3: any[] = [];
   cities: RoleI[] = [];
@@ -43,7 +41,13 @@ export class FormLoginComponent implements OnInit {
     private http: HttpClient,
     private userService: UserService,
     private usuariosService: UsuariosService,
-  ) { }
+  ) {
+    this.formLogin = this.formBuilder.group({
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+    });
+    this.formRegister = this.formBuilder.group({});
+  }
 
   ngOnInit(): void {
     this.activarFormulario('login');

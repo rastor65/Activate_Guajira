@@ -419,7 +419,7 @@ label {
   /* Evita que el contenido sobresalga */
 }
 
-::ng-deep .p-dropdown {
+::ng-deep .p-select {
   display: flex;
   min-height: 60px;
   max-height: 60px;

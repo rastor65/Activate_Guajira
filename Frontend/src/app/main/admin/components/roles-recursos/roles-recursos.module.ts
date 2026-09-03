@@ -14,7 +14,7 @@ import {DialogModule} from 'primeng/dialog';
 import {InputTextModule} from 'primeng/inputtext';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {KeyFilterModule} from 'primeng/keyfilter';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ToastModule} from 'primeng/toast';
@@ -31,7 +31,7 @@ import { CardModule } from 'primeng/card';
     RolesRecursosRoutingModule,
 
 
-    DropdownModule,
+    SelectModule,
     TableModule,
     ButtonModule,
     ConfirmDialogModule,

@@ -1213,20 +1213,20 @@ input[type="checkbox"] {
   white-space: nowrap;
 }
 
-::ng-deep .custom-dropdown .p-dropdown {
+::ng-deep .custom-dropdown .p-select {
   height: 30px;
   font-size: 0.9rem;
   padding: 0 8px;
   border-radius: 6px;
 }
 
-::ng-deep .custom-dropdown .p-dropdown-label {
+::ng-deep .custom-dropdown .p-select-label {
   padding-top: 4px;
   padding-bottom: 4px;
   line-height: 1.2rem;
 }
 
-::ng-deep .custom-dropdown .p-dropdown-trigger {
+::ng-deep .custom-dropdown .p-select-trigger {
   height: 100%;
 }
 
@@ -1250,7 +1250,7 @@ input[type="checkbox"] {
   }
 }
 
-.p-personas-search p-dropdown {
+.p-personas-search p-select {
   border-radius: 25px;
   border: 1px solid #dcdcdc;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
@@ -1263,27 +1263,27 @@ input[type="checkbox"] {
   transition: border-color 0.3s ease;
 }
 
-.p-personas-search p-dropdown:hover {
+.p-personas-search p-select:hover {
   border-color: #007ad9;
 }
 
-::ng-deep .p-dropdown {
+::ng-deep .p-select {
   width: 220px;
   border-radius: 25px !important;
 }
 
-::ng-deep .p-dropdown-label {
+::ng-deep .p-select-label {
   padding-left: 10px;
   color: #676767;
   font-size: 0.95rem;
 }
 
-::ng-deep .p-dropdown-trigger {
+::ng-deep .p-select-trigger {
   color: #007ad9;
 }
 
 @media screen and (max-width: 768px) {
-  .p-personas-search p-dropdown {
+  .p-personas-search p-select {
     width: 100%;
   }
 }
@@ -1319,7 +1319,7 @@ input[type="checkbox"] {
     outline: none;
   }
 
-  .custom-dropdown ::ng-deep .p-dropdown {
+  .custom-dropdown ::ng-deep .p-select {
     width: 100% !important;
     border-radius: 25px;
     padding: 8px 12px;
@@ -1328,13 +1328,13 @@ input[type="checkbox"] {
     background: #fff;
   }
 
-  .custom-dropdown ::ng-deep .p-dropdown-label {
+  .custom-dropdown ::ng-deep .p-select-label {
     padding: 6px 10px;
     font-size: 1rem;
     color: #333;
   }
 
-  .custom-dropdown ::ng-deep .p-dropdown-trigger {
+  .custom-dropdown ::ng-deep .p-select-trigger {
     font-size: 1rem;
   }
 }
@@ -1348,7 +1348,7 @@ input[type="checkbox"] {
     margin-bottom: 0 !important;
   }
 
-  ::ng-deep .p-dropdown {
+  ::ng-deep .p-select {
     margin-bottom: 0 !important;
     min-height: unset !important;
   }
@@ -1360,7 +1360,7 @@ input[type="checkbox"] {
 }
 
 @media screen and (max-width: 480px) {
-  ::ng-deep p-dropdown {
+  ::ng-deep p-select {
     margin: 0 !important;
     padding: 0 !important;
     border-radius: 25px !important;
@@ -1370,7 +1370,7 @@ input[type="checkbox"] {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
   }
 
-  ::ng-deep p-dropdown-label {
+  ::ng-deep p-select-label {
     padding: 10px 15px !important;
     min-height: 40px !important;
   }
@@ -1409,7 +1409,7 @@ input[type="checkbox"] {
     flex-shrink: 0;
   }
 
-  ::ng-deep .p-dropdown {
+  ::ng-deep .p-select {
     height: 45px;
     font-size: 1rem;
     border-radius: 25px !important;
@@ -1417,13 +1417,13 @@ input[type="checkbox"] {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   }
 
-  ::ng-deep .p-dropdown-label {
+  ::ng-deep .p-select-label {
     line-height: 45px;
     font-size: 0.95rem;
     padding-left: 10px;
   }
 
-  ::ng-deep .p-dropdown-trigger {
+  ::ng-deep .p-select-trigger {
     height: 100%;
     font-size: 1rem;
   }

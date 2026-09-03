@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { createMenu } from 'src/app/consts/menu';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { UserService } from 'src/app/core/services/usuarios/user.service';
 import { Person, categoriaTablaMaestra, tablaMaestra, User } from 'src/app/models/user/person';
@@ -20,6 +20,7 @@ interface menu {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-private-layout',
   templateUrl: './private-layout.component.html',
   styleUrls: ['./private-layout.component.css'],
@@ -116,7 +117,6 @@ export class PrivateLayoutComponent implements OnInit {
     private userService: UserService,
     private formBuilder: FormBuilder,
     public dialogService: DialogService,
-    private primengConfig: PrimeNGConfig,
     private messageService: MessageService,
   ) {
     this.formCambioContrasena = this.formBuilder.group({
@@ -141,7 +141,6 @@ export class PrivateLayoutComponent implements OnInit {
 
     this.obtenerTipos();
     this.verificar();
-    this.primengConfig.ripple = true;
     this.items = [
       { label: 'Imagen', icon: 'pi pi-user', command: () => { this.abrirEditarImagen(); } },
       { separator: true },

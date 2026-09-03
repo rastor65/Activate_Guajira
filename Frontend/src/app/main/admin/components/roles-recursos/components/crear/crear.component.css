@@ -59,7 +59,7 @@ legend {
   color: #333;
 }
 
-::ng-deep .p-dropdown {
+::ng-deep .p-select {
   border-radius: 12px !important;
   padding: 0.5rem !important;
   border: 1px solid #ccc !important;
@@ -67,7 +67,7 @@ legend {
   transition: border-color 0.3s ease;
 }
 
-::ng-deep .p-dropdown:hover {
+::ng-deep .p-select:hover {
   border-color: #007ad9 !important;
 }
 

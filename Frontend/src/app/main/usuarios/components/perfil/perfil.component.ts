@@ -14,6 +14,7 @@ import { ChangeDetectorRef } from '@angular/core';
 declare var Chart: any;
 
 @Component({
+  standalone: false,
   selector: 'app-perfil',
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.css']

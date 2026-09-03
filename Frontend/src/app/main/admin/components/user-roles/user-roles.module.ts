@@ -14,8 +14,7 @@ import {KeyFilterModule} from 'primeng/keyfilter';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ToastModule} from 'primeng/toast';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { MessagesModule } from 'primeng/messages';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
 
 
@@ -29,7 +28,6 @@ import { CheckboxModule } from 'primeng/checkbox';
     UserRolesRoutingModule,
     
     CheckboxModule,
-    MessagesModule,
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
@@ -42,7 +40,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     AutoCompleteModule,
     ToastModule,
     MultiSelectModule,
-    DropdownModule,
+    SelectModule,
   ]
 })
 export class UserRolesModule { }

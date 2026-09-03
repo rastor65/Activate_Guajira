@@ -9,9 +9,9 @@
       class="search-box">
   </div>
 
-  <p-dropdown class="custom-dropdown" [options]="ciudad" [(ngModel)]="selectedCiudad" optionLabel="nombre"
+  <p-select class="custom-dropdown" [options]="ciudad" [(ngModel)]="selectedCiudad" optionLabel="nombre"
     optionValue="id" placeholder="Filtrar por ciudad" (onChange)="filterCards()" [filter]="true">
-  </p-dropdown>
+  </p-select>
 </div>
 
 <div *ngIf="!cargando" class="button-container">
@@ -401,16 +401,16 @@
 
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
+        <p-select id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
           placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
-        </p-dropdown>
+        </p-select>
       </div>
 
       <br>
 
       <div class="form-group">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
+        <textarea id="descripcion" placeholder="Ingrese la descripción" pTextarea
           [(ngModel)]="formAlimentacion.descripcion" rows="4" class="descripcion-textarea"></textarea>
       </div>
     </div>
@@ -594,16 +594,16 @@
 
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
+        <p-select id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
           placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
-        </p-dropdown>
+        </p-select>
       </div>
 
       <br>
 
       <div class="form-group">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
+        <textarea id="descripcion" placeholder="Ingrese la descripción" pTextarea
           [(ngModel)]="formEntrenamiento.descripcion" rows="4" class="descripcion-textarea"></textarea>
       </div>
     </div>
@@ -659,10 +659,10 @@
       <p-progressBar *ngIf="cargandoCiudades" mode="indeterminate">
       </p-progressBar>
       <label for="ciudad">Filtrar por ciudad:</label>
-      <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
+      <p-select id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
         placeholder="Seleccionar una ciudad" class="custom-dropdown" [filter]="true"
         (onChange)="filtrarPorCiudad($event.value)">
-      </p-dropdown>
+      </p-select>
     </div>
 
     <div *ngIf="personasFiltradas.length > 0" class="tabla-contenedor">
@@ -710,16 +710,16 @@
 
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
+        <p-select id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
           placeholder="Seleccione un entrenador" optionLabel="fullName" optionValue="id" [filter]="true">
-        </p-dropdown>
+        </p-select>
       </div>
 
       <br>
 
       <div class="form-group">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
+        <textarea id="descripcion" placeholder="Ingrese la descripción" pTextarea
           [(ngModel)]="formEntrenamiento.descripcion" rows="4" class="descripcion-textarea"></textarea>
       </div>
     </div>
@@ -778,10 +778,10 @@
   <div class="contenedor">
     <div class="filtro-compacto">
       <label for="ciudad">Filtrar por ciudad:</label>
-      <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
+      <p-select id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
         placeholder="Seleccionar una ciudad" class="custom-dropdown" [filter]="true"
         (onChange)="filtrarPorCiudad($event.value)">
-      </p-dropdown>
+      </p-select>
     </div>
 
     <div *ngIf="personasFiltradas.length > 0" class="tabla-contenedor">
@@ -828,16 +828,16 @@
 
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
+        <p-select id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
           placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
-        </p-dropdown>
+        </p-select>
       </div>
 
       <br>
 
       <div class="form-group">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
+        <textarea id="descripcion" placeholder="Ingrese la descripción" pTextarea
           [(ngModel)]="formAlimentacion.descripcion" rows="4" class="descripcion-textarea"></textarea>
       </div>
     </div>

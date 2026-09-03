@@ -8,6 +8,7 @@ import { User } from 'src/app/models/user/person';
 import { Person } from 'src/app/models/user/person';
 
 @Component({
+  standalone: false,
   selector: 'app-entrenamiento',
   templateUrl: './entrenamiento.component.html',
   styleUrls: ['./entrenamiento.component.css']

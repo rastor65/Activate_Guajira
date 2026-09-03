@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MedicionesRoutingModule } from './mediciones-routing.module';
 import { EntrenadorComponent } from './components/entrenador/entrenador.component';
 import { MedicionesComponent } from './mediciones.component';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -24,7 +24,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
   imports: [
     CommonModule,
     MedicionesRoutingModule,
-    DropdownModule, 
+    SelectModule, 
     TableModule,
     DialogModule,
     ButtonModule,

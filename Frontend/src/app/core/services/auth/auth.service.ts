@@ -6,7 +6,7 @@ import { catchError, retry, tap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { MenuResponseI, UserI, UserLoginI, UserLoginResponseI } from 'src/app/models/authorization/usr_User';
 import { environment } from 'src/environments/environment';
-import *as moment from 'moment';
+import moment from 'moment';
 import { Router } from '@angular/router';
 import { Usuario } from 'src/app/models/user/person';
 

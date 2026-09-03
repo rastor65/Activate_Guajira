@@ -7,6 +7,7 @@ import { listaMenuI } from 'src/app/models/menu';
 import { createMenu } from 'src/app/consts/menu';
 
 @Component({
+  standalone: false,
   selector: 'app-landing',
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css'],

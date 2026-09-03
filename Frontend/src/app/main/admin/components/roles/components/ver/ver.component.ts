@@ -9,6 +9,7 @@ import { RolesService } from 'src/app/core/services/admin/roles.service';
 import { DialogService } from 'primeng/dynamicdialog';
 
 @Component({
+  standalone: false,
   selector: 'app-ver',
   templateUrl: './ver.component.html',
   styleUrls: ['./ver.component.css']

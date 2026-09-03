@@ -5,6 +5,7 @@ import { RecursosRolesService } from 'src/app/core/services/admin/recursos-roles
 import { MessageService } from 'primeng/api';
 
 @Component({
+  standalone: false,
   selector: 'app-crear',
   templateUrl: './crear.component.html',
   styleUrls: ['./crear.component.css']

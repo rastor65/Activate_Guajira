@@ -16,13 +16,11 @@ import { HttpClientModule } from '@angular/common/http';
 import { CardModule } from 'primeng/card';
 import { MenuModule } from 'primeng/menu';
 import { MenubarModule } from 'primeng/menubar';
-import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SplitterModule } from 'primeng/splitter';
 import { AvatarModule } from 'primeng/avatar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
-import { SidebarModule } from 'primeng/sidebar';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { ChartModule } from 'primeng/chart';
 import { PrivateLayoutModule } from './layout/private-layout/private-layout.module';
@@ -34,6 +32,8 @@ import { PublicLayoutModule } from './layout/public-layout/public-layout.module'
 
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { providePrimeNG } from 'primeng/config';
+import { ActivateGuajiraPreset } from '../theme/activate-guajira-preset';
 import { ToastModule } from "primeng/toast";
 import { TreeModule } from 'primeng/tree';
 // import {VirtualScrollerModule} from 'primeng/virtualscroller';
@@ -43,10 +43,10 @@ import { CommonModule } from '@angular/common';
 import { KeyFilterModule } from 'primeng/keyfilter';
 import { CarouselModule } from 'primeng/carousel';
 import { GalleriaModule } from 'primeng/galleria';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { FieldsetModule } from 'primeng/fieldset';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TextareaModule } from 'primeng/textarea';
 import { FileUploadModule } from 'primeng/fileupload';
 import { MantenimientoComponent } from './main/mantenimiento/mantenimiento.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -90,7 +90,6 @@ import { PreventMultipleClicksDirective } from './shared/prevent-multiple-clicks
     InputTextModule,
     CardModule,
     MenuModule,
-    MessagesModule,
     MessageModule,
     AccordionModule,
 
@@ -98,7 +97,6 @@ import { PreventMultipleClicksDirective } from './shared/prevent-multiple-clicks
     MenubarModule,
     AvatarGroupModule,
     AvatarModule,
-    SidebarModule,
     PanelMenuModule,
     ChartModule,
     ToolbarModule,
@@ -113,11 +111,11 @@ import { PreventMultipleClicksDirective } from './shared/prevent-multiple-clicks
     GalleriaModule,
     ReactiveFormsModule,
 
-    DropdownModule,
-    CalendarModule,
+    SelectModule,
+    DatePickerModule,
     FieldsetModule,
     FileUploadModule,
-    InputTextareaModule,
+    TextareaModule,
     RecursosRoutingModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
@@ -125,7 +123,22 @@ import { PreventMultipleClicksDirective } from './shared/prevent-multiple-clicks
     })
 
   ],
-  providers: [ConfirmationService, MessageService, CdkVirtualScrollViewport,
+  providers: [
+    providePrimeNG({
+      theme: {
+        preset: ActivateGuajiraPreset,
+        options: {
+          // Tema claro unicamente: nunca activar el selector de modo oscuro.
+          darkModeSelector: false,
+          cssLayer: {
+            name: 'primeng',
+            order: 'theme, base, primeng, app',
+          },
+        },
+      },
+      ripple: true,
+    }),
+    ConfirmationService, MessageService, CdkVirtualScrollViewport,
     { provide: LOCALE_ID, useValue: 'es' },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
   ],

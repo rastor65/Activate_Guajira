@@ -4,7 +4,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
 import { RolesRecursosComponent } from './components/roles-recursos/roles-recursos.component';
 import { UserRolesComponent } from './components/user-roles/user-roles.component';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { TablaMaestraComponent } from './components/tabla-maestra/tabla-maestra.component';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -18,7 +18,7 @@ import { ToastModule } from 'primeng/toast';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { InputSwitch, InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,7 @@ import { InputSwitch, InputSwitchModule } from 'primeng/inputswitch';
   ,
   imports: [
     CommonModule,
-    DropdownModule,
+    SelectModule,
     AdminRoutingModule,
     DialogModule,
     ButtonModule,
@@ -46,7 +46,7 @@ import { InputSwitch, InputSwitchModule } from 'primeng/inputswitch';
     MultiSelectModule,
     ReactiveFormsModule,
     ProgressBarModule,
-    InputSwitchModule
+    ToggleSwitchModule
   ],
   providers: [ConfirmationService, ], 
 })

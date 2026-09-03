@@ -14,6 +14,7 @@ import { tablaMaestra } from 'src/app/models/user/person';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
+  standalone: false,
   selector: 'app-entrenador',
   templateUrl: './entrenador.component.html',
   styleUrls: ['./entrenador.component.css']

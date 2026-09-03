@@ -11,13 +11,11 @@ import { RippleModule } from 'primeng/ripple';
 import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
 import { MenuModule } from 'primeng/menu';
-import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { SplitterModule } from 'primeng/splitter';
 import { MenubarModule } from 'primeng/menubar';
 import { AvatarGroupModule } from 'primeng/avatargroup';
 import { AvatarModule } from 'primeng/avatar';
-import { SidebarModule } from 'primeng/sidebar';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { ChartModule } from 'primeng/chart';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -29,13 +27,13 @@ import { TreeModule } from 'primeng/tree';
 import { SharedModule } from 'primeng/api';
 import { TableModule } from 'primeng/table';
 import { KeyFilterModule } from 'primeng/keyfilter';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { FieldsetModule } from 'primeng/fieldset';
 import { FileUploadModule } from 'primeng/fileupload';
 import { HttpClientModule } from '@angular/common/http';
 
-import {InputTextareaModule} from 'primeng/inputtextarea';
+import {TextareaModule} from 'primeng/textarea';
 import {MultiSelectModule} from 'primeng/multiselect';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -57,7 +55,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     MultiSelectModule,
     ReactiveFormsModule,
-    InputTextareaModule,
+    TextareaModule,
     DividerModule,
     ButtonModule,
     CheckboxModule,
@@ -67,14 +65,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   
     CardModule,
     MenuModule,
-    MessagesModule,
     MessageModule,
 
     SplitterModule,
     MenubarModule,
     AvatarGroupModule,
     AvatarModule,
-    SidebarModule,
     PanelMenuModule,
     ChartModule,
     ToolbarModule,
@@ -87,8 +83,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     // VirtualScrollerModule,
     TableModule,
     KeyFilterModule,
-    DropdownModule,
-    CalendarModule,
+    SelectModule,
+    DatePickerModule,
     FieldsetModule,
     FileUploadModule
   ],

@@ -3,6 +3,7 @@ import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { UserLoginI } from 'src/app/models/authorization/usr_User';
 
 @Component({
+  standalone: false,
   selector: 'app-public-layout',
   templateUrl: './public-layout.component.html',
   styleUrls: ['./public-layout.component.css']

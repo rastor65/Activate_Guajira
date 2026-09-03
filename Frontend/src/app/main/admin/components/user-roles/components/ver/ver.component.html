@@ -12,7 +12,7 @@
             <label for="rol">Roles:</label>
             <div *ngIf="usuarioSeleccionado.username">
                 <div *ngFor="let rol of roles">
-                    <p-checkbox [inputId]="'rol_' + rol.id" [value]="rol.id" [binary]="true" [label]="rol.name"
+                    <p-checkbox [inputId]="'rol_' + rol.id" [value]="rol.id" [binary]="true"
                         [(ngModel)]="rolesSeleccionados" [name]="'rol_' + rol.id">
                     </p-checkbox>
                 </div>

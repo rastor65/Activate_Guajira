@@ -182,29 +182,29 @@ PASSWORD_HASHERS = [
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'railway',
-         'USER': 'root',
-         'PASSWORD': 'zrNXNxBvYreBZCIByPDQiXCxQijcYkwh',
-         'HOST': 'caboose.proxy.rlwy.net',
-         'PORT': '13216', 
-         'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES', 'charset': 'utf8mb4',},
-     }
- }
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'peakfit',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306', 
-#         'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES'},
-#     }
-# }
+#      'default': {
+#          'ENGINE': 'django.db.backends.mysql',
+#          'NAME': 'railway',
+#          'USER': 'root',
+#          'PASSWORD': 'zrNXNxBvYreBZCIByPDQiXCxQijcYkwh',
+#          'HOST': 'caboose.proxy.rlwy.net',
+#          'PORT': '13216', 
+#          'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES', 'charset': 'utf8mb4',},
+#      }
+#  }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'peakfit',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '3306', 
+        'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES'},
+    }
+}
 
 
 # Password validation

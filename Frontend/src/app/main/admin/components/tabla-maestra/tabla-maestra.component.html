@@ -138,9 +138,9 @@
 
                     <div class="p-field">
                         <label for="categoria">Categoría</label>
-                        <p-dropdown [options]="categorias" optionLabel="nombre" optionValue="id"
+                        <p-select [options]="categorias" optionLabel="nombre" optionValue="id"
                             [(ngModel)]="selectedRegistro.categoria" placeholder="Seleccionar..."
-                            [filter]="true"></p-dropdown>
+                            [filter]="true"></p-select>
                     </div>
 
                     <div class="p-field">

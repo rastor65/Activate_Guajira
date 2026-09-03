@@ -8,14 +8,14 @@
       <div class="input-group">
         <div class="input-container">
           <label for="selectRole">Seleccionar un Rol:</label>
-          <p-dropdown id="selectRole" name="selectedRole" [options]="roles" [(ngModel)]="selectedRole"
-            placeholder="Seleccione un rol" optionLabel="name" optionValue="id" [filter]="true"></p-dropdown>
+          <p-select id="selectRole" name="selectedRole" [options]="roles" [(ngModel)]="selectedRole"
+            placeholder="Seleccione un rol" optionLabel="name" optionValue="id" [filter]="true"></p-select>
         </div>
 
         <div class="input-container">
           <label for="selectResource">Seleccionar un Recurso:</label>
-          <p-dropdown id="selectResource" name="selectResource" [options]="flattenedResources" [(ngModel)]="selectedResource"
-            placeholder="Seleccione un recurso" optionLabel="titulo" optionValue="id" [filter]="true"></p-dropdown>
+          <p-select id="selectResource" name="selectResource" [options]="flattenedResources" [(ngModel)]="selectedResource"
+            placeholder="Seleccione un recurso" optionLabel="titulo" optionValue="id" [filter]="true"></p-select>
         </div>
       </div>
 

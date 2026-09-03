@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 @Component({
+  standalone: false,
   selector: 'app-tabla-maestra',
   templateUrl: './tabla-maestra.component.html',
   styleUrls: ['./tabla-maestra.component.css'],

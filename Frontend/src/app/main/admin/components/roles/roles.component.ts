@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-roles',
   templateUrl: './roles.component.html',
   styleUrls: ['./roles.component.css']

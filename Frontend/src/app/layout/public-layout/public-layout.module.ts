@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 import { PublicLayoutRoutingModule } from './public-layout-routing.module';
 import { PublicLayoutComponent } from './public-layout.component';
@@ -24,12 +25,10 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { RippleModule } from 'primeng/ripple';
 import { MenuModule } from 'primeng/menu';
-import { MessagesModule } from 'primeng/messages';
 import { CardModule } from 'primeng/card';
 import { MessageModule } from 'primeng/message';
 import { SplitterModule } from 'primeng/splitter';
 import { MenubarModule } from 'primeng/menubar';
-import { SidebarModule } from 'primeng/sidebar';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { ChartModule } from 'primeng/chart';
 import { ToolbarModule } from 'primeng/toolbar';
@@ -37,11 +36,11 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { TreeModule } from 'primeng/tree';
 import { TableModule } from 'primeng/table';
 import { KeyFilterModule } from 'primeng/keyfilter';
-import { DropdownModule } from 'primeng/dropdown';
-import { CalendarModule } from 'primeng/calendar';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { FieldsetModule } from 'primeng/fieldset';
 import { FileUploadModule } from 'primeng/fileupload';
-import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TextareaModule } from 'primeng/textarea';
 import {PasswordModule} from 'primeng/password';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {AccordionModule} from 'primeng/accordion';
@@ -53,6 +52,7 @@ import {AccordionModule} from 'primeng/accordion';
   ],
   imports: [
     CommonModule,
+    ProgressBarModule,
     ReactiveFormsModule,
     ButtonModule,
     DialogModule,
@@ -84,13 +84,10 @@ import {AccordionModule} from 'primeng/accordion';
   
     CardModule,
     MenuModule,
-    MessagesModule,
     MessageModule,
   
     SplitterModule,
     MenubarModule,
-
-    SidebarModule,
     PanelMenuModule,
     ChartModule,
     ToolbarModule,
@@ -100,11 +97,11 @@ import {AccordionModule} from 'primeng/accordion';
     // VirtualScrollerModule,
     TableModule,
     KeyFilterModule,
-    DropdownModule,
-    CalendarModule,
+    SelectModule,
+    DatePickerModule,
     FieldsetModule,
     FileUploadModule,
-    InputTextareaModule,
+    TextareaModule,
   PasswordModule
 
   ],providers: [ConfirmationService,MessageService],

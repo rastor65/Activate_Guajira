@@ -19,12 +19,12 @@
   </div>
 
   <div class="p-personas-filter">
-    <p-dropdown [options]="filterOptions" placeholder="seleccionar..." optionLabel="name" optionValue="name"
-      [showClear]="true" (onChange)="filterByRole($event.value)"></p-dropdown>
+    <p-select [options]="filterOptions" placeholder="seleccionar..." optionLabel="name" optionValue="name"
+      [showClear]="true" (onChange)="filterByRole($event.value)"></p-select>
   </div>
 
 </div>
-<p-table #dt [value]="roles" [rows]="10" [paginator]="true" [responsive]="true" [globalFilterFields]="globalFilterFields">
+<p-table #dt [value]="roles" [rows]="10" [paginator]="true" [globalFilterFields]="globalFilterFields">
 
   <ng-template pTemplate="header">
     <tr>
