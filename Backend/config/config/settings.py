@@ -27,6 +27,12 @@ SECRET_KEY = 'django-insecure-a#xmneb=v#5y@$2c*sxhl3s2q58i1x8r*7(l8#!(4-4wp37^g&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Detras de un proxy que termina TLS (Railway) la peticion llega por http.
+# Con esto request.is_secure() y build_absolute_uri devuelven https cuando
+# corresponde, sin tener que parchear las URLs a mano en los serializers.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
 #IA
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 

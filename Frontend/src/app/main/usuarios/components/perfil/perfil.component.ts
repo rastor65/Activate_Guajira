@@ -24,7 +24,9 @@ export class PerfilComponent implements OnInit {
   formData: any = {};
   estado: string = '';
   mediciones: any[] = [];
-  public profileImage = '';
+  /** Avatar de respaldo: el usuario puede no tener imagen cargada. */
+  public readonly avatarPorDefecto = 'assets/avatars/user.png';
+  public profileImage = this.avatarPorDefecto;
   esEdicion: boolean = false;
   usuarioId: number | undefined;
   dialogMedicion: boolean = false;
@@ -71,6 +73,13 @@ export class PerfilComponent implements OnInit {
     this.chartLabels = [];
   }
 
+  /** Respaldo en caliente si la imagen remota no llega a cargar. */
+  onAvatarError() {
+    if (this.profileImage !== this.avatarPorDefecto) {
+      this.profileImage = this.avatarPorDefecto;
+    }
+  }
+
   loadUserProfile() {
     this.cargando = true;
     if (this.usuarioId !== undefined) {
@@ -78,7 +87,7 @@ export class PerfilComponent implements OnInit {
         (userProfile) => {
           this.user.username = userProfile.username;
           this.user.email = userProfile.email;
-          this.profileImage = userProfile.avatar_url;
+          this.profileImage = userProfile.avatar_url || this.avatarPorDefecto;
           this.genero = userProfile.gender_name;
           this.person = {
             nombres: userProfile.first_name,

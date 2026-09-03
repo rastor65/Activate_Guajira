@@ -7,7 +7,7 @@
 
     <!-- Cabecera del perfil -->
     <header class="perfil__header" *ngIf="person">
-        <img [src]="profileImage" alt="" class="perfil__avatar">
+        <img [src]="profileImage" alt="" class="perfil__avatar" (error)="onAvatarError()">
 
         <div class="perfil__identity">
             <p class="ag-overline">Mi perfil</p>

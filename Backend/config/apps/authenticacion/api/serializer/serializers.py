@@ -355,16 +355,15 @@ class ListUserSerializer(serializers.Serializer):
 
     def get_avatar_url(self, obj):
         try:
-            if obj.avatar:
-                request = self.context.get('request')
-                if request is not None:
-                    url = request.build_absolute_uri(f'/api/user/{obj.id}/descargar/')
-                    # Corrige si el request ya viene en https
-                    if request.is_secure():
-                        return url
-                    else:
-                        return url.replace('http://', 'https://')
-            return None
+            if not obj.avatar:
+                return None
+            request = self.context.get('request')
+            if request is None:
+                return None
+            # build_absolute_uri ya resuelve el esquema correcto. Detras de un
+            # proxy que termina TLS lo hace gracias a SECURE_PROXY_SSL_HEADER
+            # (ver settings): forzar https aqui rompia el desarrollo local.
+            return request.build_absolute_uri(f'/api/user/{obj.id}/descargar/')
         except Exception:
             return None
 
