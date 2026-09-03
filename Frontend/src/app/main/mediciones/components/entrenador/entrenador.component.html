@@ -127,19 +127,32 @@
                 <td>{{ medicion.fecha }}</td>
                 <td>{{ medicion.talla }}</td>
                 <td>{{ medicion.peso }} kg</td>
-                <td [ngClass]="getIMCClass(medicion.imc)" class="imc-cell" (click)="mostrarEstadoIMC(medicion.imc)">
-                  {{ medicion.imc }}
-                </td>
-                <td [ngClass]="getICCClass(medicion.icc)" class="imc-cell" (click)="mostrarEstadoICC(medicion.icc)">
-                  {{ medicion.icc }}
-                </td>
-                <td [ngClass]="getGrasaClass(medicion.grasa_corporal)" class="imc-cell"
-                  (click)="mostrarEstadoGrasa(medicion.grasa_corporal)">
-                  {{ medicion.grasa_corporal }}
+                <td>
+                  <button type="button" class="imc-cell" [ngClass]="getIMCClass(medicion.imc)"
+                    (click)="mostrarEstadoIMC(medicion.imc)"
+                    [attr.aria-label]="'IMC ' + medicion.imc + '. Ver explicacion'">
+                    {{ medicion.imc }}
+                  </button>
                 </td>
                 <td>
-                  <button pButton icon="pi pi-eye" class="btn-ver" (click)="verMedicion(medicion)"></button>
-                  <button pButton icon="pi pi-pencil" class="btn-editar" (click)="editarMedicion(medicion)"></button>
+                  <button type="button" class="imc-cell" [ngClass]="getICCClass(medicion.icc)"
+                    (click)="mostrarEstadoICC(medicion.icc)"
+                    [attr.aria-label]="'ICC ' + medicion.icc + '. Ver explicacion'">
+                    {{ medicion.icc }}
+                  </button>
+                </td>
+                <td>
+                  <button type="button" class="imc-cell" [ngClass]="getGrasaClass(medicion.grasa_corporal)"
+                    (click)="mostrarEstadoGrasa(medicion.grasa_corporal)"
+                    [attr.aria-label]="'Grasa corporal ' + medicion.grasa_corporal + '. Ver explicacion'">
+                    {{ medicion.grasa_corporal }}
+                  </button>
+                </td>
+                <td>
+                  <button pButton type="button" icon="pi pi-eye" class="btn-ver" aria-label="Ver medicion"
+                    pTooltip="Ver" (click)="verMedicion(medicion)"></button>
+                  <button pButton type="button" icon="pi pi-pencil" class="btn-editar" aria-label="Editar medicion"
+                    pTooltip="Editar" (click)="editarMedicion(medicion)"></button>
                 </td>
               </tr>
             </tbody>
@@ -340,10 +353,13 @@
             <td>{{ alimentacion.calorias_diarias }}</td>
             <td>{{ alimentacion.entrenador }}</td>
             <td>
-              <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUnaAlimentacion(alimentacion)"></button>
-              <button pButton icon="pi pi-pencil" class="btn-editar"
+              <button pButton type="button" icon="pi pi-eye" class="btn-ver" aria-label="Ver plan de alimentacion"
+                pTooltip="Ver" (click)="verUnaAlimentacion(alimentacion)"></button>
+              <button pButton type="button" icon="pi pi-pencil" class="btn-editar"
+                aria-label="Editar plan de alimentacion" pTooltip="Editar"
                 (click)="abrirFormularioAlimentacion(alimentacion)"></button>
-              <button pButton icon="pi pi-trash" class="btn-eliminar"
+              <button pButton type="button" icon="pi pi-trash" class="btn-eliminar"
+                aria-label="Eliminar plan de alimentacion" pTooltip="Eliminar"
                 (click)="eliminarAlimentacion(alimentacion.id)"></button>
             </td>
           </tr>
@@ -495,10 +511,13 @@
                 <td>{{ entrenamiento.duracion_semanas }} semanas</td>
                 <td>{{ entrenamiento.entrenador }}</td>
                 <td class="action-btns">
-                  <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUnEntrenamiento(entrenamiento)"></button>
-                  <button pButton icon="pi pi-pencil" class="btn-editar"
+                  <button pButton type="button" icon="pi pi-eye" class="btn-ver" aria-label="Ver plan de entrenamiento"
+                    pTooltip="Ver" (click)="verUnEntrenamiento(entrenamiento)"></button>
+                  <button pButton type="button" icon="pi pi-pencil" class="btn-editar"
+                    aria-label="Editar plan de entrenamiento" pTooltip="Editar"
                     (click)="abrirFormularioEntrenamiento(entrenamiento)"></button>
-                  <button pButton icon="pi pi-trash" class="btn-eliminar"
+                  <button pButton type="button" icon="pi pi-trash" class="btn-eliminar"
+                    aria-label="Eliminar plan de entrenamiento" pTooltip="Eliminar"
                     (click)="eliminarEntrenamiento(entrenamiento.id)"></button>
                 </td>
               </tr>
@@ -643,17 +662,17 @@
       <div class="semana-container" *ngFor="let semana of formEntrenamiento.semanas">
         <h4>SEMANA {{ semana.numero }}</h4>
         <div class="table-responsive">
-          <table class="p-datatable p-component" style="width: 100%; border-collapse: collapse;">
+          <table class="matriz-ejercicios">
             <thead>
               <tr>
-                <th style="padding: 8px; background: #f4f4f4;">TIPO DE EJERCICIO</th>
-                <th *ngFor="let dia of diasSemana" style="padding: 8px; background: #f4f4f4;">{{ dia }}</th>
+                <th scope="col">Tipo de ejercicio</th>
+                <th *ngFor="let dia of diasSemana" scope="col">{{ dia }}</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let ejercicio of semana.ejercicios; let i = index">
-                <td style="padding: 6px;">{{ ejercicio.tipo }}</td>
-                <td *ngFor="let dia of diasSemana; let j = index" style="text-align: center;">
+                <th scope="row">{{ ejercicio.tipo }}</th>
+                <td *ngFor="let dia of diasSemana; let j = index" class="matriz-ejercicios__celda">
                   <input type="checkbox" [(ngModel)]="semana.ejercicios[i].dias[j]"
                     (change)="onCheckboxChange(semana.ejercicios[i], dia, semana.ejercicios[i].dias[j])"
                     [name]="'checkbox-' + i + '-' + j" />
@@ -761,17 +780,17 @@
     <div class="semana-container" *ngFor="let semana of formEntrenamiento.semanas">
       <h4>SEMANA {{ semana.numero }}</h4>
       <div class="table-responsive">
-        <table class="p-datatable p-component" style="width: 100%; border-collapse: collapse;">
+        <table class="matriz-ejercicios">
           <thead>
             <tr>
-              <th style="padding: 8px; background: #f4f4f4;">TIPO DE EJERCICIO</th>
-              <th *ngFor="let dia of diasSemana" style="padding: 8px; background: #f4f4f4;">{{ dia }}</th>
+              <th scope="col">Tipo de ejercicio</th>
+              <th *ngFor="let dia of diasSemana" scope="col">{{ dia }}</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let ejercicio of semana.ejercicios; let i = index">
-              <td style="padding: 6px;">{{ ejercicio.tipo }}</td>
-              <td *ngFor="let dia of diasSemana; let j = index" style="text-align: center;">
+              <th scope="row">{{ ejercicio.tipo }}</th>
+              <td *ngFor="let dia of diasSemana; let j = index" class="matriz-ejercicios__celda">
                 <div>
                   <input type="checkbox" [(ngModel)]="semana.ejercicios[i].dias[j]"
                     (change)="onCheckboxChange(semana.ejercicios[i], dia, semana.ejercicios[i].dias[j])"

@@ -24,8 +24,9 @@
     </div>
   </aside>
 
-  <!-- Velo para el cajon en movil -->
-  <div class="shell__scrim" *ngIf="menuAbierto" (click)="cerrarMenu()" aria-hidden="true"></div>
+  <!-- Velo para el cajon en movil: es accionable, asi que debe ser un boton -->
+  <button type="button" class="shell__scrim" *ngIf="menuAbierto" (click)="cerrarMenu()"
+    aria-label="Cerrar menu de navegacion"></button>
 
   <!-- ===================== CONTENIDO ===================== -->
   <div class="shell__main">

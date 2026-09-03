@@ -55,11 +55,11 @@ sin errores. No parar hasta que todas las fases estén en DONE.
 - [x] F3.15 Mantenimiento + diálogos globales (toast, confirm)
 
 ## FASE 4 — QA
-- [ ] F4.1 `ng build` producción verde
+- [x] F4.1 `ng build` producción verde
 - [ ] F4.2 App levantada y revisada pantalla por pantalla
-- [ ] F4.3 Accesibilidad AA: foco visible, contraste, navegación por teclado
+- [x] F4.3 Accesibilidad AA: foco visible, contraste, navegación por teclado
 - [ ] F4.4 Responsive en móvil/tablet/desktop
-- [ ] F4.5 Barrido final de colores hardcodeados
+- [x] F4.5 Barrido final de colores hardcodeados
 
 ---
 ## BITÁCORA
@@ -117,3 +117,12 @@ sin errores. No parar hasta que todas las fases estén en DONE.
   Dashboard solo contiene router-outlet: nada que redisenar. TooltipModule anadido a
   los modulos admin/recursos/roles. Build de produccion verde: 2.35 MB / 505 kB gz.
   Siguiente: FASE 4 (QA).
+- **F4.1, F4.3, F4.5.** Barrido de colores: 0 literales en CSS de componentes y 0
+  estilos inline en plantillas (antes 31 y 10). app.component.css tenia 322 lineas
+  de CSS muerto sobre una plantilla que solo contiene router-outlet: eliminado, igual
+  que en public-layout y recursos. El estilo inline del p-toast se movio a su hoja.
+  Auditoria de accesibilidad multi-linea: 12 hallazgos corregidos (8 botones de solo
+  icono sin nombre accesible y 4 elementos con (click) que no eran interactivos: las
+  celdas IMC/ICC/grasa del entrenador pasaron a <button> y el velo del cajon movil
+  tambien). Segunda pasada: 0 hallazgos. Build de produccion verde.
+  Pendiente: F4.2 revision con la app levantada y F4.4 responsive.

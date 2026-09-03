@@ -1,19 +1,2 @@
-body {
-  margin: 0;
-  background-color: #222222;
-}
-
-.margen {
-    margin: 20px;
-}
-
-@media screen and (max-width: 768px) {
-  [data-aos-delay] {
-    transition-delay: 0 !important;
-  }
-}
-
-mat-sidenav {
-    width: 250px;
-}
-
+/* Contenedor de rutas publicas: sin estilos propios.
+   El diseno vive en cada pantalla (ver form-login). */

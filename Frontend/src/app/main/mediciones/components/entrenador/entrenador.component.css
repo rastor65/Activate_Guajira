@@ -365,9 +365,15 @@
    6. CLASIFICACIONES DE SALUD
    ========================================================================== */
 .imc-cell {
-  cursor: pointer;
-  font-weight: 600;
+  padding: var(--ag-space-1) var(--ag-space-3);
+  border: 0;
   border-radius: var(--ag-radius-sm);
+  background: transparent;
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-body-lg);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
   transition: background-color var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
@@ -590,3 +596,41 @@
 
   .resumen-dias { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   11. MATRIZ DE EJERCICIOS POR DIA
+   ========================================================================== */
+.matriz-ejercicios {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ag-text-sm);
+}
+
+.matriz-ejercicios th,
+.matriz-ejercicios td {
+  padding: var(--ag-space-3);
+  border-bottom: 1px solid var(--ag-border-subtle);
+}
+
+.matriz-ejercicios thead th {
+  background: var(--ag-bg-sunken);
+  color: var(--ag-text-secondary);
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.matriz-ejercicios thead th:first-child { text-align: left; }
+
+.matriz-ejercicios tbody th {
+  text-align: left;
+  font-weight: 600;
+  color: var(--ag-text-brand);
+}
+
+.matriz-ejercicios__celda { text-align: center; }
+
+.matriz-ejercicios tbody tr:hover { background: var(--ag-bg-tinted); }

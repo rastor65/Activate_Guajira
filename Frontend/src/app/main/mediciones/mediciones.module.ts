@@ -4,6 +4,7 @@ import { MedicionesRoutingModule } from './mediciones-routing.module';
 import { EntrenadorComponent } from './components/entrenador/entrenador.component';
 import { MedicionesComponent } from './mediciones.component';
 import { SelectModule } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -22,6 +23,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
     EntrenadorComponent,
   ],
   imports: [
+    TooltipModule,
     CommonModule,
     MedicionesRoutingModule,
     SelectModule, 
