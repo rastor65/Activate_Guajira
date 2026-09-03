@@ -1,150 +1,160 @@
-/* ============================= */
-/*  ESTILOS GENERALES            */
-/* ============================= */
+/* Riel de navegacion de la barra lateral, con submenu flotante al pasar el cursor. */
 
-:root {
-  --primary-color: #1686e8;
-  --secondary-color: #222222;
-  --hover-bg: #f0f0f0;
-  --text-color: #fafafa;
-}
-
-/* ============================= */
-/*  ESTILOS DEL MENÚ PRINCIPAL   */
-/* ============================= */
-
-.padre {
+.nav {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 10px;
-  cursor: pointer;
-  transition: background 0.3s ease-in-out;
+  gap: var(--ag-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav__item {
   position: relative;
-  color: #f0f0f0 !important;
-  border-radius: 20px;
-}
-
-.padre:hover,
-.padre:focus {
-  background-color: var(--hover-bg);
-  text-decoration-color: var(--primary-color);
-}
-
-/* ============================= */
-/*  ESTILOS DEL ICONO PRINCIPAL  */
-/* ============================= */
-
-.centered-span {
+  width: 100%;
   display: flex;
+  justify-content: center;
+}
+
+.nav__link {
+  position: relative;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  width: fit-content;
-  padding: 10px;
-  border: 2px solid transparent;
-  border-radius: 8px;
-}
-
-/* ============================= */
-/*  ESTILOS DEL LOGO             */
-/* ============================= */
-
-.logo {
-  display: block;
-  padding: 20px 20px 0 20px;
-  margin-top: 5px;
-  background-color: transparent;
-  width: 240px;
-}
-
-.logo img {
-  width: 95%;
-  height: 95%;
-  object-fit: cover;
-}
-
-.logo hr {
-  width: 100%;
-  height: 1px;
-  background-color: var(--primary-color);
-  border-width: 0;
-}
-
-/* ============================= */
-/*  SUBMENÚ FLOTANTE             */
-/* ============================= */
-
-
-
-/* ============================= */
-/*  ESTILOS DE LOS ÍTEMS DEL MENÚ */
-/* ============================= */
-
-.hijo {
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
-}
-
-.hijo:hover {
-  background-color: var(--hover-bg);
-  color: var(--text-color);
-}
-
-.hijo:hover,
-.nieto:hover,
-.padre:hover {
-  background-color: #f0f0f0;
-  color: #222222;
-  text-decoration-color: var(--primary-color);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ag-radius-md);
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 1.15rem;
+  text-decoration: none;
   cursor: pointer;
+  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
+              color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-/* ============================= */
-/*  PROFUNDIDAD DEL MENÚ (ANIDADO) */
-/* ============================= */
-
-.deep-1 {
-  margin-left: 20px;
+.nav__link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ag-text-inverse);
+  text-decoration: none;
 }
 
-.deep-2 {
-  margin-left: 40px;
+/* El estado activo se marca con barra lima + relleno, nunca solo con color */
+.nav__link.is-active {
+  background: rgba(198, 242, 78, 0.14);
+  color: var(--ag-action-accent);
 }
 
-/* ============================= */
-/*  MEJORAS DE MATERIAL DESIGN   */
-/* ============================= */
-
-.mat-list-base .mat-list-item .mat-list-item-content,
-.mat-list-base .mat-list-option .mat-list-item-content {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  box-sizing: border-box;
-  padding: 0 16px;
-  height: inherit;
+.nav__link.is-active::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--ag-space-2) * -1);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-action-accent);
 }
 
-.mat-list-base .mat-list-item .mat-list-item-ripple,
-.mat-list-base .mat-list-option .mat-list-item-ripple {
+.nav__link:focus-visible {
+  outline: 2px solid var(--ag-action-accent);
+  outline-offset: 2px;
+}
+
+.nav__caret {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  font-size: 0.6rem;
+  opacity: 0.7;
+}
+
+/* --------------------------------------------------------------------------
+   Submenu flotante
+   -------------------------------------------------------------------------- */
+.nav__flyout {
+  position: absolute;
+  z-index: 60;
+  top: 0;
+  left: calc(100% + var(--ag-space-2));
+  min-width: 15rem;
+  padding: var(--ag-space-3);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-surface);
+  border: 1px solid var(--ag-border-subtle);
+  box-shadow: var(--ag-shadow-lg);
+  animation: nav-flyout var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+@keyframes nav-flyout {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Puente invisible para que el cursor pueda cruzar sin cerrar el submenu */
+.nav__flyout::before {
+  content: '';
   position: absolute;
   top: 0;
-  left: 0;
-  right: 0;
   bottom: 0;
-  pointer-events: none;
+  left: calc(var(--ag-space-2) * -1);
+  width: var(--ag-space-2);
 }
 
-.mat-list-base .mat-list-item .mat-list-icon,
-.mat-list-base .mat-list-option .mat-list-icon {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  font-size: 24px;
-  box-sizing: content-box;
-  border-radius: 50%;
-  padding: 4px;
+.nav__flyout-title {
+  margin: 0 0 var(--ag-space-2) 0;
+  padding: 0 var(--ag-space-2);
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+}
+
+.nav__flyout-link {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-2);
+  padding: var(--ag-space-3) var(--ag-space-2);
+  min-height: 44px;
+  border-radius: var(--ag-radius-sm);
+  color: var(--ag-text-primary);
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
+              color var(--ag-dur-fast) var(--ag-ease-standard);
+}
+
+.nav__flyout-link i {
+  font-size: 0.7rem;
+  color: var(--ag-neutral-400);
+  transition: transform var(--ag-dur-fast) var(--ag-ease-standard);
+}
+
+.nav__flyout-link:hover {
+  background: var(--ag-bg-tinted);
+  color: var(--ag-text-brand);
+  text-decoration: none;
+}
+
+.nav__flyout-link:hover i { transform: translateX(2px); color: var(--ag-navy-500); }
+
+.nav__flyout-link.is-active {
+  background: var(--ag-navy-800);
+  color: var(--ag-text-inverse);
+}
+
+.nav__flyout-link.is-active i { color: var(--ag-action-accent); }
+
+/* En movil el cajon ya esta desplegado: el submenu se apila debajo */
+@media (max-width: 900px) {
+  .nav__flyout {
+    position: static;
+    min-width: 0;
+    margin-top: var(--ag-space-2);
+    box-shadow: none;
+    animation: none;
+  }
 }

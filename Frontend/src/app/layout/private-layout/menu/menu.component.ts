@@ -27,14 +27,8 @@ export class MenuComponent implements OnChanges {
     }
   }
 
+  // El submenu se posiciona por CSS respecto al item, no por calculo manual.
   public openSubmenu(event: MouseEvent, item: any): void {
-    const target = event.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
-
-    item.submenuPosition = {
-      top: rect.top + window.scrollY - 160, // Asegura que el top sea absoluto en la página
-      left: rect.right + window.scrollX - 30 // Desplaza hacia afuera del menú
-    };
     item.collapsed = false;
   }
 

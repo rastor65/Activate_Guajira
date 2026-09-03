@@ -184,8 +184,14 @@ export class PrivateLayoutComponent implements OnInit {
     );
   }
 
+  /** Cajon de navegacion en movil. En escritorio la barra lateral es fija. */
+  public menuAbierto = false;
+
+  alternarMenu() { this.menuAbierto = !this.menuAbierto; }
+  cerrarMenu() { this.menuAbierto = false; }
+
   save(id: string) { }
-  ocultarMenu(boolean: boolean) { }
+  ocultarMenu(boolean: boolean) { this.cerrarMenu(); }
   showConfirm() { this.Dialog = true; }
   hideDialog() { this.Dialog = false; }
   openDialog() { this.displayDialog = true; }

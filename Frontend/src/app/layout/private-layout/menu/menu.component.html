@@ -1,19 +1,22 @@
-<div *ngFor="let item of menu; let i = index" class="padre grid align-items-center justify-content-center pl-2"
-  (mouseenter)="openSubmenu($event, item)" (mouseleave)="closeSubmenu(item)" (click)="clickHandler($event, item)">
+<ul class="nav">
+  <li *ngFor="let item of menu" class="nav__item" (mouseenter)="openSubmenu($event, item)"
+    (mouseleave)="closeSubmenu(item)">
 
-  <span [routerLink]="item.link" (click)="clickHandler($event, item)" class="text-600 cursor-pointer centered-span"
-    style="padding-left: 10px; padding-bottom: 10px; padding-top: 10px;">
-    <i [ngClass]="item.icono" style="font-size: 1.5rem; margin-top: 5px;"></i>
-  </span>
+    <a class="nav__link" [routerLink]="item.link" routerLinkActive="is-active"
+      (click)="clickHandler($event, item)" [attr.aria-label]="item.titulo" [attr.title]="item.titulo">
+      <i [ngClass]="item.icono" aria-hidden="true"></i>
+      <span class="ag-visually-hidden">{{ item.titulo }}</span>
+      <i *ngIf="item.menu" class="nav__caret pi pi-angle-right" aria-hidden="true"></i>
+    </a>
 
-  <!-- Submenú flotante -->
-  <div *ngIf="!item.collapsed" class="submenu"
-    [ngStyle]="{'top.px': item.submenuPosition?.top, 'left.px': item.submenuPosition?.left}">
-    <div *ngFor="let subitem of item.menu" class="hijo">
-      <span [routerLink]="subitem.link" (click)="clickHandler($event, subitem)">
-        <i class="ml-2 pi pi-chevron-right" style="font-size: 1.5rem; margin-top: 5px;"></i>
-        <span class="ml-2" style="font-size: 18px;">{{ subitem.titulo }}</span>
-      </span>
+    <!-- Submenu flotante -->
+    <div *ngIf="item.menu && !item.collapsed" class="nav__flyout" role="menu" [attr.aria-label]="item.titulo">
+      <p class="nav__flyout-title">{{ item.titulo }}</p>
+      <a *ngFor="let subitem of item.menu" class="nav__flyout-link" role="menuitem" [routerLink]="subitem.link"
+        routerLinkActive="is-active" (click)="clickHandler($event, subitem)">
+        <i class="pi pi-chevron-right" aria-hidden="true"></i>
+        <span>{{ subitem.titulo }}</span>
+      </a>
     </div>
-  </div>
-</div>
+  </li>
+</ul>

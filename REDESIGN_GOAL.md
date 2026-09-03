@@ -32,15 +32,15 @@ sin errores. No parar hasta que todas las fases estén en DONE.
 - [x] F1.7 Build verde con el diseño viejo (baseline del upgrade)
 
 ## FASE 2 — Design system
-- [ ] F2.1 Capa de tokens CSS (color, tipografía, espaciado, radios, sombras, motion)
+- [x] F2.1 Capa de tokens CSS (color, tipografía, espaciado, radios, sombras, motion)
 - [x] F2.2 Preset de tema PrimeNG propio derivado de los tokens
-- [ ] F2.3 Primitivas compartidas (page shell, card, stat, empty state, skeleton)
-- [ ] F2.4 Estilos globales reescritos (styles.css limpio, sin parches)
+- [x] F2.3 Primitivas compartidas (page shell, card, stat, empty state, skeleton)
+- [x] F2.4 Estilos globales reescritos (styles.css limpio, sin parches)
 
 ## FASE 3 — Rediseño de pantallas
-- [ ] F3.1 Login / registro (public layout)
-- [ ] F3.2 Layout privado: sidebar + topbar + menú
-- [ ] F3.3 Landing (hub de módulos)
+- [x] F3.1 Login / registro (public layout)
+- [x] F3.2 Layout privado: sidebar + topbar + menú
+- [x] F3.3 Landing (hub de módulos)
 - [ ] F3.4 Perfil + mediciones + estadísticas
 - [ ] F3.5 Entrenador (mediciones/components/entrenador — 855 líneas)
 - [ ] F3.6 Entrenamiento
@@ -73,3 +73,12 @@ sin errores. No parar hasta que todas las fases estén en DONE.
   constructor, canLoad roto retirado. De 231 errores a 0. Build dev y prod en verde
   (2.34 MB / 504 kB gz). Preset de tema propio en src/theme/activate-guajira-preset.ts.
   Siguiente: F2.1 capa de tokens CSS y F2.4 styles.css.
+- **Fase 2 completa + 3 pantallas.** styles.css reescrito como capa de tokens
+  (color, tipografia, espaciado, radios, sombras, motion, layout) + primitivas
+  compartidas (.ag-page, .ag-card, .ag-stat, .ag-badge, .ag-empty, .ag-skeleton,
+  .ag-table). index.html con Barlow Condensed + Inter, sin scripts CDN sueltos.
+  Rediseñados: login (panel de marca + conmutador accesible por pestanas, se
+  elimino la manipulacion directa del DOM), shell privado (barra lateral fija,
+  barra superior pegajosa, cajon en movil con velo, dialogos con cabecera visible
+  y secciones agrupadas) y landing (hero + rejilla de modulos con tonos por
+  posicion y estado vacio). Siguiente: F3.4 perfil y mediciones.

@@ -59,18 +59,6 @@ export class FormLoginComponent implements OnInit {
       this.router.navigateByUrl('/login');
     }
 
-    const signUpButton: HTMLElement | null = document.getElementById('signUp');
-    const signInButton: HTMLElement | null = document.getElementById('signIn');
-    const container: HTMLElement | null = document.getElementById('container');
-
-    if (signUpButton && signInButton && container) {
-      signUpButton.addEventListener('click', () => {
-        container.classList.add("right-panel-active");
-      });
-      signInButton.addEventListener('click', () => {
-        container.classList.remove("right-panel-active");
-      });
-    }
     // var menu :string | null= localStorage.getItem('menu');
     if (token != null && user != null) {
       // this.showSuccess()
@@ -90,25 +78,7 @@ export class FormLoginComponent implements OnInit {
   }
 
   activarFormulario(formulario: 'login' | 'register') {
-    const container = document.getElementById('container');
-    if (!container) return;
-  
     this.formularioActivo = formulario;
-  
-    if (formulario === 'register') {
-      container.classList.add('right-panel-active');
-    } else {
-      container.classList.remove('right-panel-active');
-    }
-  
-    // Actualiza clases activas para mostrar u ocultar botones
-    const btnLogin = document.querySelector('.btn-login') as HTMLElement;
-    const btnRegister = document.querySelector('.btn-register') as HTMLElement;
-  
-    if (btnLogin && btnRegister) {
-      btnLogin.style.display = formulario === 'login' ? 'none' : 'inline-flex';
-      btnRegister.style.display = formulario === 'register' ? 'none' : 'inline-flex';
-    }
   }
 
   onSubmitLogin() {

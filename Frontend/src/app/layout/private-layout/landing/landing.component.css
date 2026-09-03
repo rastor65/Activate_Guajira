@@ -1,90 +1,199 @@
-.container{
-    padding: 30px;
+/* Panel principal: saludo + rejilla de accesos a modulos. */
+
+/* --------------------------------------------------------------------------
+   Saludo
+   -------------------------------------------------------------------------- */
+.landing__hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ag-space-6);
+  margin-bottom: var(--ag-space-8);
+  padding: var(--ag-space-10) var(--ag-space-8);
+  border-radius: var(--ag-radius-xl);
+  background:
+    radial-gradient(110% 140% at 92% 12%, var(--ag-navy-700) 0%, transparent 58%),
+    linear-gradient(140deg, var(--ag-navy-800) 0%, var(--ag-navy-900) 100%);
+  color: var(--ag-text-inverse);
 }
 
-.menu-item {
-    border-radius: 12px;
-    cursor: pointer;
-    transform: translateY(0);
-    transition: transform 0.3s ease-in-out, 
-                box-shadow 0.3s ease-in-out, 
-                background 0.3s ease-in-out;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    position: relative;
-    overflow: hidden;
+.landing__hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ag-action-accent) 0%, transparent 72%);
 }
 
-/* 🔥 Efecto 3D y elevación con hover */
-.menu-item:hover,
-.menu-item:focus {
-    transform: translateY(-8px) scale(1.07);
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
-    outline: none;
+.landing__hero-copy { position: relative; z-index: 1; }
+
+.landing__eyebrow {
+  margin: 0 0 var(--ag-space-2) 0;
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ag-action-accent);
 }
 
-/* ✨ Resplandor dinámico al pasar el mouse */
-.menu-item::before {
-    content: "";
-    position: absolute;
-    top: -100%;
-    left: -100%;
-    width: 250%;
-    height: 250%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
-    transition: transform 0.6s ease-out;
+.landing__title {
+  margin: 0 0 var(--ag-space-3) 0;
+  font-size: var(--ag-text-display);
+  line-height: 1.02;
+  color: var(--ag-text-inverse);
+  text-transform: uppercase;
 }
 
-.menu-item:hover::before {
-    transform: translate(50%, 50%);
+.landing__lede {
+  margin: 0;
+  max-width: 48ch;
+  font-size: var(--ag-text-body-lg);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.72);
 }
 
-/* 🔹 Efecto de rebote en el icono */
-.menu-icon {
-    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+.landing__hero-art {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 112px;
+  height: 112px;
+  border-radius: var(--ag-radius-full);
+  background: rgba(198, 242, 78, 0.12);
+  border: 1px solid rgba(198, 242, 78, 0.28);
+  color: var(--ag-action-accent);
+  font-size: 2.75rem;
 }
 
-.menu-item:hover .menu-icon {
-    transform: scale(1.2) rotate(8deg);
+/* --------------------------------------------------------------------------
+   Rejilla de modulos
+   -------------------------------------------------------------------------- */
+.landing__grid {
+  display: grid;
+  gap: var(--ag-space-4);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
 
-/* 🎭 Efecto de brillo en el texto con suavizado */
-.menu-title {
-    transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
+.module {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ag-space-4);
+  min-height: 172px;
+  padding: var(--ag-space-6);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-surface);
+  box-shadow: var(--ag-shadow-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: transform var(--ag-dur-base) var(--ag-ease-standard),
+              box-shadow var(--ag-dur-base) var(--ag-ease-standard),
+              border-color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.menu-item:hover .menu-title {
-    color: #ffffff;
-    text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+/* Franja superior de color: distingue modulos sin depender solo del color,
+   ya que cada tarjeta lleva ademas su titulo e icono. */
+.module::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: var(--tone, var(--ag-navy-500));
 }
 
-/* 🌈 Animación de entrada para cada item */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.module[data-tone='0'] { --tone: var(--ag-lime-300); }
+.module[data-tone='1'] { --tone: var(--ag-navy-500); }
+.module[data-tone='2'] { --tone: var(--ag-coral-400); }
+.module[data-tone='3'] { --tone: var(--ag-lime-500); }
+
+.module:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--ag-shadow-md);
+  border-color: var(--ag-navy-200);
 }
 
-.menu-item {
-    cursor: pointer;
-    transform: scale(1);
-    transition: transform 0.2s ease, box-shadow 0.3s ease;
+.module:active { transform: translateY(-1px); }
+
+.module.clicked {
+  transform: scale(0.97);
+  box-shadow: var(--ag-shadow-xs);
 }
 
-.menu-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+.module__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-tinted);
+  color: var(--ag-text-brand);
+  font-size: 1.4rem;
+  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
+              transform var(--ag-dur-base) var(--ag-ease-spring);
 }
 
-.menu-item:active {
-    transform: scale(0.95);
+.module:hover .module__icon {
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+  transform: scale(1.06);
 }
 
-.menu-item.clicked {
-    transform: scale(0.9);
-    transition: transform 0.15s ease-in-out;
+.module__title {
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-h3);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ag-text-brand);
+  line-height: 1.2;
+}
+
+.module__go {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-bg-sunken);
+  color: var(--ag-text-muted);
+  font-size: 0.8rem;
+  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
+              color var(--ag-dur-base) var(--ag-ease-standard),
+              transform var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.module:hover .module__go {
+  background: var(--ag-action-accent);
+  color: var(--ag-on-accent);
+  transform: translateX(3px);
+}
+
+/* --------------------------------------------------------------------------
+   Adaptativo
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .landing__hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--ag-space-8) var(--ag-space-5);
+  }
+
+  .landing__hero-art {
+    width: 72px;
+    height: 72px;
+    font-size: 1.8rem;
+  }
+
+  .landing__grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+
+  .module { min-height: 148px; padding: var(--ag-space-4); }
 }
