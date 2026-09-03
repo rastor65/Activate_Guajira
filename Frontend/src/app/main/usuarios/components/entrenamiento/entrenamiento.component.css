@@ -1,125 +1,197 @@
-.container {
-    max-width: 1100px;
-    margin: auto;
-    padding: 0 15px;
+/* Planes de entrenamiento del usuario. */
+
+/* --------------------------------------------------------------------------
+   Cabecera de perfil
+   -------------------------------------------------------------------------- */
+.perfil-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-5);
+  margin-bottom: var(--ag-space-8);
+  padding: var(--ag-space-6);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-surface);
+  box-shadow: var(--ag-shadow-sm);
+}
+
+.perfil-head__avatar {
+  width: 76px;
+  height: 76px;
+  flex: none;
+  border-radius: var(--ag-radius-full);
+  object-fit: cover;
+  border: 3px solid var(--ag-action-accent);
+  background: var(--ag-bg-sunken);
+}
+
+.perfil-head__name {
+  margin: var(--ag-space-1) 0 0 0;
+  font-size: var(--ag-text-h1);
+}
+
+.perfil-head__user {
+  margin: var(--ag-space-1) 0 0 0;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Planes
+   -------------------------------------------------------------------------- */
+.planes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-4);
+}
+
+.plan {
+  padding: var(--ag-space-6);
+  border: 1px solid var(--ag-border-subtle);
+  border-left: 4px solid var(--ag-action-accent);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-surface);
+  box-shadow: var(--ag-shadow-sm);
+}
+
+.plan__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ag-space-4);
+}
+
+.plan__heading { min-width: 0; }
+
+.plan__title {
+  margin: 0;
+  font-size: var(--ag-text-h2);
+}
+
+.plan__desc {
+  margin: var(--ag-space-2) 0 0 0;
+  color: var(--ag-text-secondary);
+  font-size: var(--ag-text-sm);
+  line-height: 1.6;
+}
+
+.plan__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ag-space-8);
+  margin: var(--ag-space-5) 0 0 0;
+  padding-top: var(--ag-space-4);
+  border-top: 1px solid var(--ag-border-subtle);
+}
+
+.plan__meta dt {
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+}
+
+.plan__meta dd {
+  margin: var(--ag-space-1) 0 0 0;
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-body-lg);
+  font-weight: 600;
+  color: var(--ag-text-brand);
+}
+
+/* --------------------------------------------------------------------------
+   Detalle por dia
+   -------------------------------------------------------------------------- */
+.plan__detail {
+  margin-top: var(--ag-space-5);
+  padding-top: var(--ag-space-5);
+  border-top: 1px solid var(--ag-border-subtle);
+  animation: plan-open var(--ag-dur-slow) var(--ag-ease-standard);
+}
+
+@keyframes plan-open {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.dias {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: var(--ag-space-4);
+}
+
+.dia {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-3);
+  padding: var(--ag-space-4);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-canvas);
+}
+
+.dia__title {
+  margin: 0;
+  font-size: var(--ag-text-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ag-text-brand);
+}
+
+.ejercicio {
+  padding: var(--ag-space-3);
+  border-radius: var(--ag-radius-sm);
+  border-top: 3px solid var(--ag-navy-500);
+  background: var(--ag-bg-surface);
+  box-shadow: var(--ag-shadow-xs);
+}
+
+.ejercicio__tipo {
+  margin: 0 0 var(--ag-space-2) 0;
+  font-weight: 600;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-primary);
+}
+
+.ejercicio__lista {
+  margin: 0;
+  padding-left: var(--ag-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-2);
+}
+
+.ejercicio__lista li {
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-secondary);
+  line-height: 1.5;
+}
+
+.ejercicio__lista strong {
+  display: block;
+  color: var(--ag-text-primary);
+}
+
+.nota {
+  margin: 0;
+  font-size: var(--ag-text-sm);
+  font-style: italic;
+  color: var(--ag-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Adaptativo
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .perfil-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .profile-header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 20px;
-  }
-  
-  .profile-img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #007bff;
-  }
-  
-  .profile-info h2 {
-    font-size: 1.6rem;
-    margin: 0;
-  }
-  
-  .profile-info p {
-    margin: 0;
-    color: #666;
-    font-size: 0.95rem;
-  }
-  
-  .section-title {
-    font-size: 1.4rem;
-    color: #2c3e50;
-    border-left: 4px solid #007bff;
-    padding-left: 12px;
-    margin-bottom: 20px;
-    font-weight: 600;
-  }
-  
-  .entrenamiento-card {
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s ease;
-    background-color: #fff;
-    border-left: 5px solid #007bff;
-  }
-  
-  .entrenamiento-card:hover {
-    transform: translateY(-4px);
-  }
-  
-  .card-title {
-    font-size: 1.1rem;
-    color: #007bff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .card-text {
-    font-size: 0.95rem;
-    color: #444;
-    margin-bottom: 8px;
-  }
-  
-  .duracion, .entrenador {
-    font-size: 0.9rem;
-    color: #555;
-  }
-  
-  .resumen-dias {
-    margin-top: 20px;
-  }
-  
-  .dia-resumen {
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 10px;
-  }
-  
-  .dia-resumen h6 {
-    margin-bottom: 8px;
-    color: #2c3e50;
-    font-weight: 600;
-    font-size: 0.95rem;
-  }
-  
-  .ejercicio-dia-card {
-    background-color: #e9f3ff;
-    padding: 10px 15px;
-    border-left: 4px solid #007bff;
-    border-radius: 6px;
-    margin-bottom: 8px;
-  }
-  
-  .ejercicio-dia-card strong {
-    display: block;
-    margin-bottom: 4px;
-    color: #0056b3;
-  }
-  
-  .ejercicio-dia-card ul {
-    padding-left: 18px;
-    margin: 0;
-  }
-  
-  .ejercicio-dia-card li {
-    font-size: 0.85rem;
-    color: #333;
-  }
-  
-  .no-sugerencias, .no-ejercicios {
-    font-style: italic;
-    font-size: 0.85rem;
-    color: #888;
-    margin-top: 6px;
-  }
-  
+
+  .plan { padding: var(--ag-space-4); }
+
+  .plan__meta { gap: var(--ag-space-5); }
+
+  .dias { grid-template-columns: 1fr; }
+}

@@ -1,72 +1,95 @@
-<br>
-<div *ngIf="!cargando" class="p-personas-controls">
+<div class="ag-page entrenador">
 
-  <div class="p-personas-search">
-    <span class="search-icon-container">
-      <i class="pi pi-search search-icon"></i>
-    </span>
-    <input type="text" pInputText placeholder="Buscar..." [(ngModel)]="searchValue" (input)="filterCards()"
-      class="search-box">
+  <header class="ag-page__header">
+    <div>
+      <p class="ag-overline">Modulo de entrenador</p>
+      <h1 class="ag-page__title">Usuarios a cargo</h1>
+      <p class="ag-page__subtitle">
+        Consulta mediciones, asigna entrenamientos y planes de alimentacion.
+      </p>
+    </div>
+
+    <div class="ag-page__actions">
+      <button pButton pRipple type="button" icon="pi pi-eject" label="Entrenamiento por region"
+        class="p-button-outlined" (click)="verEntrenamientosMasivos()"></button>
+      <button pButton pRipple type="button" icon="pi pi-heart" label="Alimentacion por region"
+        class="ag-accent" (click)="verAlimentacionesMasivas()"></button>
+    </div>
+  </header>
+
+  <!-- Filtros -->
+  <div class="filtros" *ngIf="!cargando">
+    <div class="filtros__search">
+      <i class="pi pi-search" aria-hidden="true"></i>
+      <input type="text" pInputText placeholder="Buscar por nombre o correo" [(ngModel)]="searchValue"
+        (input)="filterCards()" aria-label="Buscar usuario">
+    </div>
+
+    <p-select class="filtros__select" [options]="ciudad" [(ngModel)]="selectedCiudad" optionLabel="nombre"
+      optionValue="id" placeholder="Filtrar por ciudad" (onChange)="filterCards()" [filter]="true"
+      [showClear]="true"></p-select>
   </div>
 
-  <p-select class="custom-dropdown" [options]="ciudad" [(ngModel)]="selectedCiudad" optionLabel="nombre"
-    optionValue="id" placeholder="Filtrar por ciudad" (onChange)="filterCards()" [filter]="true">
-  </p-select>
-</div>
+  <!-- Cargando -->
+  <div *ngIf="cargando" class="ag-empty" role="status" aria-live="polite">
+    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+    <p class="ag-empty__text">Cargando usuarios...</p>
+  </div>
 
-<div *ngIf="!cargando" class="button-container">
-  <button class="btn" (click)="verEntrenamientosMasivos()">
-    <i class="pi pi-eject"></i> Entrenamiento por región</button>
-  <button class="btn" (click)="verAlimentacionesMasivas()">
-    <i class="pi pi-heart"></i> Alimentación por región</button>
-</div>
-
-<div *ngIf="cargando" class="loading-container">
-  <p-progressSpinner styleClass="spinner"></p-progressSpinner>
-  <span class="loading-text">Cargando usuarios...</span>
-</div>
-
-<!-- CARDS -->
-<div class="card-container">
-  <p-card *ngFor="let trainer of filteredTrainers" class="trainer-card clickable-card">
-    <ng-template pTemplate="header">
-      <div class="card-header">
+  <!-- Rejilla de usuarios -->
+  <div class="trainers" *ngIf="!cargando && filteredTrainers.length">
+    <article class="trainer" *ngFor="let trainer of filteredTrainers">
+      <header class="trainer__head">
         <p-avatar *ngIf="trainer.avatar_url" [image]="trainer.avatar_url" shape="circle" size="large"></p-avatar>
-        <p-avatar *ngIf="!trainer.avatar_url" shape="circle" size="large">
-          {{ getInitials(trainer.first_name, trainer.last_name) }}
-        </p-avatar>
-        <div class="trainer-info">
-          <h3>{{ trainer.first_name }} {{ trainer.last_name }}</h3>
+        <p-avatar *ngIf="!trainer.avatar_url" shape="circle" size="large"
+          [label]="getInitials(trainer.first_name, trainer.last_name)"></p-avatar>
+
+        <div class="trainer__identity">
+          <h2 class="trainer__name">{{ trainer.first_name }} {{ trainer.last_name }}</h2>
+          <p class="trainer__meta" *ngIf="trainer.ciudad_residencia?.nombre">
+            <i class="pi pi-map-marker" aria-hidden="true"></i>
+            {{ trainer.ciudad_residencia?.nombre }}
+          </p>
         </div>
-      </div>
-    </ng-template>
+      </header>
 
-    <ng-template pTemplate="content">
-      <div class="card-content">
-        <p><i class="pi pi-user"></i> {{ trainer.username }}</p>
-        <p><i class="pi pi-envelope"></i> {{ trainer.email }}</p>
-        <p><i class="pi pi-map-marker"></i> {{ trainer.ciudad_residencia?.nombre }}</p>
+      <dl class="trainer__data">
+        <div>
+          <dt><i class="pi pi-user" aria-hidden="true"></i> Usuario</dt>
+          <dd>{{ trainer.username }}</dd>
+        </div>
+        <div>
+          <dt><i class="pi pi-envelope" aria-hidden="true"></i> Correo</dt>
+          <dd class="trainer__email">{{ trainer.email }}</dd>
+        </div>
+      </dl>
 
-      </div>
-      <div class="button-container">
-        <button class="btn2" (click)="verPerfil(trainer)">
-          <i class="pi pi-check-circle"></i> Mediciones
-        </button>
-        <button class="btn2" (click)="verEntrenamiento(trainer)">
-          <i class="pi pi-eject"></i> Entrenamiento
-        </button>
-        <button class="btn2" (click)="verAlimentacion(trainer)">
-          <i class="pi pi-heart"></i> Alimentación
-        </button>
-      </div>
-    </ng-template>
-  </p-card>
+      <footer class="trainer__actions">
+        <button pButton pRipple type="button" icon="pi pi-check-circle" label="Mediciones"
+          class="p-button-outlined p-button-sm" (click)="verPerfil(trainer)"></button>
+        <button pButton pRipple type="button" icon="pi pi-eject" label="Entrenamiento"
+          class="p-button-outlined p-button-sm" (click)="verEntrenamiento(trainer)"></button>
+        <button pButton pRipple type="button" icon="pi pi-heart" label="Alimentacion"
+          class="p-button-outlined p-button-sm" (click)="verAlimentacion(trainer)"></button>
+      </footer>
+    </article>
+  </div>
 
+  <!-- Sin resultados -->
+  <div class="ag-empty" *ngIf="!cargando && !filteredTrainers.length">
+    <span class="ag-empty__icon"><i class="pi pi-users" aria-hidden="true"></i></span>
+    <h2 class="ag-empty__title">Sin usuarios que coincidan</h2>
+    <p class="ag-empty__text">
+      Ajusta el texto de busqueda o cambia el filtro de ciudad para ver mas resultados.
+    </p>
+  </div>
 </div>
+
 
 <!-- MEDICIONES -->
-<p-dialog [(visible)]="dialogMediciones" [style]="{'width': '80vw'}" [resizable]="false" zindex="100" [modal]="true"
-  [closable]="true" [showHeader]="false">
+<p-dialog [(visible)]="dialogMediciones" header="Mediciones del usuario" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '72rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
       <div class="profile-header">
@@ -139,8 +162,9 @@
 </p-dialog>
 
 <!--EDITAR MEDICIONES -->
-<p-dialog [(visible)]="dialogMedicion" [style]="{'width': '80vw'}" [resizable]="false" zindex="1000"
-  [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
+<p-dialog [(visible)]="dialogMedicion" header="Registrar medicion" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '68rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
 
   <div class="p-grid p-nogutter p-align-center header-container">
     <h3>{{ esEdicion ? 'Editar Medición' : 'Detalles de la Medición' }}</h3>
@@ -285,8 +309,9 @@
 </p-dialog>
 
 <!-- ALIMENTACIONES -->
-<p-dialog [(visible)]="dialogAlimentacion" [style]="{'width': '80vw'}" [resizable]="false" zindex="1000" [modal]="true"
-  [closable]="true" [showHeader]="false">
+<p-dialog [(visible)]="dialogAlimentacion" header="Planes de alimentacion" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '72rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
       <div class="profile-header">
@@ -339,8 +364,9 @@
 </p-dialog>
 
 <!-- VER UNA ALIMENTACION -->
-<p-dialog [(visible)]="dialogVerAlimentacion" [style]="{'width': '80vw'}" [resizable]="false" zindex="10000"
-  [modal]="true" [closable]="true" [showHeader]="false" class="custom-dialog">
+<p-dialog [(visible)]="dialogVerAlimentacion" header="Detalle del plan de alimentacion" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '64rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
 
   <ng-template pTemplate="content">
     <div *ngIf="selectedAlimentacion">
@@ -384,8 +410,9 @@
 </p-dialog>
 
 <!-- EDITAR Y CREAR ALIMENTACION -->
-<p-dialog [(visible)]="dialogFormularioAlimentacion" [style]="{'width': '80vw'}" [modal]="true" [closable]="true"
-  [showHeader]="false">
+<p-dialog [(visible)]="dialogFormularioAlimentacion" header="Plan de alimentacion" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '64rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
   <div class="p-grid p-fluid">
     <div class="form-container">
       <div class="form-group">
@@ -432,8 +459,9 @@
 </p-dialog>
 
 <!-- ENTRENAMIENTOS -->
-<p-dialog [(visible)]="dialogEntrenamiento" [style]="{'width': '100%', 'max-width': '80%'}" [modal]="true"
-  [closable]="true" [showHeader]="false" [resizable]="false" zindex="10000">
+<p-dialog [(visible)]="dialogEntrenamiento" header="Planes de entrenamiento" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '72rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
   <ng-template pTemplate="content">
     <div *ngIf="selectedTrainer">
       <div class="profile-header">
@@ -493,8 +521,9 @@
 </p-dialog>
 
 <!-- VER UN ENTRENAMIENTO -->
-<p-dialog [(visible)]="dialogVerEntrenamiento" [style]="{ 'width': '90vw' }" [resizable]="false" zindex="10000"
-  [modal]="true" [closable]="true" [showHeader]="false" class="custom-dialog">
+<p-dialog [(visible)]="dialogVerEntrenamiento" header="Detalle del plan de entrenamiento" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '76rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
   <ng-template pTemplate="content">
     <div *ngIf="selectedEntrenamiento">
       <div class="profile-header">
@@ -573,8 +602,9 @@
 
 
 <!-- EDITAR Y CREAR ENTRENAMIENTO -->
-<p-dialog [(visible)]="dialogFormularioEntrenamiento" [style]="{'width': '90vw'}" [modal]="true" [closable]="true"
-  [showHeader]="false">
+<p-dialog [(visible)]="dialogFormularioEntrenamiento" header="Plan de entrenamiento" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '76rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
   <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
     <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
     <p class="loading-text">Guardando entrenamiento...</p>
@@ -646,8 +676,9 @@
 
 
 <!-- CREAR ENTRENAMIENTO POR REGION -->
-<p-dialog [(visible)]="dialogEntrenamientoRegion" [style]="{'width': '95vw'}" [resizable]="false" zindex="1000"
-  [modal]="true" [closable]="true" [showHeader]="false">
+<p-dialog [(visible)]="dialogEntrenamientoRegion" header="Entrenamiento por region" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '82rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
 
   <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
     <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
@@ -767,8 +798,9 @@
 </p-dialog>
 
 <!-- CREAR ALIMENTACION POR REGION -->
-<p-dialog [(visible)]="dialogAlimentacionRegion" [style]="{ 'width': '95vw' }" [resizable]="false" zindex="1000"
-  [modal]="true" [closable]="true" [showHeader]="false">
+<p-dialog [(visible)]="dialogAlimentacionRegion" header="Alimentacion por region" [modal]="true"
+  [resizable]="false" [draggable]="false" [style]="{ width: '82rem' }"
+  [breakpoints]="{ '1024px': '94vw' }">
 
   <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
     <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>

@@ -1,72 +1,94 @@
-<p-progressSpinner *ngIf="isLoading" styleClass="custom-spinner"></p-progressSpinner>
+<div class="ag-overlay" *ngIf="isLoading" role="status" aria-live="polite">
+    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+    <p class="ag-overlay__text">Cargando</p>
+</div>
 
+<div class="ag-page" *ngIf="!isLoading">
 
-<div class="container mt-4" *ngIf="!isLoading">
-    <div class="profile-header">
-        <img [src]="profileImage || 'assets/default-avatar.png'" alt="Avatar" class="profile-img">
-        <div class="profile-info">
-            <h2>{{ person?.nombres }} {{ person?.apellidos }}</h2>
-            <p>{{ user.username }}</p>
+    <header class="perfil-head">
+        <img [src]="profileImage || 'assets/default-avatar.png'" alt="" class="perfil-head__avatar">
+        <div>
+            <p class="ag-overline">Mis entrenamientos</p>
+            <h1 class="perfil-head__name">{{ person?.nombres }} {{ person?.apellidos }}</h1>
+            <p class="perfil-head__user">{{ user.username }}</p>
         </div>
-    </div>
+    </header>
 
-    <h3 class="section-title">Mis Entrenamientos</h3>
+    <section *ngIf="entrenamientos.length > 0; else noEntrenamientos" class="planes">
+        <article class="plan" *ngFor="let entrenamiento of entrenamientos">
 
-    <div *ngIf="entrenamientos.length > 0; else noEntrenamientos">
-        <div class="row">
-            <div class="col-md-6 col-lg-4 mb-4" *ngFor="let entrenamiento of entrenamientos">
-                <div class="card entrenamiento-card">
-                    <div class="card-body">
-                        <h5 class="card-title d-flex justify-content-between align-items-center">
-                            {{ entrenamiento.nombre }}
-                            <button pButton icon="pi pi-chevron-down" class="p-button-text p-button-sm"
-                                (click)="expandedEntrenamientoId = (expandedEntrenamientoId === entrenamiento.id ? null : entrenamiento.id)">
-                            </button>
-                        </h5>
-
-                        <p class="card-text">{{ entrenamiento.descripcion }}</p>
-                        <p class="duracion"><strong>Duración:</strong> {{ entrenamiento.duracion_semanas }} semanas</p>
-                        <p class="entrenador"><strong>Entrenador:</strong> {{ entrenamiento.entrenador }}</p>
-
-                        <!-- Mostrar solo si está expandido -->
-                        <div *ngIf="expandedEntrenamientoId === entrenamiento.id">
-                            <div class="resumen-dias mt-3" *ngIf="entrenamiento?.semanas?.length">
-                                <div class="dia-resumen" *ngFor="let dia of diasSemana">
-                                    <h6>{{ dia }}</h6>
-                                    <ng-container *ngFor="let semana of entrenamiento.semanas">
-                                        <div class="semana-dia" *ngFor="let ejercicio of semana.ejercicios">
-                                            <ng-container *ngIf="ejercicio.dias[diasSemana.indexOf(dia)]">
-                                                <div class="ejercicio-dia-card">
-                                                    <strong>{{ ejercicio.tipo }}</strong>
-                                                    <ul
-                                                        *ngIf="ejercicio.sugerencias?.[dia] && ejercicio.sugerencias[dia].length">
-                                                        <li *ngFor="let sug of ejercicio.sugerencias?.[dia]">
-                                                            <b>{{ sug.nombre }}: </b> {{ sug.descripcion }}
-                                                        </li>
-
-                                                    </ul>
-                                                    <p *ngIf="!ejercicio.sugerencias?.[dia]?.length"
-                                                        class="no-sugerencias">
-                                                        Sin sugerencias disponibles
-                                                    </p>
-                                                </div>
-                                            </ng-container>
-                                        </div>
-                                    </ng-container>
-
-                                    <p *ngIf="!hasEjerciciosParaDia(entrenamiento, dia)" class="no-ejercicios">
-                                        No hay ejercicios asignados para este día.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <header class="plan__head">
+                <div class="plan__heading">
+                    <h2 class="plan__title">{{ entrenamiento.nombre }}</h2>
+                    <p class="plan__desc">{{ entrenamiento.descripcion }}</p>
                 </div>
+
+                <button pButton pRipple type="button" class="p-button-text"
+                    [icon]="expandedEntrenamientoId === entrenamiento.id ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"
+                    [attr.aria-expanded]="expandedEntrenamientoId === entrenamiento.id"
+                    [attr.aria-label]="expandedEntrenamientoId === entrenamiento.id ? 'Contraer plan' : 'Ver detalle del plan'"
+                    (click)="expandedEntrenamientoId = (expandedEntrenamientoId === entrenamiento.id ? null : entrenamiento.id)">
+                </button>
+            </header>
+
+            <dl class="plan__meta">
+                <div>
+                    <dt>Duracion</dt>
+                    <dd>{{ entrenamiento.duracion_semanas }} semanas</dd>
+                </div>
+                <div>
+                    <dt>Entrenador</dt>
+                    <dd>{{ entrenamiento.entrenador }}</dd>
+                </div>
+            </dl>
+
+            <!-- Detalle por dia -->
+            <div class="plan__detail" *ngIf="expandedEntrenamientoId === entrenamiento.id">
+                <div class="dias" *ngIf="entrenamiento?.semanas?.length; else sinSemanas">
+                    <section class="dia" *ngFor="let dia of diasSemana">
+                        <h3 class="dia__title">{{ dia }}</h3>
+
+                        <ng-container *ngFor="let semana of entrenamiento.semanas">
+                            <ng-container *ngFor="let ejercicio of semana.ejercicios">
+                                <div class="ejercicio" *ngIf="ejercicio.dias[diasSemana.indexOf(dia)]">
+                                    <p class="ejercicio__tipo">{{ ejercicio.tipo }}</p>
+
+                                    <ul class="ejercicio__lista"
+                                        *ngIf="ejercicio.sugerencias?.[dia] && ejercicio.sugerencias[dia].length; else sinSugerencias">
+                                        <li *ngFor="let sug of ejercicio.sugerencias?.[dia]">
+                                            <strong>{{ sug.nombre }}</strong>
+                                            <span>{{ sug.descripcion }}</span>
+                                        </li>
+                                    </ul>
+
+                                    <ng-template #sinSugerencias>
+                                        <p class="nota">Sin sugerencias disponibles</p>
+                                    </ng-template>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+
+                        <p class="nota" *ngIf="!hasEjerciciosParaDia(entrenamiento, dia)">
+                            Dia de descanso.
+                        </p>
+                    </section>
+                </div>
+
+                <ng-template #sinSemanas>
+                    <p class="nota">Este plan todavia no tiene semanas configuradas.</p>
+                </ng-template>
             </div>
-        </div>
-    </div>
+        </article>
+    </section>
 
     <ng-template #noEntrenamientos>
-        <p class="text-center text-muted">No tienes entrenamientos asignados.</p>
+        <div class="ag-empty">
+            <span class="ag-empty__icon"><i class="pi pi-eject" aria-hidden="true"></i></span>
+            <h2 class="ag-empty__title">Sin entrenamientos asignados</h2>
+            <p class="ag-empty__text">
+                Cuando un entrenador te asigne un plan, apareceran aqui tus rutinas
+                organizadas por semana y por dia.
+            </p>
+        </div>
     </ng-template>
 </div>

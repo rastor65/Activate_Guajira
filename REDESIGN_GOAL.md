@@ -42,9 +42,9 @@ sin errores. No parar hasta que todas las fases estén en DONE.
 - [x] F3.2 Layout privado: sidebar + topbar + menú
 - [x] F3.3 Landing (hub de módulos)
 - [x] F3.4 Perfil + mediciones + estadísticas
-- [ ] F3.5 Entrenador (mediciones/components/entrenador — 855 líneas)
-- [ ] F3.6 Entrenamiento
-- [ ] F3.7 Alimentación
+- [x] F3.5 Entrenador (mediciones/components/entrenador — 855 líneas)
+- [x] F3.6 Entrenamiento
+- [x] F3.7 Alimentación
 - [ ] F3.8 Personas (crear/editar/ver/eliminar)
 - [ ] F3.9 Admin: usuarios
 - [ ] F3.10 Admin: roles + roles/ver
@@ -89,3 +89,10 @@ sin errores. No parar hasta que todas las fases estén en DONE.
   vacio con accion, dialogo de medicion reagrupado en cuatro fieldsets tematicos
   y dialogo de estadisticas con cabecera visible. En movil la tabla se convierte
   en lista de tarjetas via data-label. Siguiente: F3.5 entrenador (855 lineas).
+- **F3.5-F3.7.** Entrenador: vista principal reescrita (filtros con icono, rejilla de
+  tarjetas de usuario con dl/dt/dd, estado vacio) y los 10 dialogos normalizados de
+  golpe — cabecera visible, ancho en rem con breakpoint, sin showHeader=false ni
+  zindex manuales; su CSS de 1430 lineas se reescribio en tokens, lo que reestiliza
+  los 9 dialogos sin tocar su logica. Entrenamiento y alimentacion usaban clases de
+  Bootstrap (row, col-md-6) que nunca estuvieron cargadas: se rehicieron con rejilla
+  propia, planes expandibles con aria-expanded y estados vacios. Siguiente: F3.8 personas.

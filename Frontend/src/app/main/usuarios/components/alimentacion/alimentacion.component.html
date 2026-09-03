@@ -1,39 +1,45 @@
-<p-progressSpinner *ngIf="isLoading" styleClass="custom-spinner"></p-progressSpinner>
-<div class="container mt-4" *ngIf="!isLoading">
-    <div class="container mt-4">
-        <div class="profile-header">
-            <img [src]="profileImage || 'assets/default-avatar.png'" alt="Avatar" class="profile-img">
-            <div class="profile-info">
-                <h2>{{ person?.nombres }} {{ person?.apellidos }}</h2>
-                <p>{{ user.username }}</p>
-            </div>
+<div class="ag-overlay" *ngIf="isLoading" role="status" aria-live="polite">
+    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+    <p class="ag-overlay__text">Cargando</p>
+</div>
+
+<div class="ag-page" *ngIf="!isLoading">
+
+    <header class="perfil-head">
+        <img [src]="profileImage || 'assets/default-avatar.png'" alt="" class="perfil-head__avatar">
+        <div>
+            <p class="ag-overline">Mi alimentacion</p>
+            <h1 class="perfil-head__name">{{ person?.nombres }} {{ person?.apellidos }}</h1>
+            <p class="perfil-head__user">{{ user.username }}</p>
         </div>
+    </header>
 
-        <h3 class="section-title">Mis planes de alimentación</h3>
+    <section *ngIf="alimentos.length > 0; else noAlimentos" class="planes">
+        <article class="plan" *ngFor="let alimento of alimentos">
+            <header class="plan__head">
+                <h2 class="plan__title">{{ alimento.nombre }}</h2>
+                <span class="ag-badge ag-badge--accent">
+                    {{ alimento.calorias_diarias }} kcal/dia
+                </span>
+            </header>
 
-        <div *ngIf="alimentos.length > 0; else noAlimentos">
-            <div class="row">
-                <div class="col-md-6 col-lg-4 mb-4" *ngFor="let alimento of alimentos">
-                    <div class="card alimento-card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ alimento.nombre }}</h5>
-                            <div class="info-row">
-                                <span class="label">Calorías:</span>
-                                <span class="value">{{ alimento.calorias_diarias }}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Entrenador:</span>
-                                <span class="value">{{ alimento.entrenador }}</span>
-                            </div>
-                            <p class="card-text">{{ alimento.descripcion }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <p class="plan__desc">{{ alimento.descripcion }}</p>
+
+            <footer class="plan__foot">
+                <span class="plan__label">Entrenador</span>
+                <span class="plan__value">{{ alimento.entrenador }}</span>
+            </footer>
+        </article>
+    </section>
+
+    <ng-template #noAlimentos>
+        <div class="ag-empty">
+            <span class="ag-empty__icon"><i class="pi pi-heart" aria-hidden="true"></i></span>
+            <h2 class="ag-empty__title">Sin planes de alimentacion</h2>
+            <p class="ag-empty__text">
+                Cuando un entrenador te asigne un plan nutricional, veras aqui tus
+                calorias objetivo y las indicaciones del plan.
+            </p>
         </div>
-
-        <ng-template #noAlimentos>
-            <p class="text-center text-muted no-alimentos-msg">No tienes planes de alimentación asignados.</p>
-        </ng-template>
-    </div>
+    </ng-template>
 </div>
