@@ -45,11 +45,11 @@ sin errores. No parar hasta que todas las fases estén en DONE.
 - [x] F3.5 Entrenador (mediciones/components/entrenador — 855 líneas)
 - [x] F3.6 Entrenamiento
 - [x] F3.7 Alimentación
-- [ ] F3.8 Personas (crear/editar/ver/eliminar)
+- [x] F3.8 Personas (crear/editar/ver/eliminar)
 - [ ] F3.9 Admin: usuarios
-- [ ] F3.10 Admin: roles + roles/ver
+- [x] F3.10 Admin: roles + roles/ver
 - [ ] F3.11 Admin: recursos + recursos/ver
-- [ ] F3.12 Admin: roles-recursos + user-roles
+- [~] F3.12 Admin: user-roles hecho; roles-recursos pendiente
 - [ ] F3.13 Admin: tabla maestra
 - [ ] F3.14 Dashboard
 - [ ] F3.15 Mantenimiento + diálogos globales (toast, confirm)
@@ -96,3 +96,11 @@ sin errores. No parar hasta que todas las fases estén en DONE.
   los 9 dialogos sin tocar su logica. Entrenamiento y alimentacion usaban clases de
   Bootstrap (row, col-md-6) que nunca estuvieron cargadas: se rehicieron con rejilla
   propia, planes expandibles con aria-expanded y estados vacios. Siguiente: F3.8 personas.
+- **F3.8, F3.10 y mitad de F3.12.** Personas: listado con buscador, filtro por rol,
+  paginador con reporte de pagina, iconos de orden y estado vacio dentro de la tabla.
+  Roles: rejilla de tarjetas con acciones accesibles y un unico dialogo cuyo titulo y
+  pie cambian segun create/edit/delete (antes era un dialogo sin cabecera con botones
+  incrustados). User-roles: cada checkbox de rol gano su <label> asociado (antes el
+  [label] de p-checkbox, eliminado en PrimeNG 20, dejaba las casillas sin texto), y
+  los roles asignados se muestran como insignias. Siguiente: F3.9 admin usuarios,
+  F3.11 recursos, resto de F3.12, F3.13 tabla maestra, F3.14 dashboard, F3.15 mantenimiento.

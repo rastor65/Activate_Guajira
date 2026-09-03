@@ -1,56 +1,52 @@
-  
-  
+/* Listado de usuarios con rol asignado. */
 
-/* Estilos personalizados para el título */
-  .personas-title {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #fa6357;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-  }
-
-/* Estilos personalizados para la tabla */
-.p-personas-title {
-  color: #333;
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-.p-table {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.p-table thead th {
-  background-color: #f2f2f2;
-  color: #333;
-  font-weight: bold;
-  padding: 10px;
-  text-align: left;
-}
-
-.p-table tbody td {
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-}
-
-/* Personaliza los estilos de PrimeNG según tus preferencias */
-.p-personas-search input {
-  width: 750px; /* Ajusta el ancho según tus necesidades */
-  
-}
-
-.p-personas-filter{
-  width: 200px; /* Ajusta el ancho según tus necesidades */
-  /* margin-left: 5rem; */
-}
-
-.p-personas-controls {
+.filtros {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: var(--ag-space-3);
+  margin-bottom: var(--ag-space-5);
+}
+
+.filtros__search {
+  position: relative;
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.filtros__search i {
+  position: absolute;
+  top: 50%;
+  left: var(--ag-space-4);
+  transform: translateY(-50%);
+  color: var(--ag-text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.filtros__search input {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--ag-space-3) var(--ag-space-4) var(--ag-space-3) var(--ag-space-10);
+  border: 1px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  color: var(--ag-text-primary);
+  font-size: var(--ag-text-body);
+}
+
+.filtros__search input:focus {
+  outline: none;
+  border-color: var(--ag-border-focus);
+  box-shadow: 0 0 0 4px rgba(47, 90, 143, 0.16);
+}
+
+.filtros__select { flex: 0 1 16rem; min-width: 12rem; }
+
+:host ::ng-deep .filtros__select .p-select { width: 100%; }
+
+/* La tabla nunca debe desbordar la pagina */
+:host ::ng-deep .p-datatable-table-container { overflow-x: auto; }
+
+@media (max-width: 640px) {
+  .filtros__select { flex: 1 1 100%; }
 }

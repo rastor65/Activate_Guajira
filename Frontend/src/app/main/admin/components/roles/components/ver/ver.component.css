@@ -1,170 +1,128 @@
-/* Reset general */
-body, html {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: #f4f7fc;
-    color: #333;
-  }
-  
-  /* Título de sección */
-  .roles-title {
-    font-size: 2rem;
-    text-align: center;
-    font-weight: 800;
-    color: #1a1a1a;
-    text-transform: uppercase;
-    margin: 1rem 0 1.5rem;
-  }
-  
-  /* Contenedor del botón */
-  .create-button-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
-  }
-  
-  .create-role-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 8px;
-  }
-  
-  /* Listado de roles */
-  .roles-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    justify-content: center;
-    padding: 0 1rem 2rem;
-  }
-  
-  .role-card {
-    flex: 1 1 300px;
-    max-width: 320px;
-  }
-  
-  .p-card {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  .p-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
-  }
-  
-  .role-header {
-    font-size: 1.2rem;
-    font-weight: 700;
-    text-align: center;
-    color: #2c3e50;
-    margin-bottom: 0.5rem;
-  }
-  
-  .role-info {
-    font-size: 0.95rem;
-    text-align: center;
-    color: #7f8c8d;
-    line-height: 1.5;
-  }
-  
-  .role-info i {
-    margin-right: 6px;
-    color: #3498db;
-  }
-  
-  /* Botones de acción */
-  .role-actions {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 1rem;
-  }
-  
-  .p-button-rounded {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  /* Diálogo modal */
-  .custom-dialog {
-    max-width: 450px;
-    width: 90%;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  }
-  
-  .dialog-content {
-    padding: 2rem;
-    text-align: center;
-    background-color: #fff;
-  }
-  
-  .dialog-content label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-  
-  .p-inputtext {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    margin-top: 0.5rem;
-  }
-  
-  .p-input-with-icon {
-    padding-left: 2.5rem;
-  }
-  
-  .dialog-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-  
-  /* Íconos */
-  .p-input-icon-left i {
-    position: absolute;
-    margin-left: 1rem;
-    margin-top: 0.75rem;
-    color: #888;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .role-card {
-      flex: 1 1 100%;
-      max-width: 100%;
-    }
-  
-    .roles-title {
-      font-size: 1.5rem;
-    }
-  
-    .create-role-button {
-      width: 90%;
-      font-size: 0.95rem;
-    }
-  
-    .dialog-buttons {
-      flex-direction: column;
-    }
-  
-    .dialog-buttons button {
-      width: 100%;
-    }
-  }
-  
+/* Gestion de roles. */
+
+.roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--ag-space-4);
+}
+
+.role {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-4);
+  padding: var(--ag-space-5);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-surface);
+  box-shadow: var(--ag-shadow-sm);
+  transition: transform var(--ag-dur-base) var(--ag-ease-standard),
+              box-shadow var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.role:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ag-shadow-md);
+}
+
+.role__head {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+}
+
+.role__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-tinted);
+  color: var(--ag-text-brand);
+  font-size: 1.1rem;
+}
+
+.role__name {
+  margin: 0;
+  font-size: var(--ag-text-h3);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.role__meta {
+  display: flex;
+  gap: var(--ag-space-6);
+  margin: 0;
+  padding-top: var(--ag-space-4);
+  border-top: 1px solid var(--ag-border-subtle);
+}
+
+.role__meta dt {
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+}
+
+.role__meta dd {
+  margin: var(--ag-space-1) 0 0 0;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.role__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ag-space-1);
+  margin-top: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Dialogo
+   -------------------------------------------------------------------------- */
+.form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-2);
+}
+
+.form__field label {
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  color: var(--ag-text-secondary);
+}
+
+.form__field input { width: 100%; }
+
+.confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ag-space-4);
+}
+
+.confirm__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-danger-soft);
+  color: var(--ag-danger);
+  font-size: 1.25rem;
+}
+
+.confirm__text {
+  margin: 0;
+  font-size: var(--ag-text-body);
+  color: var(--ag-text-secondary);
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .roles { grid-template-columns: 1fr; }
+}

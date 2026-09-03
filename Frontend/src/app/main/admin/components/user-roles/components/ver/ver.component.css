@@ -1,162 +1,91 @@
-/* Estilos globales */
-:root {
-    --primary-color: #0056b3;
-    --primary-hover: #003d80;
-    --background-light: #f8f9fa;
-    --text-dark: #333;
-    --border-color: #ddd;
-    --shadow-light: rgba(0, 0, 0, 0.1);
-    --shadow-medium: rgba(0, 0, 0, 0.15);
+/* Asignacion de roles a usuarios. */
+
+.asignacion { margin-bottom: var(--ag-space-6); }
+
+.asignacion__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-5);
 }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: var(--background-light);
-    color: var(--text-dark);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-2);
+  max-width: 32rem;
 }
 
-/* Contenedor principal */
-.container {
-    max-width: 500px;
-    margin: 30px auto;
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px var(--shadow-light);
-    transition: transform 0.2s ease-in-out;
+.form__field label {
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  color: var(--ag-text-secondary);
 }
 
-.container:hover {
-    transform: translateY(-2px);
+:host ::ng-deep .p-autocomplete,
+:host ::ng-deep .p-autocomplete-input { width: 100%; }
+
+/* --------------------------------------------------------------------------
+   Lista de roles
+   -------------------------------------------------------------------------- */
+.roles-field {
+  margin: 0;
+  padding: var(--ag-space-5);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-canvas);
 }
 
-/* Título */
-.roles-title {
-    text-align: center;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 20px;
+.roles-field legend {
+  padding: 0 var(--ag-space-2);
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ag-text-brand);
 }
 
-/* Formulario */
-.form-group {
-    margin-bottom: 20px;
+.roles-field__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--ag-space-3);
 }
 
-/* Etiquetas */
-label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 6px;
-    color: var(--text-dark);
+.role-check {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  min-height: 44px;
+  padding: var(--ag-space-2) var(--ag-space-3);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  transition: border-color var(--ag-dur-fast) var(--ag-ease-standard),
+              background-color var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
-/* Lista de roles */
-.roles-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+.role-check:hover {
+  border-color: var(--ag-navy-300);
+  background: var(--ag-bg-tinted);
 }
 
-/* Elementos de roles */
-.role-item {
-    background: var(--primary-color);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
+.role-check label {
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  color: var(--ag-text-primary);
+  cursor: pointer;
 }
 
-.role-item:hover {
-    background: var(--primary-hover);
-    transform: scale(1.05);
+.nota {
+  margin: 0;
+  font-size: var(--ag-text-sm);
+  font-style: italic;
+  color: var(--ag-text-muted);
 }
 
-/* Lista de usuarios */
-.user-list {
-    max-width: 700px;
-    margin: 30px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px var(--shadow-light);
-}
+/* Varias insignias de rol en la misma celda */
+.ag-table td .ag-badge { margin: 0 var(--ag-space-1) var(--ag-space-1) 0; }
 
-/* Tabla */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 6px 12px var(--shadow-medium);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-/* Cabecera de la tabla */
-th {
-    background: var(--primary-color);
-    color: white;
-    padding: 14px;
-    font-size: 16px;
-    text-align: left;
-}
-
-/* Filas de la tabla */
-td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-/* Alternar colores en filas */
-tbody tr:nth-child(odd) {
-    background: #f2f2f2;
-}
-
-/* Efecto hover en filas */
-tbody tr:hover {
-    background: #e0e0e0;
-    transition: background 0.3s ease-in-out;
-}
-
-/* Botón estilizado */
-button {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    background: var(--primary-color);
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-}
-
-button:hover {
-    background: var(--primary-hover);
-}
-
-/* Diseño responsivo */
-@media (max-width: 768px) {
-    .container, .user-list {
-        width: 90%;
-        max-width: 100%;
-    }
-
-    table {
-        display: block;
-        overflow-x: auto;
-    }
-
-    th, td {
-        white-space: nowrap;
-    }
+@media (max-width: 640px) {
+  .roles-field__list { grid-template-columns: 1fr; }
 }

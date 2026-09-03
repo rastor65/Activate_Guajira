@@ -1,67 +1,96 @@
-<div class="roles-container">
-    <h2 class="roles-title">Gestión de Roles</h2>
-</div>
+<div class="ag-page">
 
-<div class="create-button-container">
-    <button pButton type="button" icon="pi pi-plus" label="Crear Rol"
-        class="p-button-success create-role-button" (click)="showCreateDialog()">
-    </button>
-</div>
-
-<div class="roles-list">
-    <div *ngFor="let role of roles" class="role-card">
-        <div class="p-card">
-            <div class="role-header">
-                <b>{{ role.name }}</b>
-            </div>
-            <div class="role-info">
-                <p><i class="pi pi-calendar"></i> Creado: {{ role.createdAt | date:'dd/MM/yyyy' }}</p>
-                <p><i class="pi pi-refresh"></i> Actualizado: {{ role.updateAt | date:'dd/MM/yyyy' }}</p>
-            </div>
-            <div class="role-actions">
-                <button pButton type="button" icon="pi pi-pencil"
-                    class="p-button-rounded p-button-secondary" (click)="showEditDialog(role)">
-                </button>
-                <button pButton type="button" icon="pi pi-trash"
-                    class="p-button-rounded p-button-danger" (click)="showDeleteDialog(role)">
-                </button>
-            </div>
+    <header class="ag-page__header">
+        <div>
+            <p class="ag-overline">Administracion</p>
+            <h1 class="ag-page__title">Gestion de roles</h1>
+            <p class="ag-page__subtitle">Define los roles que agrupan permisos sobre los recursos.</p>
         </div>
+
+        <div class="ag-page__actions">
+            <button pButton pRipple type="button" icon="pi pi-plus" label="Crear rol" class="ag-accent"
+                (click)="showCreateDialog()"></button>
+        </div>
+    </header>
+
+    <div class="roles" *ngIf="roles.length; else sinRoles">
+        <article class="role" *ngFor="let role of roles">
+            <header class="role__head">
+                <span class="role__icon"><i class="pi pi-shield" aria-hidden="true"></i></span>
+                <h2 class="role__name">{{ role.name }}</h2>
+            </header>
+
+            <dl class="role__meta">
+                <div>
+                    <dt>Creado</dt>
+                    <dd>{{ role.createdAt | date:'dd/MM/yyyy' }}</dd>
+                </div>
+                <div>
+                    <dt>Actualizado</dt>
+                    <dd>{{ role.updateAt | date:'dd/MM/yyyy' }}</dd>
+                </div>
+            </dl>
+
+            <footer class="role__actions">
+                <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                    [attr.aria-label]="'Editar el rol ' + role.name" pTooltip="Editar"
+                    (click)="showEditDialog(role)"></button>
+                <button pButton pRipple type="button" icon="pi pi-trash"
+                    class="p-button-text p-button-sm p-button-danger"
+                    [attr.aria-label]="'Eliminar el rol ' + role.name" pTooltip="Eliminar"
+                    (click)="showDeleteDialog(role)"></button>
+            </footer>
+        </article>
     </div>
+
+    <ng-template #sinRoles>
+        <div class="ag-empty">
+            <span class="ag-empty__icon"><i class="pi pi-shield" aria-hidden="true"></i></span>
+            <h2 class="ag-empty__title">Todavia no hay roles</h2>
+            <p class="ag-empty__text">
+                Crea el primer rol para empezar a asignar permisos sobre los recursos del sistema.
+            </p>
+            <button pButton pRipple type="button" icon="pi pi-plus" label="Crear rol" class="ag-accent"
+                (click)="showCreateDialog()"></button>
+        </div>
+    </ng-template>
 </div>
 
-<p-dialog [(visible)]="dialogVisible" [modal]="true"
-    [style]="{width: '30vw'}" [showHeader]="false" [closable]="false" [dismissableMask]="false"
-    class="custom-dialog">
-    
+
+<p-dialog [(visible)]="dialogVisible"
+    [header]="dialogType === 'delete' ? 'Eliminar rol' : (dialogType === 'edit' ? 'Editar rol' : 'Crear rol')"
+    [modal]="true" [resizable]="false" [draggable]="false" [style]="{ width: '26rem' }"
+    [breakpoints]="{ '640px': '92vw' }">
+
     <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
-        <div class="dialog-content">
-            <label for="roleName"><b>Nombre del Rol:</b></label><br>
-            <span class="p-input-icon-left">
-                <i class="pi pi-user"></i>
-                <input id="roleName" [(ngModel)]="selectedRole.name" placeholder="Ingrese el nombre"
-                    class="p-inputtext p-input-with-icon">
-            </span>
-            <div class="dialog-buttons">
-                <button pButton icon="pi pi-check" label="Guardar" class="p-button-success" (click)="saveRole()">
-                </button>
-                <button pButton icon="pi pi-times" label="Cancelar" class="p-button-danger" (click)="cancelEdit()">
-                </button>
-            </div>
+        <div class="form__field">
+            <label for="roleName">Nombre del rol</label>
+            <input id="roleName" pInputText [(ngModel)]="selectedRole.name" placeholder="Ej. Entrenador">
         </div>
     </ng-container>
 
     <ng-container *ngIf="dialogType === 'delete'">
-        <div class="dialog-content">
-            <p><i class="pi pi-exclamation-triangle"></i> ¿Deseas eliminar este rol?</p>
-            <div class="dialog-buttons">
-                <button pButton icon="pi pi-check" label="Confirmar" class="p-button-danger"
-                    (click)="deleteRole(selectedRole.id)">
-                </button>
-                <button pButton icon="pi pi-times" label="Cancelar" class="p-button-secondary"
-                    (click)="cancelDelete()">
-                </button>
-            </div>
+        <div class="confirm">
+            <span class="confirm__icon"><i class="pi pi-exclamation-triangle" aria-hidden="true"></i></span>
+            <p class="confirm__text">
+                Vas a eliminar el rol <strong>{{ selectedRole.name }}</strong>. Los usuarios que lo
+                tengan asignado perderan los permisos asociados.
+            </p>
         </div>
     </ng-container>
+
+    <ng-template pTemplate="footer">
+        <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
+            <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
+                (click)="cancelEdit()"></button>
+            <button pButton pRipple type="button" label="Guardar" icon="pi pi-check" (click)="saveRole()"></button>
+        </ng-container>
+
+        <ng-container *ngIf="dialogType === 'delete'">
+            <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
+                (click)="cancelDelete()"></button>
+            <button pButton pRipple type="button" label="Eliminar rol" icon="pi pi-trash" class="p-button-danger"
+                (click)="deleteRole(selectedRole.id)"></button>
+        </ng-container>
+    </ng-template>
 </p-dialog>
