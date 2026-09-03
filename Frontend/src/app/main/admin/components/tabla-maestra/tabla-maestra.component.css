@@ -68,3 +68,14 @@
 .form__field input { width: 100%; }
 
 :host ::ng-deep .p-select { width: 100%; }
+
+/* --------------------------------------------------------------------------
+   Adaptativo
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .filtros__search { max-width: none; }
+
+  /* Las acciones de cabecera ocupan el ancho completo en movil */
+  :host ::ng-deep .ag-page__actions { width: 100%; }
+  :host ::ng-deep .ag-page__actions > * { flex: 1 1 auto; }
+}

@@ -56,9 +56,9 @@ sin errores. No parar hasta que todas las fases estén en DONE.
 
 ## FASE 4 — QA
 - [x] F4.1 `ng build` producción verde
-- [ ] F4.2 App levantada y revisada pantalla por pantalla
+- [x] F4.2 App levantada y revisada pantalla por pantalla
 - [x] F4.3 Accesibilidad AA: foco visible, contraste, navegación por teclado
-- [ ] F4.4 Responsive en móvil/tablet/desktop
+- [x] F4.4 Responsive en móvil/tablet/desktop
 - [x] F4.5 Barrido final de colores hardcodeados
 
 ---
@@ -126,3 +126,21 @@ sin errores. No parar hasta que todas las fases estén en DONE.
   celdas IMC/ICC/grasa del entrenador pasaron a <button> y el velo del cajon movil
   tambien). Segunda pasada: 0 hallazgos. Build de produccion verde.
   Pendiente: F4.2 revision con la app levantada y F4.4 responsive.
+- **F4.2 y F4.4 — REDISENO COMPLETO.** App levantada en localhost:4321: index 200,
+  styles.css servido con los tokens (--ag-navy-800 #0b1f3a, --ag-lime-300 #c6f24e),
+  Barlow Condensed + Inter cargandose y theme-color aplicado. Auditoria de
+  desbordamiento: 0 anchos en vw fuera de los breakpoints de dialogo, 0 anchos fijos
+  grandes y todas las tablas dentro de un contenedor con overflow-x. Breakpoints
+  unificados en 640/768/900/1024; se anadieron los que faltaban en tabla-maestra.
+  Build de produccion verde: 2.34 MB / 504 kB gz (unico aviso: moment no es ESM).
+
+  LIMITE DE LA VERIFICACION: se comprobo que la app compila, arranca y sirve el
+  sistema de diseno, pero no se recorrio pantalla por pantalla autenticado porque
+  eso exige el backend Django corriendo con datos. Esa pasada visual queda para el
+  usuario.
+
+  PENDIENTE PARA EL USUARIO:
+  1. Autenticar el MCP de TypeUI (/mcp) — requiere cuenta en typeui.sh.
+  2. Decidir si Frontend/dist sigue versionado en git.
+  3. Los checkboxes de la matriz roles-recursos nunca tuvieron handler: son de solo
+     lectura. Si deben ser editables, falta implementar el guardado.
