@@ -81,6 +81,23 @@ export class FormLoginComponent implements OnInit {
     this.formularioActivo = formulario;
   }
 
+  /**
+   * Vista previa del usuario que se creara. El backend lo deriva de la parte
+   * local del correo (admin@gmail.com -> admin) con la misma normalizacion;
+   * si ese nombre ya existe le anadira un sufijo numerico.
+   */
+  get usernamePrevisto(): string {
+    const correo: string = this.formRegister?.value?.email1 ?? '';
+    return correo
+      .split('@')[0]
+      .normalize('NFKD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9._-]+/g, '')
+      .replace(/^[._-]+|[._-]+$/g, '')
+      .slice(0, 40);
+  }
+
   onSubmitLogin() {
     this.showProgressBar = true;
     const form: UserLoginI = this.formLogin.value;
@@ -164,8 +181,10 @@ export class FormLoginComponent implements OnInit {
   onSubmitRegister() {
     this.showProgressBar = true;
     let email = this.formRegister.value.email1;
+    // El backend deriva el username del correo; aqui solo se envia la
+    // identificacion, que se guarda en la Person.
     let formValue = {
-      username: this.formRegister.value.identificación,
+      identificacion: this.formRegister.value.identificación,
       first_name: this.formRegister.value.first_name,
       last_name: this.formRegister.value.last_name,
       email: this.formRegister.value.email1,
@@ -176,7 +195,7 @@ export class FormLoginComponent implements OnInit {
       this.messageService.add({ severity: 'warn', summary: 'Alerta', detail: 'Las contraseñas no coinciden' });
       this.showProgressBar = false;
     } else {
-      if (formValue.username != "" && formValue.email != "" && formValue.password != "") {
+      if (formValue.identificacion != "" && formValue.email != "" && formValue.password != "") {
         this.bandera = true
         this.userService.createUser(formValue).subscribe(
           (user) => {

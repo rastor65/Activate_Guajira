@@ -266,8 +266,17 @@ class RegistroView(APIView):
         try:
             serializer = RegistroSerializzer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
-                return Response({"message": "Registro exitoso"}, status=status.HTTP_201_CREATED)
+                user = serializer.save()
+                # Se devuelve el usuario generado: es la credencial con la que
+                # entrara, y no la eligio el.
+                return Response(
+                    {
+                        "message": "Registro exitoso",
+                        "username": user.username,
+                        "id": user.id,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
 
             # Retornar los errores con codificación correcta
             return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

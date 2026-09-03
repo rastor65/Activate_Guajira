@@ -9,11 +9,27 @@ from django.core.validators import RegexValidator
 User = get_user_model()
 
 class RegistroSerializzer(serializers.Serializer):
-    username = serializers.CharField(max_length=150)
-    email = serializers.CharField()
+    # El nombre de usuario se deriva del correo (admin@gmail.com -> admin),
+    # no lo envia el cliente. Se acepta 'identificacion' para guardarla en la
+    # Person, que es su sitio; antes se colaba en el campo username.
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
     first_name = serializers.CharField(max_length=100, allow_blank=False)
     last_name = serializers.CharField(max_length=100, allow_blank=False)
+    identificacion = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    consentimiento = serializers.BooleanField(required=False, default=False)
+
+    def validate_email(self, value):
+        if CustomUser.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError("Ya existe una cuenta con este correo.")
+        return value
+
+    def validate_identificacion(self, value):
+        from apps.authenticacion.models import Person
+
+        if value and Person.objects.filter(identificacion=value).exists():
+            raise serializers.ValidationError("Ya existe una persona con esta identificacion.")
+        return value
 
     def validate_first_name(self, value):
         """ Validar que el nombre permita ñ y tildes """
@@ -30,13 +46,33 @@ class RegistroSerializzer(serializers.Serializer):
         return value
 
     def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data["username"],
-            email=validated_data["email"],
-            password=validated_data["password"],
-            first_name=validated_data["first_name"],
-            last_name=validated_data["last_name"]
-        )
+        from django.db import transaction
+
+        from apps.authenticacion.models import Person
+        from apps.authenticacion.usernames import generar_username
+
+        identificacion = (validated_data.pop("identificacion", "") or "").strip()
+        consentimiento = validated_data.pop("consentimiento", False)
+
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=generar_username(validated_data["email"]),
+                email=validated_data["email"],
+                password=validated_data["password"],
+                first_name=validated_data["first_name"],
+                last_name=validated_data["last_name"],
+            )
+            user.consentimiento = consentimiento
+            user.save(update_fields=["consentimiento"])
+
+            # El perfil y las mediciones cuelgan de Person: debe existir desde
+            # el registro, no crearse despues a mano.
+            Person.objects.create(
+                user=user,
+                identificacion=identificacion or None,
+                status=True,
+            )
+
         return user
 
 class RegisterUserSerializer(serializers.ModelSerializer):

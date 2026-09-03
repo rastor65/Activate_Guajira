@@ -55,9 +55,12 @@
 
         <form (ngSubmit)="onSubmitLogin()" [formGroup]="formLogin" novalidate class="auth__form">
           <div class="field">
-            <label for="login-user">Correo electronico</label>
-            <input id="login-user" type="email" autocomplete="username" formControlName="username"
-              placeholder="tucorreo@uniguajira.edu.co">
+            <label for="login-user">Usuario</label>
+            <input id="login-user" type="text" autocomplete="username" formControlName="username"
+              placeholder="Tu nombre de usuario" aria-describedby="login-user-hint">
+            <small id="login-user-hint" class="field__hint">
+              Tambien puedes entrar con tu correo.
+            </small>
           </div>
 
           <div class="field">
@@ -109,7 +112,13 @@
           <div class="field">
             <label for="reg-email">Correo electronico</label>
             <input id="reg-email" type="email" autocomplete="email" formControlName="email1"
-              placeholder="tucorreo@uniguajira.edu.co">
+              placeholder="tucorreo@uniguajira.edu.co" aria-describedby="reg-email-hint">
+            <small id="reg-email-hint" class="field__hint">
+              <ng-container *ngIf="usernamePrevisto; else sinPrevio">
+                Entraras con el usuario <strong class="field__hint-user">{{ usernamePrevisto }}</strong>
+              </ng-container>
+              <ng-template #sinPrevio>Tu usuario se creara a partir del correo.</ng-template>
+            </small>
           </div>
 
           <div class="field">

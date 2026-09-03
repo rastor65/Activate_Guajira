@@ -256,6 +256,20 @@
 .field input[type='number']::-webkit-outer-spin-button,
 .field input[type='number']::-webkit-inner-spin-button { appearance: none; margin: 0; }
 
+.field__hint {
+  font-size: var(--ag-text-xs);
+  line-height: 1.45;
+  color: var(--ag-text-muted);
+}
+
+.field__hint-user {
+  padding: 1px var(--ag-space-2);
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-lime-100);
+  color: var(--ag-lime-700);
+  font-weight: 600;
+}
+
 .field__password { position: relative; }
 
 .field__password input { padding-right: var(--ag-space-12); }

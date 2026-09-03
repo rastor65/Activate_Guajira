@@ -295,9 +295,13 @@ class Command(BaseCommand):
             )
             return
 
+        from apps.authenticacion.usernames import generar_username
+
         email = "admin.test@uniguajira.edu.co"
-        username = "1000000001"
+        cedula = "1000000001"
         password = "Admin2026*"
+        # El usuario se deriva del correo, igual que en el registro
+        username = generar_username(email)
 
         user, creado = CustomUser.objects.get_or_create(
             email=email,
@@ -315,7 +319,7 @@ class Command(BaseCommand):
         user.save()
 
         Person.objects.get_or_create(
-            user=user, defaults={"identificacion": username, "status": True}
+            user=user, defaults={"identificacion": cedula, "status": True}
         )
 
         for rol in Rol.objects.filter(pk__in=[ROL_ADMIN, ROL_ESTUDIANTE, ROL_ENTRENADOR]):
@@ -323,8 +327,8 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.WARNING(
-                "  Admin pruebas: %s / %s  (%s)"
-                % (email, password, "creado" if creado else "contrasena restablecida")
+                "  Admin pruebas: usuario=%s  clave=%s  (%s)"
+                % (user.username, password, "creado" if creado else "contrasena restablecida")
             )
         )
 
