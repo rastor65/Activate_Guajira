@@ -202,21 +202,187 @@
 /* ==========================================================================
    FICHA DEL USUARIO
    ========================================================================== */
+/* ==========================================================================
+   TABLA DE USUARIOS
+   ========================================================================== */
+.tabla-usuarios { min-width: 44rem; }
+
 .fila-usuario:hover { background: var(--ag-bg-tinted); }
 
-.enlace-usuario {
+/* Columnas que no deben estirarse */
+.col-estado { width: 8rem; }
+.col-acciones { width: 9rem; }
+
+/* --- Celda de identidad --- */
+.persona {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
   padding: 0;
   border: 0;
   background: none;
-  color: var(--ag-navy-600);
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: 600;
   text-align: left;
   cursor: pointer;
 }
 
-.enlace-usuario:hover { color: var(--ag-navy-800); text-decoration: underline; }
+.persona__avatar,
+.persona__inicial {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--ag-radius-full);
+  object-fit: cover;
+}
+
+.persona__inicial {
+  background: var(--ag-bg-tinted);
+  border: 1px solid var(--ag-navy-200);
+  color: var(--ag-text-brand);
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.persona__avatar { background: var(--ag-bg-sunken); }
+
+.persona__datos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.persona__datos strong {
+  font-size: var(--ag-text-body);
+  font-weight: 600;
+  color: var(--ag-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.persona__datos em {
+  font-style: normal;
+  font-size: var(--ag-text-xs);
+  color: var(--ag-text-muted);
+}
+
+.persona:hover .persona__datos strong { color: var(--ag-navy-600); }
+
+.persona:hover .persona__inicial {
+  background: var(--ag-navy-800);
+  border-color: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+}
+
+.persona:focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--ag-radius-sm);
+}
+
+.celda-correo {
+  color: var(--ag-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+/* --- Estado: punto mas palabra, nunca solo color --- */
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ag-space-2);
+  font-size: var(--ag-text-sm);
+  color: var(--ag-success);
+  white-space: nowrap;
+}
+
+.estado__punto {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--ag-radius-full);
+  background: currentColor;
+}
+
+.estado--baja { color: var(--ag-text-muted); }
+
+/* --- Columnas de la plantilla CSV --- */
+.file-drop__columnas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--ag-space-2);
+  margin-top: var(--ag-space-2);
+}
+
+.file-drop__columnas code {
+  padding: var(--ag-space-1) var(--ag-space-3);
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-bg-sunken);
+  border: 1px solid var(--ag-border-subtle);
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-size: var(--ag-text-xs);
+  color: var(--ag-text-secondary);
+}
+
+/* --- En movil la tabla se vuelve lista de tarjetas --- */
+@media (max-width: 860px) {
+  .ag-table-wrap { border: 0; background: transparent; overflow: visible; }
+
+  .tabla-usuarios { min-width: 0; }
+
+  .tabla-usuarios thead { display: none; }
+
+  .tabla-usuarios,
+  .tabla-usuarios tbody,
+  .tabla-usuarios tr,
+  .tabla-usuarios td { display: block; width: 100%; }
+
+  .tabla-usuarios tr {
+    margin-bottom: var(--ag-space-4);
+    border: 1px solid var(--ag-border-subtle);
+    border-radius: var(--ag-radius-lg);
+    background: var(--ag-bg-surface);
+    box-shadow: var(--ag-shadow-xs);
+    overflow: hidden;
+  }
+
+  .tabla-usuarios td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ag-space-4);
+    padding: var(--ag-space-3) var(--ag-space-4);
+    text-align: right;
+  }
+
+  .tabla-usuarios td::before {
+    content: attr(data-label);
+    flex: none;
+    font-size: var(--ag-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ag-text-muted);
+    text-align: left;
+  }
+
+  /* La identidad encabeza la tarjeta: sin rotulo y a ancho completo */
+  .tabla-usuarios td[data-label='Usuario'] {
+    background: var(--ag-bg-canvas);
+    text-align: left;
+  }
+
+  .tabla-usuarios td[data-label='Usuario']::before,
+  .tabla-usuarios td[data-label='Acciones']::before { display: none; }
+
+  .tabla-usuarios td[data-label='Acciones'] { justify-content: flex-end; }
+
+  .col-estado, .col-acciones { width: auto; }
+}
 
 :host ::ng-deep .dialog-ficha .p-dialog-content.dialog-ficha__body {
   padding: 0;

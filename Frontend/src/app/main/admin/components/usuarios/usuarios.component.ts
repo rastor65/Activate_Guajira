@@ -341,6 +341,58 @@ export class UsuariosComponent implements OnInit {
 
   }
 
+  /**
+   * Cabeceras que espera la carga masiva. Son las mismas que lee
+   * createUserRequests, para que la plantilla no pueda quedar desfasada.
+   */
+  readonly columnasCsv = ['first_name', 'last_name', 'email', 'password'];
+
+  /** Descarga una plantilla CSV con las cabeceras y una fila de ejemplo. */
+  descargarPlantilla(): void {
+    const ejemplo = [
+      ['Maria', 'Epieyu', 'maria.epieyu@uniguajira.edu.co', 'Cambiar123*'],
+      ['Juan', 'Uriana', 'juan.uriana@uniguajira.edu.co', 'Cambiar123*'],
+    ];
+
+    const filas = [this.columnasCsv, ...ejemplo]
+      .map(fila => fila.map(c => this.escaparCsv(c)).join(','))
+      .join('\r\n');
+
+    // El BOM hace que Excel abra el archivo como UTF-8 y no rompa las tildes
+    const contenido = '\uFEFF' + filas + '\r\n';
+    const blob = new Blob([contenido], { type: 'text/csv;charset=utf-8;' });
+
+    const enlace = document.createElement('a');
+    enlace.href = URL.createObjectURL(blob);
+    enlace.download = 'plantilla_usuarios.csv';
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+    URL.revokeObjectURL(enlace.href);
+  }
+
+  /** Entrecomilla el valor si lleva coma, comillas o salto de linea. */
+  private escaparCsv(valor: string): string {
+    return /[",\r\n]/.test(valor) ? '"' + valor.replace(/"/g, '""') + '"' : valor;
+  }
+
+  /** Iniciales para el avatar de la fila. */
+  inicialesDe(usuario: any): string {
+    const nombre = (usuario?.first_name || '').trim();
+    const apellido = (usuario?.last_name || '').trim();
+    if (nombre || apellido) {
+      return ((nombre[0] ?? '') + (apellido[0] ?? '')).toUpperCase();
+    }
+    return (usuario?.username ?? '?').charAt(0).toUpperCase();
+  }
+
+  /** Nombre completo, o el usuario si no hay nombres registrados. */
+  nombreCompleto(usuario: any): string {
+    const completo = [usuario?.first_name, usuario?.last_name]
+      .filter(Boolean).join(' ').trim();
+    return completo || usuario?.username || '—';
+  }
+
   onFileChange(event: any) {
     const file = event.target.files[0];
 

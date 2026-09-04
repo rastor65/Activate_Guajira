@@ -12,10 +12,24 @@ User = get_user_model()
     
 class CustomUserSerializer(serializers.ModelSerializer):
     avatar_url = serializers.SerializerMethodField()
+    roles = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
-        fields = ('id', 'username', 'email', 'avatar_url', 'consentimiento')
+        # first_name, last_name, roles y is_active se exponen para que el
+        # listado de administracion pueda mostrarlos: antes la columna de
+        # roles salia siempre vacia porque el serializer no los incluia.
+        fields = (
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'avatar_url', 'consentimiento', 'is_active', 'roles',
+        )
+
+    def get_roles(self, user):
+        """Nombres de los roles del usuario."""
+        try:
+            return [r.name for r in user.roles.all()]
+        except Exception:
+            return []
         
     def get_avatar_url(self, user):
         if user.avatar:

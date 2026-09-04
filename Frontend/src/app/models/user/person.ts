@@ -68,7 +68,11 @@ export interface Usuario {
   username: string;
   password: string;
   avatar: string | null;
-  roles: number[];
+  /** Nombres de los roles, tal como los devuelve CustomUserSerializer. */
+  roles: any[];
+  avatar_url?: string | null;
+  is_active?: boolean;
+  consentimiento?: boolean;
 }
 
 export interface Rol {

@@ -12,12 +12,19 @@
     <section class="ag-card carga" aria-labelledby="titulo-carga">
         <div class="ag-card__header">
             <h2 id="titulo-carga" class="ag-card__title">Carga masiva por CSV</h2>
+            <button pButton pRipple type="button" icon="pi pi-download" label="Descargar plantilla"
+                class="p-button-outlined p-button-sm" (click)="descargarPlantilla()"></button>
         </div>
 
         <label class="file-drop" for="csvFile">
             <i class="pi pi-file-import" aria-hidden="true"></i>
             <span class="file-drop__title">Seleccionar archivo CSV</span>
-            <span class="file-drop__hint">El archivo debe incluir nombres, apellidos, correo y contrasena.</span>
+            <span class="file-drop__hint">
+                El archivo debe traer estas columnas, en la primera fila:
+            </span>
+            <span class="file-drop__columnas">
+                <code *ngFor="let c of columnasCsv">{{ c }}</code>
+            </span>
             <input type="file" id="csvFile" (change)="onFileChange($event)" accept=".csv">
         </label>
 
@@ -91,6 +98,12 @@
     <section class="ag-card" aria-labelledby="titulo-listado">
         <div class="ag-card__header">
             <h2 id="titulo-listado" class="ag-card__title">Usuarios registrados</h2>
+            <span class="ag-badge ag-badge--neutral" *ngIf="!cargando">
+                {{ usuariosFiltrados.length }}
+                <ng-container *ngIf="usuariosFiltrados.length !== usuarios.length">
+                    de {{ usuarios.length }}
+                </ng-container>
+            </span>
         </div>
 
         <div class="filtros">
@@ -107,28 +120,49 @@
         </div>
 
         <div class="ag-table-wrap" *ngIf="!cargando && usuariosFiltrados.length">
-            <table class="ag-table">
+            <table class="ag-table tabla-usuarios">
+                <caption class="ag-visually-hidden">Usuarios registrados en la plataforma</caption>
                 <thead>
                     <tr>
                         <th scope="col">Usuario</th>
                         <th scope="col">Correo</th>
                         <th scope="col">Roles</th>
-                        <th scope="col"><span class="ag-visually-hidden">Acciones</span></th>
+                        <th scope="col" class="col-estado">Estado</th>
+                        <th scope="col" class="col-acciones"><span class="ag-visually-hidden">Acciones</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let usuario of usuariosFiltrados" class="fila-usuario">
                         <td data-label="Usuario">
-                            <button type="button" class="enlace-usuario" (click)="verDetalle(usuario)"
+                            <button type="button" class="persona" (click)="verDetalle(usuario)"
                                 [attr.aria-label]="'Ver ficha de ' + usuario.username">
-                                {{ usuario.username }}
+                                <img *ngIf="usuario.avatar_url" [src]="usuario.avatar_url" alt=""
+                                    class="persona__avatar">
+                                <span *ngIf="!usuario.avatar_url" class="persona__inicial">
+                                    {{ inicialesDe(usuario) }}
+                                </span>
+                                <span class="persona__datos">
+                                    <strong>{{ nombreCompleto(usuario) }}</strong>
+                                    <em>&#64;{{ usuario.username }}</em>
+                                </span>
                             </button>
                         </td>
-                        <td data-label="Correo">{{ usuario.email }}</td>
+
+                        <td data-label="Correo" class="celda-correo">{{ usuario.email }}</td>
+
                         <td data-label="Roles">
-                            <span class="ag-badge ag-badge--neutral" *ngFor="let rol of usuario.roles">{{ rol }}</span>
+                            <span class="ag-badge ag-badge--accent" *ngFor="let rol of usuario.roles">{{ rol }}</span>
+                            <span class="ag-badge ag-badge--neutral" *ngIf="!usuario.roles?.length">Sin rol</span>
                         </td>
-                        <td data-label="Acciones">
+
+                        <td data-label="Estado" class="col-estado">
+                            <span class="estado" [class.estado--baja]="usuario.is_active === false">
+                                <span class="estado__punto" aria-hidden="true"></span>
+                                {{ usuario.is_active === false ? 'Inactivo' : 'Activo' }}
+                            </span>
+                        </td>
+
+                        <td data-label="Acciones" class="col-acciones">
                             <div class="ag-row-actions">
                                 <button pButton pRipple type="button" icon="pi pi-eye"
                                     class="p-button-text p-button-sm" pTooltip="Ver ficha"
