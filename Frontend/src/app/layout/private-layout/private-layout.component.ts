@@ -195,6 +195,42 @@ export class PrivateLayoutComponent implements OnInit {
   }
 
   // ==========================================================================
+  // Departamento y ciudad
+  //
+  // Son 1.121 municipios: un desplegable plano seria inservible. El codigo
+  // DANE del municipio empieza por el de su departamento (44001 -> La Guajira
+  // 44), asi que se filtra por ese prefijo sin necesitar otra consulta.
+  // ==========================================================================
+
+  private ciudadesDe(codigoDepartamento: any): tablaMaestra[] {
+    const depto = this.departamento.find(d => d.id === codigoDepartamento);
+    const prefijo = (depto as any)?.codigo;
+    if (!prefijo) {
+      return this.ciudad;
+    }
+    return this.ciudad.filter(c => String((c as any).codigo ?? '').startsWith(prefijo));
+  }
+
+  /** Ciudades del departamento de residencia elegido. */
+  get ciudadesResidencia(): tablaMaestra[] {
+    return this.ciudadesDe(this.usuario.departamento);
+  }
+
+  /** Al cambiar de departamento, una ciudad de otro deja de tener sentido. */
+  onDepartamentoChange(): void {
+    const validas = this.ciudadesResidencia;
+    if (this.usuario.ciudad_residencia &&
+        !validas.some(c => c.id === this.usuario.ciudad_residencia)) {
+      this.usuario.ciudad_residencia = null as any;
+    }
+  }
+
+  /** Cuantas ciudades quedan tras el filtro, para orientar al usuario. */
+  get hayDepartamentoElegido(): boolean {
+    return !!this.usuario.departamento;
+  }
+
+  // ==========================================================================
   // Completitud del perfil
   //
   // Varias funciones dependen de datos del perfil: sin genero ni fecha de
@@ -372,14 +408,30 @@ export class PrivateLayoutComponent implements OnInit {
     if (!this.user.consentimiento) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Debe aceptar el consentimiento informado para continuar.'
+        summary: 'Falta el consentimiento',
+        detail: 'Debes aceptar el consentimiento informado para continuar.'
       });
+      // Sin esto los botones quedaban deshabilitados para siempre
       this.isGuardando = false;
+      this.botonesDesactivados = false;
       return;
     }
 
     // Validación extra para evitar duplicados
-    this.userService.getPeopleByUserId(this.usuarioId!).subscribe(personas => {
+    this.userService.getPeopleByUserId(this.usuarioId!).subscribe({
+      error: (error) => {
+        // Sin este manejador, un fallo aqui dejaba el dialogo bloqueado
+        // sin ningun aviso: los botones no volvian a habilitarse.
+        console.error('Error verificando la persona del usuario:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'No se pudo validar tu perfil',
+          detail: 'Revisa tu conexion e intentalo de nuevo.'
+        });
+        this.isGuardando = false;
+        this.botonesDesactivados = false;
+      },
+      next: (personas) => {
       if (personas.length > 1) {
         this.messageService.add({
           severity: 'error',
@@ -435,12 +487,40 @@ export class PrivateLayoutComponent implements OnInit {
         },
         (error) => {
           console.error('Error al guardar los datos del usuario', error);
-          this.messageService.add({ severity: 'error', summary: 'Error al actualizar los datos basicos', detail: 'Todos los campos son requeridos' });
+          // Se muestra el motivo real en vez de suponer que faltan campos
+          const detalle = this.describirError(error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'No se pudieron guardar los datos',
+            detail: detalle
+          });
           this.isGuardando = false;
           this.botonesDesactivados = false;
         }
       );
+      }
     });
+  }
+
+  /** Extrae del error de la API un mensaje util para el usuario. */
+  private describirError(error: any): string {
+    const cuerpo = error?.error;
+    if (typeof cuerpo === 'string' && cuerpo.trim()) {
+      return cuerpo;
+    }
+    if (cuerpo && typeof cuerpo === 'object') {
+      // DRF devuelve { campo: ["mensaje", ...] }
+      const partes: string[] = [];
+      for (const campo of Object.keys(cuerpo)) {
+        const valor = (cuerpo as any)[campo];
+        const texto = Array.isArray(valor) ? valor.join(' ') : String(valor);
+        partes.push(campo === 'detail' ? texto : `${campo}: ${texto}`);
+      }
+      if (partes.length) {
+        return partes.join(' · ');
+      }
+    }
+    return `Error ${error?.status ?? 'desconocido'} al contactar el servidor.`;
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -29,7 +29,10 @@ class categoriaTipoSerializer(serializers.ModelSerializer):
 class tablaMaestraSerializer(serializers.ModelSerializer):
     class Meta:
         model = tablaMaestra
-        fields = ('id', 'nombre', 'categoria')
+        # El codigo se expone porque en Departamento y Ciudad guarda el codigo
+        # DANE: los 2 primeros digitos del municipio son los del departamento,
+        # y con eso el frontend filtra las ciudades sin consultar de nuevo.
+        fields = ('id', 'nombre', 'categoria', 'codigo')
 
 #PERSON
 class PersonsSerializers(serializers.ModelSerializer):

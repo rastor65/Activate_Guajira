@@ -225,14 +225,18 @@
           <div class="campo">
             <label for="departamento">Departamento</label>
             <p-select inputId="departamento" [options]="departamento" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.departamento" placeholder="Selecciona" [filter]="true"
-              [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
+              [(ngModel)]="usuario.departamento" (onChange)="onDepartamentoChange()" placeholder="Selecciona"
+              [filter]="true" [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
             <label for="ciudad_residencia">Ciudad de residencia</label>
-            <p-select inputId="ciudad_residencia" [options]="ciudad" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.ciudad_residencia" placeholder="Selecciona" [filter]="true"
-              [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
+            <p-select inputId="ciudad_residencia" [options]="ciudadesResidencia" optionLabel="nombre"
+              optionValue="id" [(ngModel)]="usuario.ciudad_residencia"
+              [placeholder]="hayDepartamentoElegido ? 'Selecciona' : 'Elige primero el departamento'"
+              [filter]="true" [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
+            <small class="campo__nota" *ngIf="hayDepartamentoElegido">
+              {{ ciudadesResidencia.length }} municipios en el departamento elegido.
+            </small>
           </div>
           <div class="campo">
             <label for="barrio">Barrio</label>
