@@ -73,6 +73,34 @@ export class PerfilComponent implements OnInit {
     this.chartLabels = [];
   }
 
+  /**
+   * IMC calculado sobre lo que se esta escribiendo, para dar respuesta
+   * inmediata sin esperar a guardar. El valor definitivo lo calcula el backend.
+   */
+  get imcPrevisto(): number | null {
+    const talla = Number(this.formData?.talla);
+    const peso = Number(this.formData?.peso);
+    if (!talla || !peso || talla <= 0) {
+      return null;
+    }
+    return Math.round((peso / (talla * talla)) * 10) / 10;
+  }
+
+  /** Indice cintura-cadera en vivo, con la misma intencion que el IMC. */
+  get iccPrevisto(): number | null {
+    const cintura = Number(this.formData?.perimetro_cintura);
+    const cadera = Number(this.formData?.perimetro_cadera);
+    if (!cintura || !cadera || cadera <= 0) {
+      return null;
+    }
+    return Math.round((cintura / cadera) * 100) / 100;
+  }
+
+  /** El calculo de grasa corporal depende del genero registrado en el perfil. */
+  get generoConocido(): boolean {
+    return this.genero === 'Masculino' || this.genero === 'Femenino';
+  }
+
   /** Respaldo en caliente si la imagen remota no llega a cargar. */
   onAvatarError() {
     if (this.profileImage !== this.avatarPorDefecto) {
