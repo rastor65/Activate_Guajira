@@ -351,7 +351,23 @@ class ListUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(source='person.nombres', default="")
     last_name = serializers.CharField(source='person.apellidos', default="")
     gender_name = serializers.SerializerMethodField()
+    edad = serializers.SerializerMethodField()
     ciudad_residencia = serializers.SerializerMethodField()
+
+    def get_edad(self, obj):
+        """Edad en anos. El frontend la necesita para previsualizar la grasa
+        corporal en vivo con la misma formula que aplica el backend."""
+        try:
+            person = getattr(obj, 'person', None)
+            nacimiento = getattr(person, 'fecha_nacimiento', None) if person else None
+            if not nacimiento:
+                return None
+            hoy = date.today()
+            return hoy.year - nacimiento.year - (
+                (hoy.month, hoy.day) < (nacimiento.month, nacimiento.day)
+            )
+        except Exception:
+            return None
 
     def get_avatar_url(self, obj):
         try:

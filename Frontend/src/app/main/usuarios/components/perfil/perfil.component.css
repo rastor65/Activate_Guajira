@@ -130,8 +130,7 @@
   color: var(--ag-text-secondary);
 }
 
-/* --- Campo: el control es la caja, el input vive dentro sin borde propio.
-   Asi la unidad queda pegada al valor y el campo tiene presencia real. --- */
+/* --- Campo: el control es la caja; el input va dentro sin marco propio --- */
 .campo {
   display: flex;
   flex-direction: column;
@@ -152,7 +151,7 @@
   display: flex;
   align-items: center;
   height: 44px;
-  padding: 0 var(--ag-space-3) 0 0;
+  padding-right: var(--ag-space-3);
   border: 1px solid var(--ag-border-default);
   border-radius: var(--ag-radius-md);
   background: var(--ag-bg-surface);
@@ -167,7 +166,6 @@
   box-shadow: 0 0 0 4px rgba(47, 90, 143, 0.16);
 }
 
-/* El input renuncia a su propio marco: lo aporta el contenedor */
 .campo__control input {
   flex: 1 1 auto;
   min-width: 0;
@@ -194,7 +192,7 @@
 
 .campo__control input::placeholder { color: var(--ag-neutral-300); }
 
-/* Son medidas, no contadores: las flechas solo estorban */
+/* Son medidas, no contadores */
 .campo__control input[type='number'] { appearance: textfield; -moz-appearance: textfield; }
 .campo__control input[type='number']::-webkit-outer-spin-button,
 .campo__control input[type='number']::-webkit-inner-spin-button { appearance: none; margin: 0; }
@@ -212,101 +210,160 @@
   color: var(--ag-text-muted);
 }
 
-/* --- Bloque base: altura, peso y el IMC en vivo --- */
-.med-base {
+/* ==========================================================================
+   Tablero de indicadores en vivo
+   ========================================================================== */
+.tablero {
   display: grid;
-  grid-template-columns: 1fr 15rem;
+  grid-template-columns: 15rem 1fr;
   gap: var(--ag-space-5);
   padding: var(--ag-space-5);
   margin-bottom: var(--ag-space-6);
   border-radius: var(--ag-radius-lg);
   background:
-    radial-gradient(120% 140% at 100% 0%, var(--ag-navy-700) 0%, var(--ag-navy-800) 55%);
+    radial-gradient(130% 150% at 0% 0%, var(--ag-navy-700) 0%, var(--ag-navy-800) 50%,
+                    var(--ag-navy-900) 100%);
 }
 
-.med-base__campos {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.tablero__entrada {
+  display: flex;
+  flex-direction: column;
   gap: var(--ag-space-4);
-  align-content: center;
+  justify-content: center;
+  padding-right: var(--ag-space-5);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Sobre fondo oscuro las etiquetas se invierten */
-.med-base .campo label { color: rgba(255, 255, 255, 0.72); }
+/* Sobre fondo oscuro los campos se invierten */
+.tablero .campo label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
-.med-base .campo__control {
+.tablero .campo__control {
+  height: 48px;
   border-color: rgba(255, 255, 255, 0.16);
   background: rgba(255, 255, 255, 0.07);
 }
 
-.med-base .campo__control:hover { border-color: rgba(198, 242, 78, 0.4); }
+.tablero .campo__control:hover { border-color: rgba(198, 242, 78, 0.4); }
 
-.med-base .campo__control:focus-within {
+.tablero .campo__control:focus-within {
   border-color: var(--ag-action-accent);
   box-shadow: 0 0 0 4px rgba(198, 242, 78, 0.18);
 }
 
-.med-base .campo__control input { color: var(--ag-text-inverse); font-size: var(--ag-text-body-lg); }
-.med-base .campo__control input::placeholder { color: rgba(255, 255, 255, 0.32); }
+.tablero .campo__control input {
+  color: var(--ag-text-inverse);
+  font-family: var(--ag-font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
 
-.med-base .campo__sufijo {
+.tablero .campo__control input::placeholder {
+  font-family: var(--ag-font-body);
+  font-size: var(--ag-text-body);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.28);
+}
+
+.tablero .campo__sufijo {
   border-left-color: rgba(255, 255, 255, 0.16);
   color: var(--ag-action-accent);
 }
 
-/* --- Tarjeta de resultado --- */
-.med-resultado {
+/* --- Rejilla de indicadores --- */
+.tablero__panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: var(--ag-space-3);
+}
+
+.ind {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--ag-space-2);
-  padding: var(--ag-space-4);
+  gap: var(--ag-space-1);
+  padding: var(--ag-space-4) var(--ag-space-3);
   border-radius: var(--ag-radius-md);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
-  transition: border-color var(--ag-dur-base) var(--ag-ease-standard);
+  transition: border-color var(--ag-dur-base) var(--ag-ease-standard),
+              background-color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.med-resultado--activo { border-color: rgba(198, 242, 78, 0.45); }
+.ind--activo {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(198, 242, 78, 0.35);
+}
 
-.med-resultado__label {
+.ind__label {
   margin: 0;
   font-size: var(--ag-text-xs);
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.5);
 }
 
-.med-resultado__valor {
+.ind__valor {
   margin: 0;
   font-family: var(--ag-font-display);
-  font-size: var(--ag-text-stat);
+  font-size: 2rem;
   font-weight: 700;
-  line-height: 1;
-  color: var(--ag-text-inverse);
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.35);
   font-variant-numeric: tabular-nums;
+  transition: color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.med-resultado--activo .med-resultado__valor { color: var(--ag-action-accent); }
+.ind__valor small {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-left: 1px;
+}
 
-.med-resultado__pista {
+.ind--activo .ind__valor { color: var(--ag-action-accent); }
+
+/* El rango de peso no cabe a 2rem */
+.ind__valor--rango { font-size: 1.25rem; }
+
+.ind--destacado .ind__valor { font-size: 2.5rem; }
+
+.ind__pista {
   margin: 0;
-  max-width: 16ch;
   font-size: var(--ag-text-xs);
-  line-height: 1.4;
-  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.4);
 }
 
-/* --- Secciones --- */
-.med-seccion { margin-bottom: var(--ag-space-6); }
+/* Las insignias del tablero van sobre fondo oscuro */
+.ind .ag-badge {
+  font-size: 0.625rem;
+  padding: 2px var(--ag-space-2);
+}
+
+/* ==========================================================================
+   Secciones de campos
+   ========================================================================== */
+.med-seccion {
+  padding: var(--ag-space-5);
+  margin-bottom: var(--ag-space-4);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-canvas);
+}
 
 .med-seccion:last-of-type { margin-bottom: 0; }
 
 .med-seccion__head {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--ag-space-2);
   margin-bottom: var(--ag-space-4);
@@ -316,16 +373,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  flex: none;
+  width: 28px;
+  height: 28px;
   border-radius: var(--ag-radius-sm);
-  background: var(--ag-bg-tinted);
-  color: var(--ag-navy-500);
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
   font-size: 0.8rem;
 }
 
 .med-seccion__titulo {
   margin: 0;
+  margin-right: auto;
   font-size: var(--ag-text-sm);
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -333,32 +392,58 @@
   color: var(--ag-text-brand);
 }
 
-/* Dato calculado junto al titulo de la seccion */
-.med-seccion__dato {
-  margin-left: auto;
+/* Indicadores derivados junto al titulo de su seccion */
+.med-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ag-space-1);
   padding: var(--ag-space-1) var(--ag-space-3);
   border-radius: var(--ag-radius-full);
-  background: var(--ag-bg-sunken);
+  background: var(--ag-bg-surface);
+  border: 1px solid var(--ag-border-subtle);
   font-size: var(--ag-text-xs);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--ag-text-secondary);
+  white-space: nowrap;
 }
 
-.med-seccion__dato strong {
+.med-chip strong {
   color: var(--ag-text-brand);
   font-variant-numeric: tabular-nums;
 }
 
-/* Rejilla uniforme: todas las secciones fluyen igual */
+.med-chip--alerta {
+  background: var(--ag-warning-soft);
+  border-color: var(--ag-warning);
+  color: var(--ag-warning);
+}
+
+.med-chip--alerta strong { color: var(--ag-warning); }
+
 .med-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: var(--ag-space-4);
 }
 
-/* Los ng-container por genero no crean caja: sus campos entran en la rejilla */
+/* Los ng-container por genero no deben crear caja en la rejilla */
 .med-grid > ng-container { display: contents; }
+
+/* --- Nota derivada al pie de una seccion --- */
+.med-nota {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-2);
+  margin: var(--ag-space-4) 0 0 0;
+  padding-top: var(--ag-space-3);
+  border-top: 1px dashed var(--ag-border-subtle);
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-secondary);
+}
+
+.med-nota strong {
+  color: var(--ag-text-brand);
+  font-variant-numeric: tabular-nums;
+}
 
 /* --- Aviso contextual --- */
 .med-aviso {
@@ -380,14 +465,30 @@
 /* --------------------------------------------------------------------------
    Adaptativo
    -------------------------------------------------------------------------- */
-@media (max-width: 768px) {
-  .med-base { grid-template-columns: 1fr; }
-  .med-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+@media (max-width: 900px) {
+  .tablero { grid-template-columns: 1fr; }
+
+  .tablero__entrada {
+    flex-direction: row;
+    padding-right: 0;
+    padding-bottom: var(--ag-space-5);
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .tablero__entrada .campo { flex: 1 1 0; }
 }
 
-@media (max-width: 480px) {
-  .med-base__campos { grid-template-columns: 1fr; }
-  .med-grid { grid-template-columns: 1fr; }
+@media (max-width: 640px) {
+  .med-seccion { padding: var(--ag-space-4); }
+  .med-grid { grid-template-columns: 1fr 1fr; }
+  .tablero__panel { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 420px) {
+  .tablero__entrada { flex-direction: column; }
+  .med-grid,
+  .tablero__panel { grid-template-columns: 1fr; }
 }
 
 /* --------------------------------------------------------------------------

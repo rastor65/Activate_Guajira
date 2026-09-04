@@ -36,6 +36,8 @@ export class PerfilComponent implements OnInit {
   generoPerson: any;
   cargando: boolean = false;
   genero: any;
+  /** Edad en anos, del perfil. La grasa corporal depende de ella. */
+  edad: number | null = null;
   pesoChart: any;
   imcChart: any;
   isGuardando: boolean = false;
@@ -93,32 +95,147 @@ export class PerfilComponent implements OnInit {
     return this.esNueva ? 'Nueva medicion' : 'Editar medicion';
   }
 
-  /**
-   * IMC calculado sobre lo que se esta escribiendo, para dar respuesta
-   * inmediata sin esperar a guardar. El valor definitivo lo calcula el backend.
-   */
-  get imcPrevisto(): number | null {
-    const talla = Number(this.formData?.talla);
-    const peso = Number(this.formData?.peso);
-    if (!talla || !peso || talla <= 0) {
-      return null;
-    }
-    return Math.round((peso / (talla * talla)) * 10) / 10;
+  // ==========================================================================
+  // Calculos en vivo
+  //
+  // Replican las formulas del backend (ver ListMedicionSerializer) para que la
+  // vista previa coincida con lo que se guarda. Los marcados como "informativo"
+  // no los calcula el backend: se muestran solo como apoyo al registrar.
+  // ==========================================================================
+
+  private num(valor: any): number | null {
+    const n = Number(valor);
+    return Number.isFinite(n) && n > 0 ? n : null;
   }
 
-  /** Indice cintura-cadera en vivo, con la misma intencion que el IMC. */
+  /** IMC = peso / talla^2 */
+  get imcPrevisto(): number | null {
+    const talla = this.num(this.formData?.talla);
+    const peso = this.num(this.formData?.peso);
+    if (!talla || !peso) {
+      return null;
+    }
+    return Math.round((peso / (talla * talla)) * 100) / 100;
+  }
+
+  /** ICC = cintura / cadera */
   get iccPrevisto(): number | null {
-    const cintura = Number(this.formData?.perimetro_cintura);
-    const cadera = Number(this.formData?.perimetro_cadera);
-    if (!cintura || !cadera || cadera <= 0) {
+    const cintura = this.num(this.formData?.perimetro_cintura);
+    const cadera = this.num(this.formData?.perimetro_cadera);
+    if (!cintura || !cadera) {
       return null;
     }
     return Math.round((cintura / cadera) * 100) / 100;
   }
 
-  /** El calculo de grasa corporal depende del genero registrado en el perfil. */
+  /**
+   * Grasa corporal por la formula de Deurenberg, la misma del backend:
+   * depende de IMC, edad y genero, no de los pliegues.
+   */
+  get grasaPrevista(): number | null {
+    const imc = this.imcPrevisto;
+    if (imc === null || this.edad === null || !this.generoConocido) {
+      return null;
+    }
+    const ajuste = this.genero === 'Masculino' ? 16.2 : 5.4;
+    return Math.round(((1.20 * imc) + (0.23 * this.edad) - ajuste) * 100) / 100;
+  }
+
+  /** Fuerza maxima de prension = media de ambas manos */
+  get fuerzaMaximaPrevista(): number | null {
+    const derecha = this.num(this.formData?.fuerza_manoderecha);
+    const izquierda = this.num(this.formData?.fuerza_manoizquierda);
+    if (!derecha || !izquierda) {
+      return null;
+    }
+    return Math.round(((derecha + izquierda) / 2) * 10) / 10;
+  }
+
+  /** Informativo: rango de peso para un IMC entre 18.5 y 24.9 */
+  get pesoSaludable(): string | null {
+    const talla = this.num(this.formData?.talla);
+    if (!talla) {
+      return null;
+    }
+    const minimo = Math.round(18.5 * talla * talla * 10) / 10;
+    const maximo = Math.round(24.9 * talla * talla * 10) / 10;
+    return `${minimo} - ${maximo}`;
+  }
+
+  /** Informativo: indice cintura-altura, buen predictor de riesgo abdominal */
+  get indiceCinturaAltura(): number | null {
+    const cintura = this.num(this.formData?.perimetro_cintura);
+    const talla = this.num(this.formData?.talla);
+    if (!cintura || !talla) {
+      return null;
+    }
+    // La cintura va en cm y la talla en m
+    return Math.round((cintura / (talla * 100)) * 100) / 100;
+  }
+
+  /** Informativo: por encima de 0.5 se asocia a mayor riesgo cardiometabolico */
+  get icaEnRiesgo(): boolean {
+    const ica = this.indiceCinturaAltura;
+    return ica !== null && ica >= 0.5;
+  }
+
+  /** Informativo: asimetria entre manos, en por ciento */
+  get asimetriaFuerza(): number | null {
+    const derecha = this.num(this.formData?.fuerza_manoderecha);
+    const izquierda = this.num(this.formData?.fuerza_manoizquierda);
+    if (!derecha || !izquierda) {
+      return null;
+    }
+    const mayor = Math.max(derecha, izquierda);
+    return Math.round((Math.abs(derecha - izquierda) / mayor) * 1000) / 10;
+  }
+
+  /** Una asimetria superior al 10% se considera relevante en valoracion funcional */
+  get asimetriaRelevante(): boolean {
+    const a = this.asimetriaFuerza;
+    return a !== null && a > 10;
+  }
+
+  /** Informativo: fuerza de prension relativa al peso corporal */
+  get fuerzaRelativa(): number | null {
+    const fuerza = this.fuerzaMaximaPrevista;
+    const peso = this.num(this.formData?.peso);
+    if (fuerza === null || !peso) {
+      return null;
+    }
+    return Math.round((fuerza / peso) * 100) / 100;
+  }
+
+  /** Informativo: ganancia entre la medida explosiva inicial y la final */
+  get progresoExplosivo(): number | null {
+    const inicial = this.num(this.formData?.fuerza_explosiva_i);
+    const final = this.num(this.formData?.fuerza_explosiva_f);
+    if (!inicial || !final) {
+      return null;
+    }
+    return Math.round((final - inicial) * 10) / 10;
+  }
+
+  /** El genero se necesita para la grasa corporal y los pliegues especificos. */
   get generoConocido(): boolean {
     return this.genero === 'Masculino' || this.genero === 'Femenino';
+  }
+
+  /** Que le falta al perfil para poder calcular la grasa corporal. */
+  get faltaParaGrasa(): string | null {
+    const faltantes: string[] = [];
+    if (!this.generoConocido) {
+      faltantes.push('genero');
+    }
+    if (this.edad === null) {
+      faltantes.push('fecha de nacimiento');
+    }
+    return faltantes.length ? faltantes.join(' y ') : null;
+  }
+
+  /** Clasificacion del indice cintura-cadera para la vista previa. */
+  getICCLabelPrevio(icc: number): string {
+    return this.getICCLabel(icc);
   }
 
   /** Respaldo en caliente si la imagen remota no llega a cargar. */
@@ -137,6 +254,7 @@ export class PerfilComponent implements OnInit {
           this.user.email = userProfile.email;
           this.profileImage = userProfile.avatar_url || this.avatarPorDefecto;
           this.genero = userProfile.gender_name;
+          this.edad = userProfile.edad ?? null;
           this.person = {
             nombres: userProfile.first_name,
             apellidos: userProfile.last_name

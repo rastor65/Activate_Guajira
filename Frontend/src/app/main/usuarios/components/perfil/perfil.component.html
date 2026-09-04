@@ -167,17 +167,17 @@
 
 <!-- ===================== MEDICION ===================== -->
 <p-dialog [(visible)]="dialogMedicion" [header]="tituloMedicion" [modal]="true" [resizable]="false"
-    [draggable]="false" [style]="{ width: '60rem' }" [breakpoints]="{ '900px': '94vw' }"
+    [draggable]="false" [style]="{ width: '64rem' }" [breakpoints]="{ '1024px': '95vw' }"
     styleClass="dialog-medicion">
 
     <p class="dialog__lede" *ngIf="!soloLectura">
-        Solo <strong>altura</strong> y <strong>peso</strong> son obligatorios. Deja vacia
-        cualquier prueba que no se haya aplicado.
+        Los indicadores se calculan mientras escribes. Solo <strong>altura</strong> y
+        <strong>peso</strong> son obligatorios.
     </p>
 
-    <!-- ---------- Datos base con calculo en vivo ---------- -->
-    <section class="med-base">
-        <div class="med-base__campos">
+    <!-- ---------- Panel de resultados en vivo ---------- -->
+    <section class="tablero" aria-label="Indicadores calculados">
+        <div class="tablero__entrada">
                 <div class="campo">
                     <label for="talla">Altura</label>
                     <div class="campo__control">
@@ -196,13 +196,42 @@
                 </div>
         </div>
 
-        <div class="med-resultado" [class.med-resultado--activo]="imcPrevisto" role="status" aria-live="polite">
-            <p class="med-resultado__label">Indice de masa corporal</p>
-            <p class="med-resultado__valor">{{ imcPrevisto ?? '--' }}</p>
-            <span class="ag-badge" *ngIf="imcPrevisto" [ngClass]="'badge--' + getIMCClass(imcPrevisto)">
-                {{ getIMCLabel(imcPrevisto) }}
-            </span>
-            <p class="med-resultado__pista" *ngIf="!imcPrevisto">Se calcula al escribir altura y peso</p>
+        <div class="tablero__panel" role="status" aria-live="polite">
+            <!-- IMC -->
+            <article class="ind ind--destacado" [class.ind--activo]="imcPrevisto">
+                <p class="ind__label">IMC</p>
+                <p class="ind__valor">{{ imcPrevisto ?? '--' }}</p>
+                <span class="ag-badge" *ngIf="imcPrevisto"
+                    [ngClass]="'badge--' + getIMCClass(imcPrevisto)">{{ getIMCLabel(imcPrevisto) }}</span>
+                <p class="ind__pista" *ngIf="!imcPrevisto">Altura y peso</p>
+            </article>
+
+            <!-- Grasa corporal -->
+            <article class="ind" [class.ind--activo]="grasaPrevista">
+                <p class="ind__label">Grasa corporal</p>
+                <p class="ind__valor">{{ grasaPrevista ?? '--' }}<small *ngIf="grasaPrevista">%</small></p>
+                <span class="ag-badge" *ngIf="grasaPrevista"
+                    [ngClass]="'badge--' + getGrasaClass(grasaPrevista)">{{ getGrasaLabel(grasaPrevista) }}</span>
+                <p class="ind__pista" *ngIf="!grasaPrevista">
+                    {{ faltaParaGrasa ? 'Falta ' + faltaParaGrasa : 'Altura y peso' }}
+                </p>
+            </article>
+
+            <!-- ICC -->
+            <article class="ind" [class.ind--activo]="iccPrevisto">
+                <p class="ind__label">Cintura-cadera</p>
+                <p class="ind__valor">{{ iccPrevisto ?? '--' }}</p>
+                <span class="ag-badge" *ngIf="iccPrevisto"
+                    [ngClass]="'badge--' + getICCClass(iccPrevisto)">Riesgo {{ getICCLabel(iccPrevisto) }}</span>
+                <p class="ind__pista" *ngIf="!iccPrevisto">Perimetros</p>
+            </article>
+
+            <!-- Peso saludable -->
+            <article class="ind" [class.ind--activo]="pesoSaludable">
+                <p class="ind__label">Peso saludable</p>
+                <p class="ind__valor ind__valor--rango">{{ pesoSaludable ?? '--' }}</p>
+                <p class="ind__pista">{{ pesoSaludable ? 'kg para tu altura' : 'Altura' }}</p>
+            </article>
         </div>
     </section>
 
@@ -211,8 +240,9 @@
         <header class="med-seccion__head">
             <i class="pi pi-arrows-h" aria-hidden="true"></i>
             <h3 class="med-seccion__titulo">Perimetros</h3>
-            <span class="med-seccion__dato" *ngIf="iccPrevisto">
-                ICC <strong>{{ iccPrevisto }}</strong>
+            <span class="med-chip" *ngIf="indiceCinturaAltura" [class.med-chip--alerta]="icaEnRiesgo">
+                Cintura-altura <strong>{{ indiceCinturaAltura }}</strong>
+                <span *ngIf="icaEnRiesgo">· riesgo elevado</span>
             </span>
         </header>
         <div class="med-grid">
@@ -238,16 +268,13 @@
     <!-- ---------- Pliegues cutaneos ---------- -->
     <section class="med-seccion">
         <header class="med-seccion__head">
-            <i class="pi pi-percentage" aria-hidden="true"></i>
+            <i class="pi pi-chart-bar" aria-hidden="true"></i>
             <h3 class="med-seccion__titulo">Pliegues cutaneos</h3>
         </header>
 
         <p class="med-aviso" *ngIf="!generoConocido">
             <i class="pi pi-info-circle" aria-hidden="true"></i>
-            <span>
-                Registra tu <strong>genero</strong> en el perfil para habilitar los pliegues
-                especificos y el calculo de grasa corporal.
-            </span>
+            <span>Registra tu <strong>genero</strong> en el perfil para habilitar los pliegues especificos.</span>
         </p>
 
         <div class="med-grid">
@@ -305,7 +332,18 @@
         <header class="med-seccion__head">
             <i class="pi pi-bolt" aria-hidden="true"></i>
             <h3 class="med-seccion__titulo">Fuerza</h3>
+
+            <span class="med-chip" *ngIf="fuerzaMaximaPrevista">
+                Prension media <strong>{{ fuerzaMaximaPrevista }} kg</strong>
+            </span>
+            <span class="med-chip" *ngIf="fuerzaRelativa">
+                Relativa <strong>{{ fuerzaRelativa }}</strong>
+            </span>
+            <span class="med-chip" *ngIf="asimetriaFuerza !== null" [class.med-chip--alerta]="asimetriaRelevante">
+                Asimetria <strong>{{ asimetriaFuerza }}%</strong>
+            </span>
         </header>
+
         <div class="med-grid">
                 <div class="campo">
                     <label for="fuerza_manoderecha">Mano derecha</label>
@@ -324,6 +362,13 @@
                     </div>
                 </div>
                 <div class="campo">
+                    <label for="resistencia_abdominal">Resistencia abdominal</label>
+                    <div class="campo__control">
+                        <input type="number" id="resistencia_abdominal" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.resistencia_abdominal">
+                    </div>
+                </div>
+                <div class="campo">
                     <label for="fuerza_explosiva_i">Explosiva inicial</label>
                     <div class="campo__control">
                         <input type="number" id="fuerza_explosiva_i" pInputText
@@ -337,14 +382,14 @@
                             [readonly]="soloLectura" [(ngModel)]="formData.fuerza_explosiva_f">
                     </div>
                 </div>
-                <div class="campo">
-                    <label for="resistencia_abdominal">Resistencia abdominal</label>
-                    <div class="campo__control">
-                        <input type="number" id="resistencia_abdominal" pInputText
-                            [readonly]="soloLectura" [(ngModel)]="formData.resistencia_abdominal">
-                    </div>
-                </div>
         </div>
+
+        <p class="med-nota" *ngIf="progresoExplosivo !== null">
+            <i class="pi pi-arrow-up-right" aria-hidden="true" *ngIf="progresoExplosivo > 0"></i>
+            <i class="pi pi-arrow-down-right" aria-hidden="true" *ngIf="progresoExplosivo < 0"></i>
+            <i class="pi pi-minus" aria-hidden="true" *ngIf="progresoExplosivo === 0"></i>
+            Diferencia explosiva: <strong>{{ progresoExplosivo }}</strong>
+        </p>
     </section>
 
     <!-- ---------- Capacidad funcional ---------- -->
@@ -355,26 +400,18 @@
         </header>
         <div class="med-grid">
                 <div class="campo">
-                    <label for="equilibrio">Equilibrio</label>
-                    <div class="campo__control">
-                        <input type="number" id="equilibrio" pInputText
-                            [readonly]="soloLectura" [(ngModel)]="formData.equilibrio">
-                    </div>
-                </div>
-                <div class="campo">
-                    <label for="flexibilidad">Flexibilidad</label>
-                    <div class="campo__control">
-                        <input type="number" id="flexibilidad" pInputText
-                            [readonly]="soloLectura" [(ngModel)]="formData.flexibilidad">
-                    <span class="campo__sufijo">cm</span>
-                    </div>
-                </div>
-                <div class="campo">
                     <label for="frecuencia_cardiaca">Frecuencia cardiaca</label>
                     <div class="campo__control">
                         <input type="number" id="frecuencia_cardiaca" pInputText
                             [readonly]="soloLectura" [(ngModel)]="formData.frecuencia_cardiaca">
                     <span class="campo__sufijo">ppm</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="volumen_max_oxigeno">Volumen max. oxigeno</label>
+                    <div class="campo__control">
+                        <input type="number" id="volumen_max_oxigeno" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.volumen_max_oxigeno">
                     </div>
                 </div>
                 <div class="campo">
@@ -393,10 +430,18 @@
                     </div>
                 </div>
                 <div class="campo">
-                    <label for="volumen_max_oxigeno">Volumen max. oxigeno</label>
+                    <label for="flexibilidad">Flexibilidad</label>
                     <div class="campo__control">
-                        <input type="number" id="volumen_max_oxigeno" pInputText
-                            [readonly]="soloLectura" [(ngModel)]="formData.volumen_max_oxigeno">
+                        <input type="number" id="flexibilidad" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.flexibilidad">
+                    <span class="campo__sufijo">cm</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="equilibrio">Equilibrio</label>
+                    <div class="campo__control">
+                        <input type="number" id="equilibrio" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.equilibrio">
                     </div>
                 </div>
                 <div class="campo">
