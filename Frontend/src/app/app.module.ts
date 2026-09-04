@@ -34,6 +34,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { CacheInterceptor } from './core/interceptors/cache.interceptor';
 import { ActivateGuajiraPreset } from '../theme/activate-guajira-preset';
 import { ToastModule } from "primeng/toast";
 import { TreeModule } from 'primeng/tree';
@@ -140,6 +141,9 @@ import { PreventMultipleClicksDirective } from './shared/prevent-multiple-clicks
       ripple: true,
     }),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    // Va despues del de autenticacion: primero se resuelve la sesion y luego
+    // se decide si la respuesta puede salir del cache en vez de la red.
+    { provide: HTTP_INTERCEPTORS, useClass: CacheInterceptor, multi: true },
     ConfirmationService, MessageService, CdkVirtualScrollViewport,
     { provide: LOCALE_ID, useValue: 'es' },
     { provide: LocationStrategy, useClass: HashLocationStrategy },

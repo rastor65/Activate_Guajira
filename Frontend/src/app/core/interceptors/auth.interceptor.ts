@@ -9,6 +9,7 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { HttpCacheService } from '../cache/http-cache.service';
 
 /**
  * Adjunta el token a cada peticion a la API y centraliza el 401.
@@ -20,7 +21,10 @@ import { Router } from '@angular/router';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private router: Router) { }
+  constructor(
+    private router: Router,
+    private cache: HttpCacheService,
+  ) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const token = localStorage.getItem('token');
@@ -37,7 +41,9 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
           // La sesion caduco: limpiar y volver al login, en vez de dejar la
-          // interfaz mostrando datos vacios como si no hubiera nada.
+          // interfaz mostrando datos vacios como si no hubiera nada. El cache
+          // se va con ella: son datos de una sesion que ya no vale.
+          this.cache.limpiar();
           localStorage.removeItem('token');
           localStorage.removeItem('user');
           localStorage.removeItem('menu');
