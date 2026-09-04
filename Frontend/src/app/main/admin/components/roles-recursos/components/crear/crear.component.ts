@@ -6,7 +6,7 @@ import { MessageService } from 'primeng/api';
 
 @Component({
   standalone: false,
-  selector: 'app-crear',
+  selector: 'app-roles-recursos-crear',
   templateUrl: './crear.component.html',
   styleUrls: ['./crear.component.css']
 })

@@ -23,6 +23,7 @@ import { CheckboxModule } from 'primeng/checkbox';
   declarations: [
     VerComponent,
   ],
+  exports: [VerComponent],
   imports: [
     CommonModule,
     UserRolesRoutingModule,

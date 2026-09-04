@@ -10,7 +10,7 @@ import { DialogService } from 'primeng/dynamicdialog';
 
 @Component({
   standalone: false,
-  selector: 'app-ver',
+  selector: 'app-roles-ver',
   templateUrl: './ver.component.html',
   styleUrls: ['./ver.component.css']
 })

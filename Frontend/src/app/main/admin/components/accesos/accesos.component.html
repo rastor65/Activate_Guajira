@@ -1,0 +1,32 @@
+<div class="ag-page accesos">
+
+  <header class="ag-page__header">
+    <div>
+      <p class="ag-overline">Administracion</p>
+      <h1 class="ag-page__title">Control de acceso</h1>
+      <p class="ag-page__subtitle">
+        Roles, recursos, permisos y asignaciones en un solo lugar.
+      </p>
+    </div>
+  </header>
+
+  <!-- Navegacion entre secciones -->
+  <nav class="accesos__nav" aria-label="Secciones de control de acceso">
+    <button *ngFor="let s of secciones" type="button" class="accesos__tab"
+      [class.is-active]="seccion === s.id" [attr.aria-current]="seccion === s.id"
+      (click)="irA(s.id)">
+      <i [ngClass]="s.icono" aria-hidden="true"></i>
+      <span class="accesos__tab-titulo">{{ s.titulo }}</span>
+    </button>
+  </nav>
+
+  <p class="accesos__descripcion">{{ seccionActual.descripcion }}</p>
+
+  <!-- Contenido: se reutilizan los componentes que ya existian -->
+  <div class="accesos__panel">
+    <app-roles-ver *ngIf="seccion === 'roles'"></app-roles-ver>
+    <app-recursos-ver *ngIf="seccion === 'recursos'"></app-recursos-ver>
+    <app-roles-recursos-crear *ngIf="seccion === 'permisos'"></app-roles-recursos-crear>
+    <app-user-roles-ver *ngIf="seccion === 'usuarios'"></app-user-roles-ver>
+  </div>
+</div>

@@ -1,0 +1,97 @@
+/* Vista unificada de control de acceso. */
+
+/* --------------------------------------------------------------------------
+   Navegacion entre secciones
+   -------------------------------------------------------------------------- */
+.accesos__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ag-space-2);
+  padding: var(--ag-space-2);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-surface);
+  box-shadow: var(--ag-shadow-xs);
+}
+
+.accesos__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ag-space-2);
+  flex: 1 1 10rem;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--ag-space-2) var(--ag-space-4);
+  border: 0;
+  border-radius: var(--ag-radius-md);
+  background: transparent;
+  color: var(--ag-text-secondary);
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
+              color var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.accesos__tab > i { font-size: 0.95rem; }
+
+.accesos__tab:hover {
+  background: var(--ag-bg-tinted);
+  color: var(--ag-text-brand);
+}
+
+.accesos__tab.is-active {
+  background: var(--ag-action-primary);
+  color: var(--ag-text-inverse);
+}
+
+.accesos__tab.is-active > i { color: var(--ag-action-accent); }
+
+.accesos__tab:focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
+}
+
+.accesos__descripcion {
+  margin: var(--ag-space-4) 0 var(--ag-space-5) 0;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Panel
+   -------------------------------------------------------------------------- */
+.accesos__panel {
+  animation: accesos-entrar var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+@keyframes accesos-entrar {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Los componentes reutilizados ya traen su propio .ag-page: aqui sobra el
+   relleno y el ancho maximo, porque este contenedor ya los aplica. */
+.accesos__panel ::ng-deep .ag-page {
+  max-width: none;
+  padding: 0;
+}
+
+/* Y tampoco deben repetir la cabecera de pagina: la de arriba ya identifica
+   la seccion, y su titulo lo da la pestana activa. */
+.accesos__panel ::ng-deep .ag-page__header {
+  margin-bottom: var(--ag-space-4);
+}
+
+.accesos__panel ::ng-deep .ag-page__header .ag-overline,
+.accesos__panel ::ng-deep .ag-page__header .ag-page__title {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .accesos__tab { flex: 1 1 100%; justify-content: flex-start; }
+}

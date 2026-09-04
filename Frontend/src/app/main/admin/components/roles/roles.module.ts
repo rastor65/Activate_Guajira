@@ -21,6 +21,7 @@ import { CardModule } from 'primeng/card';
     VerComponent,
     RolesComponent,
   ],
+  exports: [VerComponent],
   providers: [
     // ConfirmationService
   ],

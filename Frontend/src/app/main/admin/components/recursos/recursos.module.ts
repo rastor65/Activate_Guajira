@@ -28,6 +28,7 @@ import { RecursosComponent } from './recursos.component';
     VerComponent,
     RecursosComponent
   ],
+  exports: [VerComponent],
   imports: [
     TooltipModule,
     CommonModule,

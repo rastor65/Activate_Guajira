@@ -26,6 +26,7 @@ import { CardModule } from 'primeng/card';
   declarations: [
     CrearComponent,
   ],
+  exports: [CrearComponent],
   imports: [
     CommonModule,
     RolesRecursosRoutingModule,

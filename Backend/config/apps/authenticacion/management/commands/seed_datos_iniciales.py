@@ -50,11 +50,11 @@ RECURSOS = [
 
     (5, 0, "Administracion", "/administrador/usuarios", "pi pi-cog", "/administrador", "GET"),
     (6, 5, "Usuarios", "/administrador/usuarios", "pi pi-users", "/administrador/usuarios", "GET"),
-    (7, 5, "Personas", "/usuarios/personas", "pi pi-id-card", "/usuarios/personas", "GET"),
-    (8, 5, "Roles", "/administrador/roles", "pi pi-shield", "/administrador/roles", "GET"),
-    (9, 5, "Recursos", "/administrador/recursos", "pi pi-sitemap", "/administrador/recursos", "GET"),
-    (10, 5, "Asignar recursos", "/administrador/recursos_roles", "pi pi-link", "/administrador/recursos_roles", "GET"),
-    (11, 5, "Asignar roles", "/administrador/user_roles", "pi pi-user-edit", "/administrador/user_roles", "GET"),
+    # Los contenedores de estas rutas solo tienen un router-outlet y sus hijos
+    # cuelgan de /ver o /crear: apuntar al padre mostraba una pagina en blanco.
+    (7, 5, "Personas", "/usuarios/personas/ver", "pi pi-id-card", "/usuarios/personas/ver", "GET"),
+    # Roles, recursos, permisos y asignaciones viven ahora en una sola vista
+    (8, 5, "Control de acceso", "/administrador/accesos", "pi pi-shield", "/administrador/accesos", "GET"),
     (12, 5, "Tabla maestra", "/administrador/tabla_maestra", "pi pi-database", "/administrador/tabla_maestra", "GET"),
 ]
 
@@ -62,7 +62,7 @@ RECURSOS = [
 PERMISOS = {
     ROL_ESTUDIANTE: [1, 2, 3],
     ROL_ENTRENADOR: [1, 2, 3, 4],
-    ROL_ADMIN: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    ROL_ADMIN: [1, 2, 3, 4, 5, 6, 7, 8, 12],
 }
 
 # ---------------------------------------------------------------------------

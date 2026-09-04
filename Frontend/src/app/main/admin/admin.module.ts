@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
+import { AccesosComponent } from './components/accesos/accesos.component';
+import { RolesModule } from './components/roles/roles.module';
+import { RecursosModule } from './components/recursos/recursos.module';
+import { RolesRecursosModule } from './components/roles-recursos/roles-recursos.module';
+import { UserRolesModule } from './components/user-roles/user-roles.module';
 import { RolesRecursosComponent } from './components/roles-recursos/roles-recursos.component';
 import { UserRolesComponent } from './components/user-roles/user-roles.component';
 import { SelectModule } from 'primeng/select';
@@ -23,6 +28,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 @NgModule({
   declarations: [
+    AccesosComponent,
     RolesRecursosComponent,
     UserRolesComponent,
     AdminComponent,
@@ -34,6 +40,10 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
   ]
   ,
   imports: [
+    RolesModule,
+    RecursosModule,
+    RolesRecursosModule,
+    UserRolesModule,
     TooltipModule,
     CommonModule,
     SelectModule,

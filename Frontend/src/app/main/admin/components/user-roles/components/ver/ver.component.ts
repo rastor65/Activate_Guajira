@@ -8,7 +8,7 @@ import { Usuario, Rol, UserRole } from 'src/app/models/user/person';
 
 @Component({
   standalone: false,
-  selector: 'app-ver',
+  selector: 'app-user-roles-ver',
   templateUrl: './ver.component.html',
   styleUrls: ['./ver.component.css']
 })
