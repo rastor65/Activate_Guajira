@@ -187,12 +187,18 @@ class RolesUserSerializers(serializers.ModelSerializer):
             raise ValidationError(response, code=code)
         
 class UserRolListSimpleSerializer(serializers.ModelSerializer):
-    userId = serializers.StringRelatedField()  # o usa userId.username si lo prefieres
-    rolesId = serializers.StringRelatedField()  # o rolesId.nombre si lo prefieres
+    # userId y rolesId salen como texto ("rastor - ", "Estudiante"), que es lo
+    # que ya consumen otras vistas. Se anaden los ids aparte: sin ellos el
+    # frontend no puede saber a que usuario o rol corresponde cada fila, y
+    # tenia que adivinarlo comparando cadenas.
+    userId = serializers.StringRelatedField()
+    rolesId = serializers.StringRelatedField()
+    usuario_id = serializers.IntegerField(source="userId_id", read_only=True)
+    rol_id = serializers.IntegerField(source="rolesId_id", read_only=True)
 
     class Meta:
         model = UserRol
-        fields = ['id', 'userId', 'rolesId', 'status']
+        fields = ["id", "userId", "rolesId", "status", "usuario_id", "rol_id"]
 
 class UserRolSerializer(serializers.ModelSerializer):
     userId = UserSerialSimple()

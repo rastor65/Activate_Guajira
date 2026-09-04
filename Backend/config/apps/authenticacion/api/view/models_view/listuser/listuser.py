@@ -9,10 +9,10 @@ from rest_framework.generics import RetrieveAPIView
 
 class UsersView(APIView):
     def get(self, request):
-        entrenadores_ids = UserRol.objects.filter(rolesId__name="Usuario").values_list('userId', flat=True)
+        usuarios_ids = UserRol.objects.filter(rolesId__name="Estudiante", status=True).values_list('userId', flat=True)
 
         users = (CustomUser.objects
-                 .filter(id__in=entrenadores_ids, is_active=True)
+                 .filter(id__in=usuarios_ids, is_active=True)
                  .select_related('person', 'person__genero', 'person__ciudad_residencia')  # <- Agrega ciudad_residencia aquí
                  .order_by('id'))
                  
