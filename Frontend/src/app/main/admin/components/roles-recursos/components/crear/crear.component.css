@@ -1,90 +1,167 @@
 /* Matriz de permisos: que recursos ve cada rol. */
 
-.matriz { min-width: 34rem; }
+.matriz {
+  min-width: 40rem;
+  border-collapse: separate;
+  border-spacing: 0;
+}
 
 /* --------------------------------------------------------------------------
-   Columna de recursos: fija al desplazar en horizontal
+   Primera columna: los recursos, fija al desplazar en horizontal
+   --------------------------------------------------------------------------
+   OJO: el th debe seguir siendo celda de tabla. Ponerle display:flex lo saca
+   del algoritmo de la tabla y descuadra el ancho de las columnas, que era lo
+   que dejaba un hueco enorme antes de la primera casilla. El flex va dentro.
    -------------------------------------------------------------------------- */
 .matriz__recurso {
   position: sticky;
   left: 0;
   z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: var(--ag-space-3);
-  min-width: 16rem;
+  width: 18rem;
+  padding: var(--ag-space-2) var(--ag-space-4);
   text-align: left;
   font-weight: 500;
   background: var(--ag-bg-surface);
+  border-right: 1px solid var(--ag-border-subtle);
 }
 
-.matriz thead .matriz__recurso { background: var(--ag-bg-sunken); }
+.matriz thead .matriz__recurso {
+  background: var(--ag-bg-sunken);
+  z-index: 3;
+}
 
 .matriz tbody tr:hover .matriz__recurso { background: var(--ag-bg-tinted); }
 
-.matriz__icono {
-  flex: none;
-  width: 1.1rem;
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--ag-navy-500);
+.recurso {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  min-width: 0;
 }
 
-/* La jerarquia se marca con sangria, no solo con simbolos */
-.matriz__recurso[data-nivel='0'] {
+.recurso__icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-bg-tinted);
+  color: var(--ag-navy-500);
+  font-size: 0.8rem;
+}
+
+.recurso__titulo {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- Jerarquia: sangria, tamano y un filete que marca la dependencia --- */
+.matriz__recurso[data-nivel='0'] .recurso__titulo {
   font-weight: 600;
   color: var(--ag-text-brand);
 }
 
+.matriz__recurso[data-nivel='0'] .recurso__icono {
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+}
+
 .matriz__recurso[data-nivel='1'] { padding-left: var(--ag-space-8); }
+.matriz__recurso[data-nivel='2'] { padding-left: var(--ag-space-12); }
 
-.matriz__recurso[data-nivel='1'] .matriz__icono { color: var(--ag-neutral-400); }
+.matriz__recurso[data-nivel='1'] .recurso,
+.matriz__recurso[data-nivel='2'] .recurso { position: relative; }
 
-.matriz__recurso[data-nivel='2'] {
-  padding-left: var(--ag-space-12);
-  font-size: var(--ag-text-xs);
+.matriz__recurso[data-nivel='1'] .recurso::before,
+.matriz__recurso[data-nivel='2'] .recurso::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--ag-space-4) * -1);
+  top: 50%;
+  width: var(--ag-space-3);
+  height: 1px;
+  background: var(--ag-border-default);
+}
+
+.matriz__recurso[data-nivel='1'] .recurso__titulo,
+.matriz__recurso[data-nivel='2'] .recurso__titulo {
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-secondary);
+}
+
+.matriz__recurso[data-nivel='1'] .recurso__icono,
+.matriz__recurso[data-nivel='2'] .recurso__icono {
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: 1px solid var(--ag-border-subtle);
+  color: var(--ag-neutral-400);
+  font-size: 0.65rem;
 }
 
 /* --------------------------------------------------------------------------
    Cabecera de roles
    -------------------------------------------------------------------------- */
-.matriz__rol {
-  text-align: center;
-  white-space: nowrap;
-  min-width: 7rem;
+.matriz thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-.matriz__rol-nombre { display: block; }
+.matriz__rol {
+  width: auto;
+  padding: var(--ag-space-3) var(--ag-space-2);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.matriz__rol-nombre {
+  display: block;
+  font-size: var(--ag-text-xs);
+  letter-spacing: 0.08em;
+}
 
 .matriz__rol-cuenta {
   display: inline-block;
-  margin-top: 2px;
+  margin-top: var(--ag-space-1);
+  min-width: 22px;
   padding: 1px var(--ag-space-2);
   border-radius: var(--ag-radius-full);
-  background: var(--ag-bg-surface);
-  border: 1px solid var(--ag-border-subtle);
-  font-size: 0.625rem;
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+  font-family: var(--ag-font-display);
+  font-size: 0.7rem;
   font-weight: 700;
-  color: var(--ag-text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
 /* --------------------------------------------------------------------------
-   Casillas de permiso
+   Filas y casillas
    -------------------------------------------------------------------------- */
+.matriz tbody td,
+.matriz tbody th { padding: var(--ag-space-2) var(--ag-space-4); }
+
+.matriz tbody tr:nth-child(even) td { background: var(--ag-bg-canvas); }
+
+.matriz tbody tr:hover td { background: var(--ag-bg-tinted); }
+
 .matriz__celda { text-align: center; }
 
 .permiso {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: 1px solid var(--ag-border-default);
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--ag-border-default);
   border-radius: var(--ag-radius-sm);
   background: var(--ag-bg-surface);
-  color: var(--ag-neutral-300);
-  font-size: 0.75rem;
+  color: transparent;
+  font-size: 0.7rem;
   cursor: pointer;
   transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
               border-color var(--ag-dur-fast) var(--ag-ease-standard),
@@ -92,20 +169,23 @@
               transform var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
+/* Sin acceso: casilla vacia. El icono aparece al pasar por encima, como
+   anticipo de lo que va a ocurrir al pulsar. */
 .permiso:hover:not(:disabled) {
-  border-color: var(--ag-navy-400);
+  border-color: var(--ag-navy-500);
   background: var(--ag-bg-tinted);
-  color: var(--ag-navy-500);
-  transform: scale(1.08);
+  color: var(--ag-navy-400);
+  transform: scale(1.1);
 }
 
-/* Concedido: relleno mas icono, nunca solo color */
+/* Concedido: relleno solido mas icono, nunca solo color */
 .permiso.is-activo {
   background: var(--ag-action-primary);
   border-color: var(--ag-action-primary);
   color: var(--ag-action-accent);
 }
 
+/* Al pasar sobre uno concedido se avisa en rojo: el clic lo va a retirar */
 .permiso.is-activo:hover:not(:disabled) {
   background: var(--ag-danger);
   border-color: var(--ag-danger);
@@ -114,7 +194,7 @@
 
 .permiso:disabled {
   cursor: progress;
-  opacity: 0.6;
+  color: var(--ag-navy-400);
   transform: none;
 }
 
@@ -123,7 +203,16 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 640px) {
-  .matriz__recurso { min-width: 11rem; }
-  .matriz__rol { min-width: 5.5rem; }
+/* --------------------------------------------------------------------------
+   Adaptativo
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .matriz { min-width: 32rem; }
+
+  .matriz__recurso { width: 12rem; padding-inline: var(--ag-space-3); }
+
+  .matriz__recurso[data-nivel='1'] { padding-left: var(--ag-space-6); }
+  .matriz__recurso[data-nivel='2'] { padding-left: var(--ag-space-8); }
+
+  .recurso__icono { display: none; }
 }
