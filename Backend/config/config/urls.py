@@ -2,11 +2,22 @@ from django.urls import path, include,re_path
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
+from django.http import JsonResponse
 from rest_framework import routers
 from rest_framework import permissions
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from apps.services import ia
+
+
+def salud(request):
+    """Comprobacion de salud para Railway y docker compose.
+
+    No consulta la base de datos a proposito: si respondiera 503 por un corte
+    momentaneo de MySQL, el orquestador reiniciaria el contenedor en bucle en
+    vez de esperar a que la base vuelva.
+    """
+    return JsonResponse({'estado': 'ok'})
 
 
 # Api router
@@ -26,6 +37,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
+    path('healthz', salud, name='salud'),
     path('admin/', admin.site.urls),
     path('api/', include('apps.authenticacion.urls')),
     path('api/', include(router.urls)),

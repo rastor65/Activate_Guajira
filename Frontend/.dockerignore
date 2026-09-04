@@ -1,0 +1,33 @@
+# Lo que no debe entrar en la construccion del frontend.
+
+# npm ci las reinstala dentro de la imagen; copiarlas desde Windows ademas
+# traeria binarios de la plataforma equivocada.
+node_modules/
+
+# Resultado de compilaciones anteriores: la imagen construye el suyo.
+dist/
+.angular/
+
+# Git y editores
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Pruebas y cobertura
+coverage/
+*.spec.ts.snap
+
+# Secretos y configuracion local
+.env
+*.env
+!.env.example
+
+# Registros
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini

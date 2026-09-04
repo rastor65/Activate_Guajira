@@ -144,3 +144,101 @@ sin errores. No parar hasta que todas las fases estén en DONE.
   2. Decidir si Frontend/dist sigue versionado en git.
   3. Los checkboxes de la matriz roles-recursos nunca tuvieron handler: son de solo
      lectura. Si deben ser editables, falta implementar el guardado.
+
+---
+
+## Cache-aside (04-09-2026)
+
+Toda vista pedia sus listas al entrar, aunque el usuario acabara de salir de
+ella: el listado de municipios (1121 filas) viajaba en cada visita al perfil.
+
+Implementado como interceptor, no vista por vista: `CacheInterceptor` +
+`HttpCacheService` + `cache-config.ts`. Cada GET a la API se clasifica en una
+familia con su propio tiempo de vida; toda escritura invalida las familias que
+deja obsoletas, de modo que lo que el propio usuario cambia se vuelve a pedir al
+instante. La respuesta se emite una sola vez, venga del cache o de la red, asi
+que ningun componente tuvo que cambiar.
+
+- Parametricas (tabla maestra, categorias, generos, documentos): 12 h, ademas en
+  sessionStorage para sobrevivir a un F5. Son impersonales.
+- Control de acceso (recursos, roles): 30 min. Permisos y usuario-rol: 5 min.
+- Usuarios y personas: 2 min. Mediciones: 1 min. Planes: 2 min.
+- Nunca se cachean: login, avatares, subidas, registro y sondeos de mantenimiento.
+- Peticiones simultaneas a la misma ruta comparten una sola llamada.
+- El cache se vacia al iniciar sesion, al cerrarla y ante un 401.
+
+Verificado con un arnes en Node sobre el interceptor real (12/12): 3 visitas a
+una vista = 1 peticion; un POST a `/roles/user_rol/` fuerza recargar usuarios
+pero no roles ni parametricas; `?page=1` y `?page=2` son entradas distintas; los
+avatares nunca se guardan; 4 vistas simultaneas = 1 llamada; y una lista mutada
+por un componente no corrompe la copia guardada.
+
+---
+
+## Movil primero (04-09-2026)
+
+Revision de las 11 vistas reales a 320 / 360 / 390 / 768 px, midiendo en un
+Chrome real (Playwright) en vez de a ojo: desborde de la pagina, elementos que
+se salen, objetivos tactiles y tamano de letra. Dos hallazgos gordos aparecieron
+por el camino y sin arreglarlos no habia nada que medir.
+
+### 1. 92 botones invisibles (a cualquier ancho)
+
+PrimeNG 20 elimino las entradas `label` e `icon` de la directiva `pButton`. Cada
+`<button pButton label="X" icon="Y">` renderizaba un boton vacio de 6px de alto:
+sin texto, sin icono y sin las clases del tema. El build no lo detecta porque
+`label` e `icon` son atributos HTML validos. Convertidos a la API nueva, de
+composicion: `<i pButtonIcon>` + `<span pButtonLabel>` dentro del boton, que
+conserva el elemento y sus clases (de ahi cuelga todo el CSS existente).
+
+De paso, `pRipple` y `pInputText` no hacian nada en 8 modulos que nunca
+importaron RippleModule / InputTextModule / TooltipModule.
+
+### 2. Vistas que se caian en silencio
+
+`tabla-maestra` tenia `selectedRegistro = null` y su dialogo enlazaba
+`selectedRegistro.nombre`. La plantilla del dialogo se evalua aunque este
+cerrado, asi que el ciclo de render se rompia: la tabla de 1266 registros no
+aparecia y los botones se quedaban sin las clases del tema. Igual en
+`usuarios`, donde el formulario se construia despues de cargar datos
+("Cannot find control with name: 'first_name'"), y en el login, que navegaba a
+`/welcome`, una ruta que no existe. Las 11 vistas quedan con 0 errores.
+
+### 3. Responsive propiamente dicho
+
+Capa global nueva en styles.css (seccion 6), porque el fallo era siempre el
+mismo — un ancho minimo mayor que la pantalla:
+
+- rejillas con `minmax(min(240px, 100%), 1fr)`: ceden el minimo cuando no cabe;
+- dialogos con `max-width: calc(100vw - espacio)` y contenido desplazable —
+  declaran hasta 80rem para escritorio;
+- campos a 16px por debajo de 768px: Safari amplia la pagina al enfocar un campo
+  mas pequeno y luego no la devuelve;
+- acciones de cabecera a ancho completo;
+- objetivos tactiles de 44px bajo `(max-width: 768px), (pointer: coarse)`, para
+  no engordar la interfaz de raton.
+
+Arreglos concretos: el buscador de mediciones media 320px de ALTO (`flex: 1 1
+20rem` en un contenedor en columna: la base se mide sobre el eje principal); el
+editor de usuario se salia 106px del dialogo (a una pista `1fr` le falta
+`min-width: 0` para poder encoger); las insignias de roles se salian 95px al
+tener tres roles; y varios botones median 24-36px.
+
+### Verificacion
+
+| medida | antes | ahora |
+|---|---|---|
+| botones que renderizan | 0 de 92 | 92 de 92 |
+| vistas con errores de ejecucion | 3 de 11 | 0 de 11 |
+| desborde de pagina a 320px | 1 vista | ninguna |
+| objetivos tactiles < 40px a 390px | 25 | ninguno |
+| dialogos que se salen a 320px | — | 0 de 11 |
+
+El desborde se midio neutralizando `overflow-x: hidden` del body, que lo
+esconde en vez de arreglarlo. Build de produccion verde (siguen los dos avisos
+de siempre: el presupuesto de CSS de entrenador y que moment no es ESM).
+
+NOTA: al convertir los botones, mi patron de extraccion de `label=` tambien
+capturaba la parte `label` de `aria-label`, dejando 12 botones con un `aria-`
+suelto y el texto alternativo convertido en etiqueta visible. Reparado y
+verificado que ningun otro atributo quedo mutilado.

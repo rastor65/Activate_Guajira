@@ -1,0 +1,49 @@
+# Lo que no debe entrar en la imagen del backend.
+
+# Entorno virtual de otra maquina, 100 MB versionados por error.
+# Sus rutas apuntan a C:\Users\Mendoza\... y no sirven dentro del contenedor.
+backend/
+
+# Secretos: las variables se definen en el servicio de Railway, nunca en la
+# imagen. Si este archivo entrara, las credenciales viajarian en cada capa.
+.env
+config/.env
+*.env
+!.env.example
+
+# Bytecode y cachés
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Base de datos local y volcados
+*.sqlite3
+*.db
+*.sql
+*.dump
+
+# Archivos subidos por usuarios: son datos, no codigo. En produccion viven en
+# un volumen montado.
+config/archivos/
+config/avatars/
+
+# Estaticos recogidos: los regenera collectstatic durante la construccion
+config/static/
+
+# Herramientas y notas de desarrollo
+.git/
+.gitignore
+.vscode/
+.idea/
+*.log
+user.txt
+actualizar_usuarios.py
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini

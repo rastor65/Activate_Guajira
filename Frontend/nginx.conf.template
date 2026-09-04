@@ -1,0 +1,98 @@
+# Servidor estatico del frontend.
+#
+# Es una plantilla: la imagen de nginx la pasa por envsubst al arrancar para
+# sustituir ${PORT}, que Railway asigna en cada despliegue. Solo se sustituye
+# PORT (NGINX_ENVSUBST_FILTER en el Dockerfile), para que las variables propias
+# de nginx como $uri sobrevivan intactas.
+#
+# Dos cosas que conviene tener presentes al tocar este archivo:
+#  - nginx se queda con el PRIMER location regex que casa, asi que los mas
+#    especificos van arriba;
+#  - un add_header dentro de un location descarta los heredados, de ahi que
+#    seguridad.conf se incluya en cada uno.
+
+server {
+    listen       ${PORT};
+    server_name  _;
+
+    root  /usr/share/nginx/html;
+    index index.html;
+
+    # Railway termina TLS en su proxy; sin esto los registros muestran la IP
+    # interna del proxy en lugar de la del visitante.
+    real_ip_header    X-Forwarded-For;
+    set_real_ip_from  0.0.0.0/0;
+
+    # --- Compresion ---------------------------------------------------------
+    gzip              on;
+    gzip_vary         on;
+    gzip_comp_level   6;
+    gzip_min_length   1024;
+    gzip_proxied      any;
+    gzip_types
+        text/plain
+        text/css
+        text/javascript
+        application/javascript
+        application/json
+        application/manifest+json
+        image/svg+xml
+        font/woff2;
+
+    # --- Comprobacion de salud ----------------------------------------------
+    location = /healthz {
+        access_log off;
+        add_header Content-Type text/plain;
+        return 200 'ok';
+    }
+
+    # --- Ficheros que nunca deben guardarse en cache -------------------------
+    # Va ANTES del bloque de recursos con huella: ngsw-worker.js termina en .js
+    # y si casara con aquel, el navegador se quedaria un ano con un service
+    # worker viejo y la aplicacion no se actualizaria nunca.
+    location ~* ^/(index\.html|ngsw\.json|ngsw-worker\.js|safety-worker\.js|manifest\.webmanifest)$ {
+        include /etc/nginx/seguridad.conf;
+        expires -1;
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+    }
+
+    # --- Carpeta assets ------------------------------------------------------
+    # Angular copia estos ficheros tal cual, SIN huella en el nombre: si se
+    # guardaran como inmutables, cambiar un icono no llegaria a quien ya lo
+    # tiene. El prefijo ^~ hace que gane a los regex de abajo.
+    location ^~ /assets/ {
+        include /etc/nginx/seguridad.conf;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800" always;
+        try_files $uri =404;
+    }
+
+    # --- Recursos con huella en el nombre -----------------------------------
+    # Angular renombra cada fichero cuando su contenido cambia
+    # (main-A1B2C3.js), asi que se pueden guardar para siempre sin riesgo de
+    # servir uno viejo.
+    location ~* \.(?:js|css|woff2|woff|ttf|eot|otf)$ {
+        include /etc/nginx/seguridad.conf;
+        expires 1y;
+        add_header Cache-Control "public, immutable" always;
+        access_log off;
+        try_files $uri =404;
+    }
+
+    # Imagenes sueltas de la raiz (favicon y demas): tampoco llevan huella.
+    location ~* \.(?:png|jpg|jpeg|gif|webp|avif|svg|ico)$ {
+        include /etc/nginx/seguridad.conf;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800" always;
+        access_log off;
+        try_files $uri =404;
+    }
+
+    # --- Aplicacion de una sola pagina --------------------------------------
+    # Cualquier ruta desconocida devuelve index.html y el enrutador de Angular
+    # decide. Sin esto, recargar en una ruta profunda daria 404.
+    location / {
+        include /etc/nginx/seguridad.conf;
+        try_files $uri $uri/ /index.html;
+    }
+}
