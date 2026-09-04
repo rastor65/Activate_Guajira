@@ -3,45 +3,27 @@
   <header class="ag-page__header">
     <div>
       <p class="ag-overline">Administracion</p>
-      <h1 class="ag-page__title">Asignar recursos</h1>
-      <p class="ag-page__subtitle">Otorga a un rol acceso a un recurso del sistema.</p>
+      <h1 class="ag-page__title">Permisos</h1>
+      <p class="ag-page__subtitle">
+        Marca una casilla para dar acceso y desmarcala para retirarlo. Los cambios
+        se guardan al instante.
+      </p>
     </div>
   </header>
 
-  <!-- Formulario de asignacion -->
-  <section class="ag-card asignar">
-    <form (submit)="agregarRecursoRol()" class="asignar__form">
-      <div class="asignar__fields">
-        <div class="form__field">
-          <label for="selectRole">Rol</label>
-          <p-select inputId="selectRole" name="selectedRole" [options]="roles" [(ngModel)]="selectedRole"
-            placeholder="Selecciona un rol" optionLabel="name" optionValue="id" [filter]="true"></p-select>
-        </div>
-
-        <div class="form__field">
-          <label for="selectResource">Recurso</label>
-          <p-select inputId="selectResource" name="selectResource" [options]="flattenedResources"
-            [(ngModel)]="selectedResource" placeholder="Selecciona un recurso" optionLabel="titulo" optionValue="id"
-            [filter]="true"></p-select>
-        </div>
-
-        <button pButton pRipple type="submit" icon="pi pi-check" label="Asignar" class="ag-accent"></button>
-      </div>
-    </form>
-  </section>
-
-  <!-- Matriz de permisos -->
-  <section class="ag-card" aria-labelledby="titulo-matriz">
+  <section class="ag-card">
     <div class="ag-card__header">
-      <h2 id="titulo-matriz" class="ag-card__title">Matriz de permisos</h2>
-      <span class="ag-badge ag-badge--neutral">Solo lectura</span>
+      <h2 class="ag-card__title">Matriz de permisos</h2>
+      <button pButton pRipple type="button" icon="pi pi-refresh" label="Recargar"
+        class="p-button-text p-button-sm" (click)="cargarTodo()" [disabled]="cargando"></button>
     </div>
 
-    <p class="matriz__nota">
-      Refleja los accesos vigentes de cada rol. Para modificarlos usa el formulario de arriba.
-    </p>
+    <div class="ag-empty" *ngIf="cargando" role="status" aria-live="polite">
+      <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+      <p class="ag-empty__text">Cargando permisos...</p>
+    </div>
 
-    <div class="ag-table-wrap">
+    <div class="ag-table-wrap" *ngIf="!cargando && filas.length && roles.length">
       <table class="ag-table matriz">
         <caption class="ag-visually-hidden">
           Recursos del sistema y los roles que tienen acceso a cada uno
@@ -49,39 +31,45 @@
         <thead>
           <tr>
             <th scope="col" class="matriz__recurso">Recurso</th>
-            <th *ngFor="let role of roles" scope="col" class="matriz__rol">{{ role.name }}</th>
+            <th *ngFor="let rol of roles" scope="col" class="matriz__rol">
+              <span class="matriz__rol-nombre">{{ rol.name }}</span>
+              <span class="matriz__rol-cuenta">{{ totalDeRol(rol.id) }}</span>
+            </th>
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let resource of resources">
-            <tr>
-              <th scope="row" class="matriz__recurso matriz__recurso--n0">{{ resource.titulo }}</th>
-              <td *ngFor="let role of roles" class="matriz__celda">
-                <input type="checkbox" [checked]="hasAccess(role.id, resource.id)" disabled
-                  [attr.aria-label]="role.name + ' tiene acceso a ' + resource.titulo">
-              </td>
-            </tr>
+          <tr *ngFor="let fila of filas">
+            <th scope="row" class="matriz__recurso" [attr.data-nivel]="fila.nivel">
+              <i [ngClass]="fila.recurso.icono || 'pi pi-circle-fill'" class="matriz__icono"
+                aria-hidden="true"></i>
+              <span>{{ fila.recurso.titulo }}</span>
+            </th>
 
-            <ng-container *ngFor="let childResource of resource.children">
-              <tr>
-                <th scope="row" class="matriz__recurso matriz__recurso--n1">{{ childResource.titulo }}</th>
-                <td *ngFor="let role of roles" class="matriz__celda">
-                  <input type="checkbox" [checked]="hasAccess(role.id, childResource.id)" disabled
-                    [attr.aria-label]="role.name + ' tiene acceso a ' + childResource.titulo">
-                </td>
-              </tr>
-
-              <tr *ngFor="let grandchildResource of childResource.children">
-                <th scope="row" class="matriz__recurso matriz__recurso--n2">{{ grandchildResource.titulo }}</th>
-                <td *ngFor="let role of roles" class="matriz__celda">
-                  <input type="checkbox" [checked]="hasAccess(role.id, grandchildResource.id)" disabled
-                    [attr.aria-label]="role.name + ' tiene acceso a ' + grandchildResource.titulo">
-                </td>
-              </tr>
-            </ng-container>
-          </ng-container>
+            <td *ngFor="let rol of roles" class="matriz__celda">
+              <button type="button" class="permiso"
+                [class.is-activo]="hasAccess(rol.id, fila.recurso.id)"
+                [disabled]="ocupada(rol.id, fila.recurso.id)"
+                [attr.aria-pressed]="hasAccess(rol.id, fila.recurso.id)"
+                [attr.aria-label]="(hasAccess(rol.id, fila.recurso.id) ? 'Retirar' : 'Dar') +
+                  ' acceso de ' + rol.name + ' a ' + fila.recurso.titulo"
+                (click)="alternar(rol, fila.recurso)">
+                <i class="pi" aria-hidden="true"
+                  [ngClass]="ocupada(rol.id, fila.recurso.id) ? 'pi-spin pi-spinner'
+                    : (hasAccess(rol.id, fila.recurso.id) ? 'pi-check' : 'pi-minus')"></i>
+              </button>
+            </td>
+          </tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="ag-empty" *ngIf="!cargando && (!filas.length || !roles.length)">
+      <span class="ag-empty__icon"><i class="pi pi-link" aria-hidden="true"></i></span>
+      <h3 class="ag-empty__title">Faltan datos para la matriz</h3>
+      <p class="ag-empty__text">
+        Necesitas al menos un rol y un recurso. Creálos en las pestanas de
+        Roles y Recursos.
+      </p>
     </div>
   </section>
 </div>

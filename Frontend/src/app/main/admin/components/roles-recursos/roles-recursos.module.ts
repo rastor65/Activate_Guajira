@@ -7,6 +7,7 @@ import { RolesRecursosComponent } from './roles-recursos.component';
 
 //PRIME NG TABLE
 import {TableModule} from 'primeng/table';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import {ButtonModule} from 'primeng/button';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {PanelModule} from 'primeng/panel';
@@ -28,6 +29,7 @@ import { CardModule } from 'primeng/card';
   ],
   exports: [CrearComponent],
   imports: [
+    ProgressSpinnerModule,
     CommonModule,
     RolesRecursosRoutingModule,
 

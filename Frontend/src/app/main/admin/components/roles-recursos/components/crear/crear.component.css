@@ -1,45 +1,18 @@
-/* Asignacion de recursos a roles y matriz de permisos vigentes. */
+/* Matriz de permisos: que recursos ve cada rol. */
 
-.asignar { margin-bottom: var(--ag-space-6); }
-
-.asignar__fields {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--ag-space-4);
-}
-
-.form__field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ag-space-2);
-  flex: 1 1 16rem;
-  min-width: 0;
-}
-
-.form__field label {
-  font-size: var(--ag-text-sm);
-  font-weight: 500;
-  color: var(--ag-text-secondary);
-}
-
-:host ::ng-deep .p-select { width: 100%; }
+.matriz { min-width: 34rem; }
 
 /* --------------------------------------------------------------------------
-   Matriz
+   Columna de recursos: fija al desplazar en horizontal
    -------------------------------------------------------------------------- */
-.matriz__nota {
-  margin: 0 0 var(--ag-space-4) 0;
-  font-size: var(--ag-text-sm);
-  color: var(--ag-text-muted);
-}
-
-/* La primera columna queda fija al desplazar horizontalmente */
 .matriz__recurso {
   position: sticky;
   left: 0;
   z-index: 2;
-  min-width: 15rem;
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  min-width: 16rem;
   text-align: left;
   font-weight: 500;
   background: var(--ag-bg-surface);
@@ -49,62 +22,108 @@
 
 .matriz tbody tr:hover .matriz__recurso { background: var(--ag-bg-tinted); }
 
-/* Jerarquia por sangria, no solo por simbolos */
-.matriz__recurso--n0 {
+.matriz__icono {
+  flex: none;
+  width: 1.1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--ag-navy-500);
+}
+
+/* La jerarquia se marca con sangria, no solo con simbolos */
+.matriz__recurso[data-nivel='0'] {
   font-weight: 600;
   color: var(--ag-text-brand);
 }
 
-.matriz__recurso--n1 {
-  padding-left: var(--ag-space-8);
-  color: var(--ag-text-primary);
-}
+.matriz__recurso[data-nivel='1'] { padding-left: var(--ag-space-8); }
 
-.matriz__recurso--n2 {
+.matriz__recurso[data-nivel='1'] .matriz__icono { color: var(--ag-neutral-400); }
+
+.matriz__recurso[data-nivel='2'] {
   padding-left: var(--ag-space-12);
-  color: var(--ag-text-secondary);
   font-size: var(--ag-text-xs);
 }
 
-.matriz__recurso--n1::before,
-.matriz__recurso--n2::before {
-  content: '';
-  position: absolute;
-  left: var(--ag-space-4);
-  top: 50%;
-  width: var(--ag-space-3);
-  height: 1px;
-  background: var(--ag-border-default);
-}
-
-.matriz__recurso--n2::before { left: var(--ag-space-8); }
-
+/* --------------------------------------------------------------------------
+   Cabecera de roles
+   -------------------------------------------------------------------------- */
 .matriz__rol {
   text-align: center;
   white-space: nowrap;
+  min-width: 7rem;
 }
 
+.matriz__rol-nombre { display: block; }
+
+.matriz__rol-cuenta {
+  display: inline-block;
+  margin-top: 2px;
+  padding: 1px var(--ag-space-2);
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-bg-surface);
+  border: 1px solid var(--ag-border-subtle);
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--ag-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Casillas de permiso
+   -------------------------------------------------------------------------- */
 .matriz__celda { text-align: center; }
 
-.matriz__celda input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--ag-navy-800);
+.permiso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-bg-surface);
+  color: var(--ag-neutral-300);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
+              border-color var(--ag-dur-fast) var(--ag-ease-standard),
+              color var(--ag-dur-fast) var(--ag-ease-standard),
+              transform var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
-/* Estado de solo lectura: sin apariencia de deshabilitado apagado, pero
-   claramente no interactivo. */
-.matriz__celda input[type='checkbox']:disabled {
-  cursor: default;
-  opacity: 1;
+.permiso:hover:not(:disabled) {
+  border-color: var(--ag-navy-400);
+  background: var(--ag-bg-tinted);
+  color: var(--ag-navy-500);
+  transform: scale(1.08);
 }
 
-.matriz__celda input[type='checkbox']:disabled:not(:checked) {
-  accent-color: var(--ag-neutral-300);
+/* Concedido: relleno mas icono, nunca solo color */
+.permiso.is-activo {
+  background: var(--ag-action-primary);
+  border-color: var(--ag-action-primary);
+  color: var(--ag-action-accent);
+}
+
+.permiso.is-activo:hover:not(:disabled) {
+  background: var(--ag-danger);
+  border-color: var(--ag-danger);
+  color: var(--ag-text-inverse);
+}
+
+.permiso:disabled {
+  cursor: progress;
+  opacity: 0.6;
+  transform: none;
+}
+
+.permiso:focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
 }
 
 @media (max-width: 640px) {
-  .asignar__fields > button { width: 100%; }
-
   .matriz__recurso { min-width: 11rem; }
+  .matriz__rol { min-width: 5.5rem; }
 }
