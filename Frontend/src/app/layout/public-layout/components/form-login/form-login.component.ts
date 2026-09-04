@@ -68,7 +68,9 @@ export class FormLoginComponent implements OnInit {
         user: userObjeto,
         token: token,
       }
-      this.router.navigateByUrl('/welcome');
+      // '/welcome' no existe en el enrutador: la sesion ya iniciada va al
+      // mismo destino que un login recien hecho.
+      this.router.navigateByUrl('/landing');
     } else { }
     this.buildForm();
   }

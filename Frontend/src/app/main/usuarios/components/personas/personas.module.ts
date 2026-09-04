@@ -17,6 +17,8 @@ import { DialogModule } from 'primeng/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { SelectModule } from 'primeng/select';
+import { RippleModule } from 'primeng/ripple';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 @NgModule({
@@ -28,6 +30,8 @@ import { SelectModule } from 'primeng/select';
     EliminarComponent
   ],
   imports: [
+    TooltipModule,
+    RippleModule,
     CommonModule,
     PersonasRoutingModule,
     FormsModule,

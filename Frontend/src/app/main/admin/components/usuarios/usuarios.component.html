@@ -12,8 +12,11 @@
     <section class="ag-card carga" aria-labelledby="titulo-carga">
         <div class="ag-card__header">
             <h2 id="titulo-carga" class="ag-card__title">Carga masiva por CSV</h2>
-            <button pButton pRipple type="button" icon="pi pi-download" label="Descargar plantilla"
-                class="p-button-outlined p-button-sm" (click)="descargarPlantilla()"></button>
+            <button pButton pRipple type="button"
+                class="p-button-outlined p-button-sm" (click)="descargarPlantilla()">
+              <i class="pi pi-download" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Descargar plantilla</span>
+            </button>
         </div>
 
         <label class="file-drop" for="csvFile">
@@ -61,8 +64,11 @@
             </div>
 
             <div class="carga__actions">
-                <button pButton pRipple type="button" icon="pi pi-users" label="Crear usuarios" class="ag-accent"
-                    (click)="crearUsuarios()"></button>
+                <button pButton pRipple type="button" class="ag-accent"
+                    (click)="crearUsuarios()">
+                  <i class="pi pi-users" pButtonIcon aria-hidden="true"></i>
+                  <span pButtonLabel>Crear usuarios</span>
+                </button>
             </div>
         </ng-container>
     </section>
@@ -151,8 +157,10 @@
                         <td data-label="Correo" class="celda-correo">{{ usuario.email }}</td>
 
                         <td data-label="Roles">
-                            <span class="ag-badge ag-badge--accent" *ngFor="let rol of usuario.roles">{{ rol }}</span>
-                            <span class="ag-badge ag-badge--neutral" *ngIf="!usuario.roles?.length">Sin rol</span>
+                            <span class="ag-badges">
+                                <span class="ag-badge ag-badge--accent" *ngFor="let rol of usuario.roles">{{ rol }}</span>
+                                <span class="ag-badge ag-badge--neutral" *ngIf="!usuario.roles?.length">Sin rol</span>
+                            </span>
                         </td>
 
                         <td data-label="Estado" class="col-estado">
@@ -164,18 +172,24 @@
 
                         <td data-label="Acciones" class="col-acciones">
                             <div class="ag-row-actions">
-                                <button pButton pRipple type="button" icon="pi pi-eye"
+                                <button pButton pRipple type="button"
                                     class="p-button-text p-button-sm" pTooltip="Ver ficha"
                                     [attr.aria-label]="'Ver ficha de ' + usuario.username"
-                                    (click)="verDetalle(usuario)"></button>
-                                <button pButton pRipple type="button" icon="pi pi-pencil"
+                                    (click)="verDetalle(usuario)">
+                                  <i class="pi pi-eye" pButtonIcon aria-hidden="true"></i>
+                                </button>
+                                <button pButton pRipple type="button"
                                     class="p-button-text p-button-sm" pTooltip="Editar"
                                     [attr.aria-label]="'Editar a ' + usuario.username"
-                                    (click)="vereditarUsuario(usuario)"></button>
-                                <button pButton pRipple type="button" icon="pi pi-trash"
+                                    (click)="vereditarUsuario(usuario)">
+                                  <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                                </button>
+                                <button pButton pRipple type="button"
                                     class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar"
                                     [attr.aria-label]="'Eliminar a ' + usuario.username"
-                                    (click)="eliminarUsuario(usuario)"></button>
+                                    (click)="eliminarUsuario(usuario)">
+                                  <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -292,10 +306,15 @@
         </div>
 
         <footer class="ficha__pie">
-            <button pButton pRipple type="button" label="Cerrar" class="p-button-text"
-                (click)="cerrarDetalle()"></button>
-            <button pButton pRipple type="button" label="Editar usuario" icon="pi pi-pencil"
-                (click)="editarDesdeDetalle()"></button>
+            <button pButton pRipple type="button" class="p-button-text"
+                (click)="cerrarDetalle()">
+              <span pButtonLabel>Cerrar</span>
+            </button>
+            <button pButton pRipple type="button"
+                (click)="editarDesdeDetalle()">
+              <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Editar usuario</span>
+            </button>
         </footer>
     </div>
 </p-dialog>
@@ -536,11 +555,15 @@
       </div>
 
       <footer class="ed__pie">
-        <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-          (click)="cerrareditarUsuario()" [disabled]="guardandoUsuario"></button>
-        <button pButton pRipple type="button" label="Guardar cambios" (click)="guardarUsuario()"
-          [disabled]="guardandoUsuario"
-          [icon]="guardandoUsuario ? 'pi pi-spin pi-spinner' : 'pi pi-check'"></button>
+        <button pButton pRipple type="button" class="p-button-text"
+          (click)="cerrareditarUsuario()" [disabled]="guardandoUsuario">
+          <span pButtonLabel>Cancelar</span>
+        </button>
+        <button pButton pRipple type="button" (click)="guardarUsuario()"
+          [disabled]="guardandoUsuario">
+          <i [class]="guardandoUsuario ? 'pi pi-spin pi-spinner' : 'pi pi-check'" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Guardar cambios</span>
+        </button>
       </footer>
     </section>
   </div>

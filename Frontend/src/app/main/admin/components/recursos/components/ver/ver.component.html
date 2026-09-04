@@ -10,8 +10,11 @@
         </div>
 
         <div class="ag-page__actions">
-            <button pButton pRipple type="button" icon="pi pi-plus" label="Crear recurso" class="ag-accent"
-                (click)="showCreateDialog()"></button>
+            <button pButton pRipple type="button" class="ag-accent"
+                (click)="showCreateDialog()">
+              <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Crear recurso</span>
+            </button>
         </div>
     </header>
 
@@ -52,13 +55,17 @@
                     </td>
                     <td>
                         <div class="ag-row-actions">
-                            <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                            <button pButton pRipple type="button" class="p-button-text p-button-sm"
                                 pTooltip="Editar" [attr.aria-label]="'Editar el recurso ' + resource.titulo"
-                                (click)="showEditDialog(resource)"></button>
-                            <button pButton pRipple type="button" icon="pi pi-trash"
+                                (click)="showEditDialog(resource)">
+                              <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                            </button>
+                            <button pButton pRipple type="button"
                                 class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar"
                                 [attr.aria-label]="'Eliminar el recurso ' + resource.titulo"
-                                (click)="showDeleteDialog(resource)"></button>
+                                (click)="showDeleteDialog(resource)">
+                              <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -153,13 +160,20 @@
     </ng-container>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple type="button" label="Cancelar" class="p-button-text" (click)="cancelEdit()"></button>
+        <button pButton pRipple type="button" class="p-button-text" (click)="cancelEdit()">
+          <span pButtonLabel>Cancelar</span>
+        </button>
 
-        <button *ngIf="dialogType !== 'delete'" pButton pRipple type="button" label="Guardar" icon="pi pi-check"
-            (click)="saveResource()"></button>
+        <button *ngIf="dialogType !== 'delete'" pButton pRipple type="button"
+            (click)="saveResource()">
+          <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Guardar</span>
+        </button>
 
-        <button *ngIf="dialogType === 'delete'" pButton pRipple type="button" label="Eliminar recurso"
-            icon="pi pi-trash" class="p-button-danger" (click)="deleteResource(selectedResource.id)"></button>
+        <button *ngIf="dialogType === 'delete'" pButton pRipple type="button" class="p-button-danger" (click)="deleteResource(selectedResource.id)">
+          <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Eliminar recurso</span>
+        </button>
     </ng-template>
 </p-dialog>
 
@@ -194,7 +208,9 @@
     </div>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple type="button" label="Cerrar" class="p-button-text"
-            (click)="dialogIconos = false"></button>
+        <button pButton pRipple type="button" class="p-button-text"
+            (click)="dialogIconos = false">
+          <span pButtonLabel>Cerrar</span>
+        </button>
     </ng-template>
 </p-dialog>

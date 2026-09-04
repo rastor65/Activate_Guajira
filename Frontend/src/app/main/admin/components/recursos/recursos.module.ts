@@ -22,6 +22,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 import { CardModule } from 'primeng/card';
 import { RecursosComponent } from './recursos.component';
+import { RippleModule } from 'primeng/ripple';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { RecursosComponent } from './recursos.component';
   ],
   exports: [VerComponent],
   imports: [
+    RippleModule,
     SelectModule,
     TooltipModule,
     CommonModule,

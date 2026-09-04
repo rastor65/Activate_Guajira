@@ -88,7 +88,10 @@
 }
 
 .accesos__panel ::ng-deep .ag-page__header .ag-overline,
-.accesos__panel ::ng-deep .ag-page__header .ag-page__title {
+.accesos__panel ::ng-deep .ag-page__header .ag-page__title,
+/* El subtitulo tambien: la pestana ya explica la seccion y quedaban dos
+   descripciones seguidas diciendo lo mismo. */
+.accesos__panel ::ng-deep .ag-page__header .ag-page__subtitle {
   display: none;
 }
 

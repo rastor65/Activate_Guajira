@@ -8,8 +8,11 @@
         </div>
 
         <div class="ag-page__actions">
-            <button pButton pRipple type="button" icon="pi pi-plus" label="Crear rol" class="ag-accent"
-                (click)="showCreateDialog()"></button>
+            <button pButton pRipple type="button" class="ag-accent"
+                (click)="showCreateDialog()">
+              <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Crear rol</span>
+            </button>
         </div>
     </header>
 
@@ -32,13 +35,17 @@
             </dl>
 
             <footer class="role__actions">
-                <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                <button pButton pRipple type="button" class="p-button-text p-button-sm"
                     [attr.aria-label]="'Editar el rol ' + role.name" pTooltip="Editar"
-                    (click)="showEditDialog(role)"></button>
-                <button pButton pRipple type="button" icon="pi pi-trash"
+                    (click)="showEditDialog(role)">
+                  <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                </button>
+                <button pButton pRipple type="button"
                     class="p-button-text p-button-sm p-button-danger"
                     [attr.aria-label]="'Eliminar el rol ' + role.name" pTooltip="Eliminar"
-                    (click)="showDeleteDialog(role)"></button>
+                    (click)="showDeleteDialog(role)">
+                  <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+                </button>
             </footer>
         </article>
     </div>
@@ -50,8 +57,11 @@
             <p class="ag-empty__text">
                 Crea el primer rol para empezar a asignar permisos sobre los recursos del sistema.
             </p>
-            <button pButton pRipple type="button" icon="pi pi-plus" label="Crear rol" class="ag-accent"
-                (click)="showCreateDialog()"></button>
+            <button pButton pRipple type="button" class="ag-accent"
+                (click)="showCreateDialog()">
+              <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Crear rol</span>
+            </button>
         </div>
     </ng-template>
 </div>
@@ -81,16 +91,26 @@
 
     <ng-template pTemplate="footer">
         <ng-container *ngIf="dialogType === 'create' || dialogType === 'edit'">
-            <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-                (click)="cancelEdit()"></button>
-            <button pButton pRipple type="button" label="Guardar" icon="pi pi-check" (click)="saveRole()"></button>
+            <button pButton pRipple type="button" class="p-button-text"
+                (click)="cancelEdit()">
+              <span pButtonLabel>Cancelar</span>
+            </button>
+            <button pButton pRipple type="button" (click)="saveRole()">
+              <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Guardar</span>
+            </button>
         </ng-container>
 
         <ng-container *ngIf="dialogType === 'delete'">
-            <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-                (click)="cancelDelete()"></button>
-            <button pButton pRipple type="button" label="Eliminar rol" icon="pi pi-trash" class="p-button-danger"
-                (click)="deleteRole(selectedRole.id)"></button>
+            <button pButton pRipple type="button" class="p-button-text"
+                (click)="cancelDelete()">
+              <span pButtonLabel>Cancelar</span>
+            </button>
+            <button pButton pRipple type="button" class="p-button-danger"
+                (click)="deleteRole(selectedRole.id)">
+              <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Eliminar rol</span>
+            </button>
         </ng-container>
     </ng-template>
 </p-dialog>

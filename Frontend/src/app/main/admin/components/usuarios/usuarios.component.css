@@ -131,7 +131,7 @@
 }
 
 /* Varias insignias de rol en la misma celda */
-.ag-table td .ag-badge { margin: 0 var(--ag-space-1) var(--ag-space-1) 0; }
+.ag-table td .ag-badge { margin: 0; }
 
 /* --------------------------------------------------------------------------
    Dialogos
@@ -218,6 +218,8 @@
   display: flex;
   align-items: center;
   gap: var(--ag-space-3);
+  /* Abre la ficha del usuario: con el dedo necesita alto propio */
+  min-height: 44px;
   padding: 0;
   border: 0;
   background: none;
@@ -382,6 +384,10 @@
   .tabla-usuarios td[data-label='Acciones'] { justify-content: flex-end; }
 
   .col-estado, .col-acciones { width: auto; }
+
+  /* Con tres roles las insignias empujaban la tarjeta fuera de la pantalla:
+     ahora se apilan contra el borde derecho, bajo su rotulo. */
+  .tabla-usuarios td .ag-badges { justify-content: flex-end; }
 }
 
 :host ::ng-deep .dialog-ficha .p-dialog-content.dialog-ficha__body {
@@ -563,6 +569,14 @@
   grid-template-columns: 14.5rem 1fr;
   min-height: 30rem;
   max-height: 82vh;
+}
+
+/* Sin esto la columna 1fr se estira hasta el ancho minimo de su contenido
+   (474px medidos) en lugar de encoger, y saca el editor fuera del dialogo.
+   El minimo de una pista 1fr es auto, no cero: hay que decirlo. */
+.ed__rail,
+.ed__panel {
+  min-width: 0;
 }
 
 /* --- Columna de navegacion --- */
@@ -882,4 +896,21 @@
   .ed__nav-item.is-active::before { display: none; }
 
   .ed__head, .ed__cuerpo, .ed__pie { padding-inline: var(--ag-space-4); }
+}
+
+
+/* --------------------------------------------------------------------------
+   Objetivos tactiles
+   --------------------------------------------------------------------------
+   Los botones de cerrar y las acciones de campo median 34-36px: con el pulgar
+   se falla. Se agrandan solo cuando el puntero es grueso, para no engordar la
+   interfaz de escritorio.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px), (pointer: coarse) {
+  .ficha__cerrar,
+  .ed__cerrar,
+  .campo__accion {
+    width: 44px;
+    height: 44px;
+  }
 }

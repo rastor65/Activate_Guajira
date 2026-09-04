@@ -21,6 +21,11 @@ export interface Person {
   id: number | null;
   nombres?: string;
   apellidos?: string;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  email?: string;
+  avatar_url?: string;
   identificacion?: string;
   departamento?: number | null
   fecha_nacimiento?: string;

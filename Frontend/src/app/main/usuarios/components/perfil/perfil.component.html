@@ -15,10 +15,14 @@
         </div>
 
         <div class="perfil__actions">
-            <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-chart-bar"
-                label="Estadisticas" class="p-button-outlined" (click)="abrirEstadisticas()"></button>
-            <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-plus"
-                label="Agregar medicion" class="ag-accent" (click)="abrirMedicion()"></button>
+            <button appPreventMultipleClicks pButton pRipple type="button" class="p-button-outlined" (click)="abrirEstadisticas()">
+              <i class="pi pi-chart-bar" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Estadisticas</span>
+            </button>
+            <button appPreventMultipleClicks pButton pRipple type="button" class="ag-accent" (click)="abrirMedicion()">
+              <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Agregar medicion</span>
+            </button>
         </div>
     </header>
 
@@ -82,8 +86,11 @@
         <div class="med-error" *ngIf="errorMediciones" role="alert">
             <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
             <span>{{ errorMediciones }}</span>
-            <button pButton pRipple type="button" label="Reintentar" icon="pi pi-refresh"
-                class="p-button-text p-button-sm" (click)="cargarMediciones()"></button>
+            <button pButton pRipple type="button"
+                class="p-button-text p-button-sm" (click)="cargarMediciones()">
+              <i class="pi pi-refresh" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Reintentar</span>
+            </button>
         </div>
 
         <div class="ag-table-wrap" *ngIf="mediciones.length; else sinMediciones">
@@ -143,12 +150,16 @@
 
                         <td data-label="Acciones">
                             <div class="ag-row-actions">
-                                <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-pencil"
+                                <button appPreventMultipleClicks pButton pRipple type="button"
                                     class="p-button-text p-button-sm" aria-label="Editar medicion"
-                                    pTooltip="Editar" (click)="editarMedicion(medicion)"></button>
-                                <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-trash"
+                                    pTooltip="Editar" (click)="editarMedicion(medicion)">
+                                  <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                                </button>
+                                <button appPreventMultipleClicks pButton pRipple type="button"
                                     class="p-button-text p-button-sm p-button-danger" aria-label="Eliminar medicion"
-                                    pTooltip="Eliminar" (click)="eliminarMedicion(medicion)"></button>
+                                    pTooltip="Eliminar" (click)="eliminarMedicion(medicion)">
+                                  <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -164,8 +175,10 @@
                     Registra tu primera medicion para empezar a seguir tu composicion corporal
                     y tu progreso en el tiempo.
                 </p>
-                <button appPreventMultipleClicks pButton pRipple type="button" icon="pi pi-plus"
-                    label="Agregar medicion" class="ag-accent" (click)="abrirMedicion()"></button>
+                <button appPreventMultipleClicks pButton pRipple type="button" class="ag-accent" (click)="abrirMedicion()">
+                  <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+                  <span pButtonLabel>Agregar medicion</span>
+                </button>
             </div>
         </ng-template>
     </section>
@@ -462,12 +475,15 @@
     </section>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple type="button" [label]="soloLectura ? 'Cerrar' : 'Cancelar'"
-            class="p-button-text" (click)="cerrarMedicion()" [disabled]="botonesDesactivados"></button>
-        <button *ngIf="!soloLectura" pButton pRipple type="button"
-            [label]="esNueva ? 'Guardar medicion' : 'Guardar cambios'" (click)="guardarMedicion()"
-            [disabled]="botonesDesactivados || !imcPrevisto"
-            [icon]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'"></button>
+        <button pButton pRipple type="button"
+            class="p-button-text" (click)="cerrarMedicion()" [disabled]="botonesDesactivados">
+          <span pButtonLabel>{{ soloLectura ? 'Cerrar' : 'Cancelar' }}</span>
+        </button>
+        <button *ngIf="!soloLectura" pButton pRipple type="button" (click)="guardarMedicion()"
+            [disabled]="botonesDesactivados || !imcPrevisto">
+          <i [class]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>{{ esNueva ? 'Guardar medicion' : 'Guardar cambios' }}</span>
+        </button>
     </ng-template>
 </p-dialog>
 
@@ -488,7 +504,9 @@
     </div>
 
     <ng-template pTemplate="footer">
-        <button appPreventMultipleClicks pButton pRipple type="button" label="Cerrar" class="p-button-text"
-            (click)="cerrarEstadisticas()"></button>
+        <button appPreventMultipleClicks pButton pRipple type="button" class="p-button-text"
+            (click)="cerrarEstadisticas()">
+          <span pButtonLabel>Cerrar</span>
+        </button>
     </ng-template>
 </p-dialog>

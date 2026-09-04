@@ -79,8 +79,11 @@
             <a href="#" class="auth__link">Olvidaste tu contrasena?</a>
           </div>
 
-          <button pButton pRipple type="submit" label="Entrar" icon="pi pi-arrow-right" iconPos="right"
-            class="ag-accent auth__submit" [disabled]="!formLogin.valid"></button>
+          <button pButton pRipple type="submit"
+            class="ag-accent auth__submit" [disabled]="!formLogin.valid">
+            <span pButtonLabel>Entrar</span>
+            <i class="pi pi-arrow-right" pButtonIcon aria-hidden="true"></i>
+          </button>
         </form>
 
         <p class="auth__switch">
@@ -149,8 +152,11 @@
             </span>
           </label>
 
-          <button pButton pRipple type="submit" label="Crear cuenta" icon="pi pi-arrow-right" iconPos="right"
-            class="ag-accent auth__submit" [disabled]="!formRegister.valid"></button>
+          <button pButton pRipple type="submit"
+            class="ag-accent auth__submit" [disabled]="!formRegister.valid">
+            <span pButtonLabel>Crear cuenta</span>
+            <i class="pi pi-arrow-right" pButtonIcon aria-hidden="true"></i>
+          </button>
         </form>
 
         <p class="auth__switch">

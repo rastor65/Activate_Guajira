@@ -713,7 +713,133 @@ table, .ag-num, .ag-stat__value {
 }
 
 /* -----------------------------------------------------------------------------
-   6. MOVIMIENTO REDUCIDO
+   6. MOVIL PRIMERO
+   -----------------------------------------------------------------------------
+   Reglas transversales para que cualquier vista aguante una pantalla estrecha
+   sin que haya que tocarla una por una. Van aqui, y no en cada componente,
+   porque el fallo es siempre el mismo: un ancho minimo mayor que la pantalla.
+   -------------------------------------------------------------------------- */
+
+/* --- Rejillas: ninguna puede exigir mas ancho del que hay ---
+   minmax(240px, 1fr) desborda en cuanto la pantalla baja de 240px mas el
+   relleno. min() cede ese minimo cuando no cabe, que es justo lo que falta. */
+.ag-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+}
+
+.ag-grid--wide {
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+}
+
+/* --- Nada empuja la pagina a lo ancho ---
+   Correos, codigos y nombres largos no llevan espacios donde partir, asi que
+   estiran su contenedor hasta sacarlo de la pantalla. */
+.ag-table td,
+.ag-badge,
+.ag-stat__value {
+  overflow-wrap: break-word;
+}
+
+/* Una insignia nunca es mas ancha que su celda: se recorta antes que desbordar */
+.ag-badge { max-width: 100%; }
+
+/* Grupos de insignias que se apilan en lugar de salirse en una sola linea */
+.ag-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ag-space-2);
+  min-width: 0;
+}
+
+/* --- Dialogos ---
+   Declaran anchos comodos para escritorio (hasta 80rem). En una pantalla
+   pequena manda la pantalla, y lo que no quepa se desplaza dentro del cuerpo
+   del dialogo, nunca por debajo de la pagina. */
+.p-dialog {
+  max-width: calc(100vw - var(--ag-space-6));
+  max-height: calc(100dvh - var(--ag-space-6));
+}
+
+.p-dialog .p-dialog-content {
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* Una tabla dentro de un dialogo se desplaza sola, no estira el dialogo */
+.p-dialog table {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  /* --- Sin zoom al enfocar en iOS ---
+     Safari amplia la pagina cuando el campo enfocado mide menos de 16px, y
+     luego no la devuelve. El cuerpo del texto es de 15px, justo por debajo. */
+  input,
+  select,
+  textarea,
+  .p-inputtext,
+  .p-select-label,
+  .p-textarea {
+    font-size: 16px;
+  }
+
+  /* Las acciones de cabecera ocupan el ancho completo: en una fila estrecha
+     quedan dos botones diminutos y mal repartidos. */
+  .ag-page__actions {
+    width: 100%;
+  }
+
+  .ag-page__actions > * {
+    flex: 1 1 auto;
+  }
+
+  /* Los dialogos pegados a los bordes ganan pantalla util */
+  .p-dialog {
+    max-width: calc(100vw - var(--ag-space-4));
+  }
+}
+
+/* --- Objetivos tactiles ---
+   Con el dedo no se acierta a 32px. Se aplica por tipo de puntero para no
+   engordar la interfaz de escritorio, donde el raton si acierta. */
+@media (max-width: 768px), (pointer: coarse) {
+  .p-button {
+    min-height: 44px;
+  }
+
+  .p-button.p-button-sm {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  .p-button.p-button-icon-only {
+    min-width: 44px;
+  }
+
+  /* Separacion entre acciones de fila: pegados se pulsa el que no es */
+  .ag-row-actions {
+    gap: var(--ag-space-2);
+  }
+
+  /* Los dialogos se montan en <body>, fuera del alcance de la encapsulacion
+     de cada componente: sus botones hay que dimensionarlos desde aqui. */
+  .p-dialog-header button,
+  .p-dialog .p-dialog-close-button,
+  .p-dialog .p-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Enlaces sueltos dentro de texto: se les da altura sin moverlos de sitio */
+  .ag-tap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   7. MOVIMIENTO REDUCIDO
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *,

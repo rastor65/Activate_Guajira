@@ -93,10 +93,9 @@ export class UsuariosComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Los campos de persona se guardan como ids de tabla maestra: hace falta
-    // el catalogo para mostrar nombres en la ficha.
-    this.cargarCatalogo();
-
+    // El formulario se arma antes que nada: la plantilla del editor se evalua
+    // en el primer ciclo de render, y si aqui todavia esta el grupo vacio del
+    // campo, Angular lanza "Cannot find control with name: 'first_name'".
     this.formUsuario = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
@@ -108,6 +107,10 @@ export class UsuariosComponent implements OnInit {
       last_login: [''],
       date_joined: ['']
     });
+
+    // Los campos de persona se guardan como ids de tabla maestra: hace falta
+    // el catalogo para mostrar nombres en la ficha.
+    this.cargarCatalogo();
 
     this.cargarDatos();
 

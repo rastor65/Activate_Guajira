@@ -11,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { AlimentacionComponent } from './components/alimentacion/alimentacion.component';
 import { EntrenamientoComponent } from './components/entrenamiento/entrenamiento.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { RippleModule } from 'primeng/ripple';
+import { InputTextModule } from 'primeng/inputtext';
 
 
 @NgModule({
@@ -22,6 +24,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     
   ],
   imports: [
+    InputTextModule,
+    RippleModule,
     CommonModule,
     TooltipModule,
     UsuariosRoutingModule,

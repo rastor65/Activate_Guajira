@@ -17,7 +17,15 @@
     <section *ngIf="alimentos.length > 0; else noAlimentos" class="planes">
         <article class="plan" *ngFor="let alimento of alimentos">
             <header class="plan__head">
-                <h2 class="plan__title">{{ alimento.nombre }}</h2>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <h2 class="plan__title" style="margin: 0;">{{ alimento.nombre }}</h2>
+                    <span class="ag-badge ag-badge--accent" *ngIf="alimento.activo">
+                        <i class="pi pi-check-circle" aria-hidden="true"></i> Plan Activo
+                    </span>
+                    <span class="ag-badge ag-badge--neutral" *ngIf="!alimento.activo">
+                        <i class="pi pi-history" aria-hidden="true"></i> Histórico
+                    </span>
+                </div>
                 <span class="ag-badge ag-badge--accent">
                     {{ alimento.calorias_diarias }} kcal/dia
                 </span>

@@ -14,6 +14,7 @@ import { DialogModule } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { CardModule } from 'primeng/card';
+import { RippleModule } from 'primeng/ripple';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { CardModule } from 'primeng/card';
     // ConfirmationService
   ],
   imports: [
+    RippleModule,
     TooltipModule,
     CommonModule,
     RolesRoutingModule,

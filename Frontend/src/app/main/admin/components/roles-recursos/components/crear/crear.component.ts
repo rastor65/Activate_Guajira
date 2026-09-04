@@ -3,6 +3,7 @@ import { RecursosService } from 'src/app/core/services/admin/recursos.service';
 import { RolesService } from 'src/app/core/services/admin/roles.service';
 import { RecursosRolesService } from 'src/app/core/services/admin/recursos-roles.service';
 import { MessageService } from 'primeng/api';
+import { HttpCacheService } from 'src/app/core/cache/http-cache.service';
 
 /**
  * Matriz de permisos: que recursos ve cada rol.
@@ -35,9 +36,20 @@ export class CrearComponent implements OnInit {
     private rolesService: RolesService,
     private recursosRolesService: RecursosRolesService,
     private messageService: MessageService,
+    private cache: HttpCacheService,
   ) { }
 
   ngOnInit(): void {
+    this.cargarTodo();
+  }
+
+  /**
+   * Recarga a peticion del usuario: descarta lo guardado para que la
+   * siguiente lectura vaya al servidor. Es la unica via para saltarse el
+   * cache; entrar a la vista se sirve de memoria.
+   */
+  recargar(): void {
+    this.cache.invalidar('recursos', 'roles', 'permisos');
     this.cargarTodo();
   }
 

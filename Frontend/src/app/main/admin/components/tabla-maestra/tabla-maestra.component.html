@@ -10,10 +10,16 @@
         </div>
 
         <div class="ag-page__actions">
-            <button pButton pRipple type="button" icon="pi pi-folder" label="Administrar categorias"
-                class="p-button-outlined" (click)="abrirCategorias()"></button>
-            <button pButton pRipple type="button" icon="pi pi-plus" label="Agregar registro" class="ag-accent"
-                (click)="abrirDialogMaestra()"></button>
+            <button pButton pRipple type="button"
+                class="p-button-outlined" (click)="abrirCategorias()">
+              <i class="pi pi-folder" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Administrar categorias</span>
+            </button>
+            <button pButton pRipple type="button" class="ag-accent"
+                (click)="abrirDialogMaestra()">
+              <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Agregar registro</span>
+            </button>
         </div>
     </header>
 
@@ -44,13 +50,17 @@
                     <td><span class="ag-badge ag-badge--neutral">{{ getCategoriaNombre(item.categoria) }}</span></td>
                     <td>
                         <div class="ag-row-actions">
-                            <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                            <button pButton pRipple type="button" class="p-button-text p-button-sm"
                                 pTooltip="Editar" [attr.aria-label]="'Editar ' + item.nombre"
-                                (click)="abrirDialogMaestra(item)"></button>
-                            <button pButton pRipple type="button" icon="pi pi-trash"
+                                (click)="abrirDialogMaestra(item)">
+                              <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                            </button>
+                            <button pButton pRipple type="button"
                                 class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar"
                                 [attr.aria-label]="'Eliminar ' + item.nombre"
-                                (click)="eliminarMaestra(item.id)"></button>
+                                (click)="eliminarMaestra(item.id)">
+                              <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+                            </button>
                         </div>
                     </td>
                 </tr>
@@ -93,13 +103,17 @@
                 <td>{{ categoria.nombre }}</td>
                 <td>
                     <div class="ag-row-actions">
-                        <button pButton pRipple type="button" icon="pi pi-pencil" class="p-button-text p-button-sm"
+                        <button pButton pRipple type="button" class="p-button-text p-button-sm"
                             pTooltip="Editar" [attr.aria-label]="'Editar la categoria ' + categoria.nombre"
-                            (click)="editarCategoria(categoria)"></button>
-                        <button pButton pRipple type="button" icon="pi pi-trash"
+                            (click)="editarCategoria(categoria)">
+                          <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                        </button>
+                        <button pButton pRipple type="button"
                             class="p-button-text p-button-sm p-button-danger" pTooltip="Eliminar"
                             [attr.aria-label]="'Eliminar la categoria ' + categoria.nombre"
-                            (click)="confirmarEliminar(categoria)"></button>
+                            (click)="confirmarEliminar(categoria)">
+                          <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+                        </button>
                     </div>
                 </td>
             </tr>
@@ -119,10 +133,15 @@
     </p-table>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple type="button" label="Cerrar" class="p-button-text"
-            (click)="cerrarCategorias()"></button>
-        <button pButton pRipple type="button" label="Agregar categoria" icon="pi pi-plus"
-            (click)="nuevaCategoria()"></button>
+        <button pButton pRipple type="button" class="p-button-text"
+            (click)="cerrarCategorias()">
+          <span pButtonLabel>Cerrar</span>
+        </button>
+        <button pButton pRipple type="button"
+            (click)="nuevaCategoria()">
+          <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Agregar categoria</span>
+        </button>
     </ng-template>
 </p-dialog>
 
@@ -139,10 +158,15 @@
     </div>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-            (click)="cerrarDialogEditCategoria()"></button>
-        <button pButton pRipple type="button" label="Guardar" icon="pi pi-check"
-            (click)="guardarCategoria()"></button>
+        <button pButton pRipple type="button" class="p-button-text"
+            (click)="cerrarDialogEditCategoria()">
+          <span pButtonLabel>Cancelar</span>
+        </button>
+        <button pButton pRipple type="button"
+            (click)="guardarCategoria()">
+          <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Guardar</span>
+        </button>
     </ng-template>
 </p-dialog>
 
@@ -172,10 +196,15 @@
     </div>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-            (click)="cerrarDialogMaestra()"></button>
-        <button pButton pRipple type="button" label="Guardar cambios" icon="pi pi-check"
-            (click)="guardarMaestra()"></button>
+        <button pButton pRipple type="button" class="p-button-text"
+            (click)="cerrarDialogMaestra()">
+          <span pButtonLabel>Cancelar</span>
+        </button>
+        <button pButton pRipple type="button"
+            (click)="guardarMaestra()">
+          <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Guardar cambios</span>
+        </button>
     </ng-template>
 </p-dialog>
 

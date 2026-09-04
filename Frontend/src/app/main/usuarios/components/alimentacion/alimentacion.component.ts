@@ -46,8 +46,12 @@ export class AlimentacionComponent implements OnInit {
   getAlimentacion() {
     if (this.usuarioId !== undefined) {
       this.entrenadorService.getAlimentacionesPorUsuario(this.usuarioId).subscribe((data) => {
-        // Guardamos los datos de alimentación
-        this.alimentos = data;
+        // Guardamos los datos de alimentación ordenando el activo de primero
+        this.alimentos = (Array.isArray(data) ? data : []).sort((a: any, b: any) => {
+          if (a.activo && !b.activo) return -1;
+          if (!a.activo && b.activo) return 1;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
   
         // Recorremos cada alimentación para obtener el nombre del entrenador
         this.alimentos.forEach((alimento: any) => {

@@ -22,6 +22,7 @@ import {ToastModule} from 'primeng/toast';
 import { CrearComponent } from './components/crear/crear.component';
 
 import { CardModule } from 'primeng/card';
+import { RippleModule } from 'primeng/ripple';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { CardModule } from 'primeng/card';
   ],
   exports: [CrearComponent],
   imports: [
+    RippleModule,
     ProgressSpinnerModule,
     CommonModule,
     RolesRecursosRoutingModule,

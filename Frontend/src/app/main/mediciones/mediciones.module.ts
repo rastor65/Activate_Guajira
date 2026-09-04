@@ -13,6 +13,8 @@ import { CardModule } from 'primeng/card';
 import { AvatarModule } from 'primeng/avatar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { RippleModule } from 'primeng/ripple';
+import { InputTextModule } from 'primeng/inputtext';
 
 
 @NgModule({
@@ -23,6 +25,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
     EntrenadorComponent,
   ],
   imports: [
+    InputTextModule,
+    RippleModule,
     TooltipModule,
     CommonModule,
     MedicionesRoutingModule,

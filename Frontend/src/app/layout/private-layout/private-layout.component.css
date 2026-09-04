@@ -236,6 +236,11 @@
 }
 
 .shell__title {
+  /* Es un enlace a la portada: con el dedo necesita alto propio, no solo el
+     de su texto. Al ser flex no cambia de sitio en escritorio. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-family: var(--ag-font-display);
   font-size: var(--ag-text-h3);
   font-weight: 700;

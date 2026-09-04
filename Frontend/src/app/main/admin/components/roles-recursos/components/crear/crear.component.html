@@ -14,8 +14,11 @@
   <section class="ag-card">
     <div class="ag-card__header">
       <h2 class="ag-card__title">Matriz de permisos</h2>
-      <button pButton pRipple type="button" icon="pi pi-refresh" label="Recargar"
-        class="p-button-text p-button-sm" (click)="cargarTodo()" [disabled]="cargando"></button>
+      <button pButton pRipple type="button"
+        class="p-button-text p-button-sm" (click)="recargar()" [disabled]="cargando">
+        <i class="pi pi-refresh" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Recargar</span>
+      </button>
     </div>
 
     <div class="ag-empty" *ngIf="cargando" role="status" aria-live="polite">

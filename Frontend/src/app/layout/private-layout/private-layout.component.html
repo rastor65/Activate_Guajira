@@ -71,9 +71,14 @@
     <p class="confirm__text">Vas a salir de tu cuenta. Tendras que volver a iniciar sesion para continuar.</p>
   </div>
   <ng-template pTemplate="footer">
-    <button pButton pRipple type="button" label="Cancelar" class="p-button-text" (click)="hideDialog()"></button>
-    <button pButton pRipple type="button" label="Cerrar sesion" icon="pi pi-check"
-      (click)="cerrarSesion()"></button>
+    <button pButton pRipple type="button" class="p-button-text" (click)="hideDialog()">
+      <span pButtonLabel>Cancelar</span>
+    </button>
+    <button pButton pRipple type="button"
+      (click)="cerrarSesion()">
+      <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+      <span pButtonLabel>Cerrar sesion</span>
+    </button>
   </ng-template>
 </p-dialog>
 
@@ -98,9 +103,14 @@
         autocomplete="new-password" required>
     </div>
     <div class="form__actions">
-      <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-        (click)="cerrarEditarContra()"></button>
-      <button pButton pRipple type="submit" label="Guardar" icon="pi pi-check"></button>
+      <button pButton pRipple type="button" class="p-button-text"
+        (click)="cerrarEditarContra()">
+        <span pButtonLabel>Cancelar</span>
+      </button>
+      <button pButton pRipple type="submit">
+        <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Guardar</span>
+      </button>
     </div>
   </form>
 </p-dialog>
@@ -297,11 +307,15 @@
         </label>
 
         <div class="pf__acciones">
-          <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-            (click)="cerrarEditarPerfil()" [disabled]="botonesDesactivados"></button>
-          <button pButton pRipple type="button" label="Guardar cambios" (click)="guardarDatos()"
-            [disabled]="botonesDesactivados"
-            [icon]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'"></button>
+          <button pButton pRipple type="button" class="p-button-text"
+            (click)="cerrarEditarPerfil()" [disabled]="botonesDesactivados">
+            <span pButtonLabel>Cancelar</span>
+          </button>
+          <button pButton pRipple type="button" (click)="guardarDatos()"
+            [disabled]="botonesDesactivados">
+            <i [class]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'" pButtonIcon aria-hidden="true"></i>
+            <span pButtonLabel>Guardar cambios</span>
+          </button>
         </div>
       </footer>
     </section>
@@ -324,9 +338,14 @@
     </label>
 
     <div class="form__actions">
-      <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-        (click)="cerrarEditarImagen()"></button>
-      <button pButton pRipple type="submit" label="Guardar" icon="pi pi-check"></button>
+      <button pButton pRipple type="button" class="p-button-text"
+        (click)="cerrarEditarImagen()">
+        <span pButtonLabel>Cancelar</span>
+      </button>
+      <button pButton pRipple type="submit">
+        <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Guardar</span>
+      </button>
     </div>
   </form>
 </p-dialog>

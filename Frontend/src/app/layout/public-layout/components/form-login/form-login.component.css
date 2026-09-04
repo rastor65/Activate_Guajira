@@ -282,8 +282,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  /* 44px: es el objetivo tactil mas pequeno que se acierta con el pulgar */
+  width: 44px;
+  height: 44px;
   border: 0;
   border-radius: var(--ag-radius-sm);
   background: transparent;
@@ -331,6 +332,10 @@
 }
 
 .auth__link {
+  /* Enlaces de 16-20px de alto: se les da area tactil sin moverlos de sitio */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   padding: 0;
   border: 0;
   background: none;

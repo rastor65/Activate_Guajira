@@ -26,6 +26,8 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { RippleModule } from 'primeng/ripple';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
   declarations: [
@@ -41,6 +43,8 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
   ]
   ,
   imports: [
+    InputTextModule,
+    RippleModule,
     DatePickerModule,
     RolesModule,
     RecursosModule,
