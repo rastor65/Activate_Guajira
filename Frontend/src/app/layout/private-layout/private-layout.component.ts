@@ -194,6 +194,61 @@ export class PrivateLayoutComponent implements OnInit {
     );
   }
 
+  // ==========================================================================
+  // Completitud del perfil
+  //
+  // Varias funciones dependen de datos del perfil: sin genero ni fecha de
+  // nacimiento no se puede calcular la grasa corporal. Mostrar que falta
+  // evita que el usuario lo descubra por una seccion vacia.
+  // ==========================================================================
+
+  private static readonly CAMPOS_POR_SECCION: { [seccion: string]: string[] } = {
+    identificacion: ['document_type', 'identificacion', 'fecha_nacimiento'],
+    socioeconomico: ['nivelFormacion', 'estrato', 'situacion_laboral'],
+    residencia: ['departamento', 'ciudad_residencia', 'barrio', 'telefono'],
+    demograficos: ['ciudad_nacimiento', 'estado_civil', 'grupoEtnico', 'genero'],
+  };
+
+  private tieneValor(campo: string): boolean {
+    const valor = (this.usuario as any)?.[campo];
+    return valor !== null && valor !== undefined && valor !== '';
+  }
+
+  /** Cuantos campos faltan en una seccion. */
+  faltantesEn(seccion: string): number {
+    const campos = PrivateLayoutComponent.CAMPOS_POR_SECCION[seccion] ?? [];
+    return campos.filter(c => !this.tieneValor(c)).length;
+  }
+
+  /** Porcentaje completado del perfil, sobre todos los campos. */
+  get completitud(): number {
+    const campos = Object.values(PrivateLayoutComponent.CAMPOS_POR_SECCION).flat();
+    if (!campos.length) {
+      return 0;
+    }
+    const llenos = campos.filter(c => this.tieneValor(c)).length;
+    return Math.round((llenos / campos.length) * 100);
+  }
+
+  get perfilCompleto(): boolean {
+    return this.completitud === 100;
+  }
+
+  /**
+   * Genero y fecha de nacimiento son los dos que habilitan el calculo de
+   * grasa corporal, asi que se senalan aparte.
+   */
+  get faltaParaComposicion(): string[] {
+    const faltan: string[] = [];
+    if (!this.tieneValor('genero')) {
+      faltan.push('genero');
+    }
+    if (!this.tieneValor('fecha_nacimiento')) {
+      faltan.push('fecha de nacimiento');
+    }
+    return faltan;
+  }
+
   /** Cajon de navegacion en movil. En escritorio la barra lateral es fija. */
   public menuAbierto = false;
 

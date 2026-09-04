@@ -67,6 +67,9 @@ PERMISOS = {
 
 # ---------------------------------------------------------------------------
 # Tabla maestra: los desplegables del formulario de perfil.
+# OJO: los nombres de categoria deben coincidir EXACTAMENTE con los que
+# filtra el frontend (private-layout.component.ts), tildes incluidas, o el
+# desplegable correspondiente se queda vacio sin dar ningun error.
 # ---------------------------------------------------------------------------
 PARAMETRICAS = {
     "Tipo de documento": [
@@ -77,7 +80,7 @@ PARAMETRICAS = {
         "Permiso por proteccion temporal",
         "Registro civil",
     ],
-    "Nivel de formacion": [
+    "Nivel de formación": [
         "Primaria",
         "Bachillerato",
         "Tecnico",
@@ -95,7 +98,7 @@ PARAMETRICAS = {
         "Divorciado(a)",
         "Viudo(a)",
     ],
-    "Grupo etnico": [
+    "Grupo étnico": [
         "Ninguno",
         "Indigena Wayuu",
         "Indigena Wiwa",
@@ -113,7 +116,7 @@ PARAMETRICAS = {
         "Prefiere no decirlo",
     ],
     "Estrato": ["1", "2", "3", "4", "5", "6"],
-    "Situacion laboral": [
+    "Situación Laboral": [
         "Estudiante",
         "Empleado",
         "Independiente",
