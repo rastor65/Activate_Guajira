@@ -141,13 +141,23 @@ export class PrivateLayoutComponent implements OnInit {
 
     this.obtenerTipos();
     this.verificar();
+    // Menu de cuenta, colgado del avatar de la barra superior
     this.items = [
-      { label: 'Imagen', icon: 'pi pi-user', command: () => { this.abrirEditarImagen(); } },
+      {
+        label: 'Mi cuenta',
+        items: [
+          { label: 'Editar perfil', icon: 'pi pi-user-edit', command: () => { this.abrirEditarPerfil(); } },
+          { label: 'Cambiar imagen', icon: 'pi pi-image', command: () => { this.abrirEditarImagen(); } },
+          { label: 'Cambiar contraseña', icon: 'pi pi-key', command: () => { this.abrirEditarContra(); } },
+        ]
+      },
       { separator: true },
-      { label: 'Editar perfil', icon: 'pi pi-cog', command: () => { this.abrirEditarPerfil(); } },
-      { separator: true },
-      { label: 'Cambiar contraseña', icon: 'pi pi-key', command: () => { this.abrirEditarContra(); } },
-      { separator: true },
+      {
+        label: 'Cerrar sesión',
+        icon: 'pi pi-sign-out',
+        styleClass: 'menu-cuenta__salir',
+        command: () => { this.showConfirm(); }
+      },
     ];
   }
 

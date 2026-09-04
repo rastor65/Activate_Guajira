@@ -153,134 +153,6 @@
 .shell--expandido .side__seccion { opacity: 1; height: auto; }
 
 /* --------------------------------------------------------------------------
-   Bloque de cuenta
-   -------------------------------------------------------------------------- */
-.side__cuenta {
-  flex: none;
-  margin-top: var(--ag-space-4);
-  padding-top: var(--ag-space-4);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.side__perfil {
-  display: flex;
-  align-items: center;
-  gap: var(--ag-space-3);
-  width: 100%;
-  padding: var(--ag-space-2) var(--ag-space-1);
-  margin-bottom: var(--ag-space-2);
-  border: 0;
-  border-radius: var(--ag-radius-md);
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
-  overflow: hidden;
-  transition: background-color var(--ag-dur-base) var(--ag-ease-standard);
-}
-
-.side__perfil:hover { background: rgba(255, 255, 255, 0.07); }
-
-.side__perfil:focus-visible {
-  outline: 2px solid var(--ag-action-accent);
-  outline-offset: -2px;
-}
-
-.side__perfil:hover .side__perfil-datos em { color: var(--ag-action-accent); }
-
-.side__avatar {
-  flex: none;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--ag-radius-full);
-  object-fit: cover;
-  background: rgba(255, 255, 255, 0.08);
-  border: 2px solid rgba(198, 242, 78, 0.5);
-}
-
-.side__perfil-datos {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  line-height: 1.2;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity var(--ag-dur-base) var(--ag-ease-standard);
-}
-
-.shell--expandido .side__perfil-datos { opacity: 1; }
-
-.side__perfil-datos strong {
-  font-size: var(--ag-text-sm);
-  font-weight: 600;
-  color: var(--ag-text-inverse);
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.side__perfil-datos em {
-  font-size: var(--ag-text-xs);
-  font-style: normal;
-  color: rgba(255, 255, 255, 0.42);
-}
-
-/* --- Acciones --- */
-.side__acciones {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.shell--expandido .side__acciones { flex-direction: row; gap: var(--ag-space-2); }
-
-.side__accion {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--ag-space-2);
-  width: 44px;
-  height: 40px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--ag-radius-md);
-  background: transparent;
-  color: rgba(255, 255, 255, 0.62);
-  font-family: var(--ag-font-body);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
-              color var(--ag-dur-base) var(--ag-ease-standard);
-}
-
-.shell--expandido .side__accion {
-  flex: 1 1 0;
-  width: auto;
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.side__accion span {
-  display: none;
-  font-size: var(--ag-text-sm);
-  font-weight: 500;
-}
-
-.shell--expandido .side__accion span { display: inline; }
-
-.side__accion:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--ag-action-accent);
-}
-
-.side__accion--salir:hover {
-  background: rgba(255, 90, 71, 0.18);
-  color: var(--ag-coral-400);
-}
-
-.side__accion:focus-visible {
-  outline: 2px solid var(--ag-action-accent);
-  outline-offset: 2px;
-}
-
-/* --------------------------------------------------------------------------
    Tirador de expandir / contraer
    Va anclado al borde derecho para no ocupar sitio dentro del menu.
    -------------------------------------------------------------------------- */
@@ -408,6 +280,14 @@
   object-fit: cover;
   background: var(--ag-bg-sunken);
 }
+
+.shell__user-caret {
+  font-size: 0.65rem;
+  color: var(--ag-text-muted);
+  transition: transform var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.shell__user:hover .shell__user-caret { color: var(--ag-text-brand); }
 
 .shell__user-name {
   font-size: var(--ag-text-sm);
@@ -684,22 +564,14 @@
   .side__tirador { display: none; }
 
   .side__wordmark,
-  .side__seccion,
-  .side__perfil-datos { opacity: 1; }
+  .side__seccion { opacity: 1; }
 
   .side__seccion { height: auto; }
 
   .side__nav { overflow-y: auto; overflow-x: hidden; }
 
-  .side__acciones { flex-direction: row; gap: var(--ag-space-2); }
 
-  .side__accion {
-    flex: 1 1 0;
-    width: auto;
-    background: rgba(255, 255, 255, 0.05);
-  }
 
-  .side__accion span { display: inline; }
 
   .shell__scrim {
     display: block;

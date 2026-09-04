@@ -595,6 +595,57 @@ table, .ag-num, .ag-stat__value {
 
 .p-toast { font-size: var(--ag-text-body); }
 
+/* --- Menu de cuenta (colgado del avatar de la barra superior).
+   Se monta en <body> con appendTo, asi que se estila aqui y no en el
+   componente, donde la encapsulacion no lo alcanzaria. --- */
+.menu-cuenta.p-menu {
+  min-width: 15rem;
+  padding: var(--ag-space-2);
+  border-radius: var(--ag-radius-lg);
+  box-shadow: var(--ag-shadow-lg);
+}
+
+.menu-cuenta .p-menu-submenu-label {
+  padding: var(--ag-space-2) var(--ag-space-3);
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+  background: transparent;
+}
+
+.menu-cuenta .p-menu-item-link {
+  gap: var(--ag-space-3);
+  padding: var(--ag-space-3);
+  border-radius: var(--ag-radius-sm);
+  font-size: var(--ag-text-sm);
+}
+
+.menu-cuenta .p-menu-item-icon {
+  color: var(--ag-navy-500);
+  font-size: 0.95rem;
+}
+
+.menu-cuenta .p-menu-item-content:hover {
+  background: var(--ag-bg-tinted);
+}
+
+.menu-cuenta .p-menu-separator {
+  margin: var(--ag-space-2) 0;
+  border-color: var(--ag-border-subtle);
+}
+
+/* Salir es destructivo: se marca en rojo y separado del resto */
+.menu-cuenta .menu-cuenta__salir .p-menu-item-link,
+.menu-cuenta .menu-cuenta__salir .p-menu-item-icon {
+  color: var(--ag-danger);
+}
+
+.menu-cuenta .menu-cuenta__salir .p-menu-item-content:hover {
+  background: var(--ag-danger-soft);
+}
+
 /* -----------------------------------------------------------------------------
    5. COMPATIBILIDAD — clases heredadas, ahora expresadas en tokens
    -------------------------------------------------------------------------- */

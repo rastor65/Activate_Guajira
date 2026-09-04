@@ -20,33 +20,6 @@
       <app-menu [menu]="menu1" [expandido]="sidebarExpandido" (funcion)="ocultarMenu($event)"></app-menu>
     </nav>
 
-    <!-- Cuenta -->
-    <div class="side__cuenta">
-      <button type="button" class="side__perfil" (click)="abrirEditarPerfil()"
-        aria-label="Editar mi perfil" pTooltip="Editar perfil" tooltipPosition="right">
-        <img *ngIf="profileImage" [src]="profileImage" alt="" class="side__avatar">
-        <span class="side__perfil-datos">
-          <strong>{{ nombre || 'Mi cuenta' }}</strong>
-          <em>Editar perfil</em>
-        </span>
-      </button>
-
-      <div class="side__acciones">
-        <button type="button" class="side__accion" (click)="menu.toggle($event)" aria-label="Ajustes de cuenta"
-          pTooltip="Ajustes" tooltipPosition="right">
-          <i class="pi pi-cog" aria-hidden="true"></i>
-          <span>Ajustes</span>
-        </button>
-        <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
-
-        <button type="button" class="side__accion side__accion--salir" (click)="showConfirm()"
-          aria-label="Cerrar sesion" pTooltip="Cerrar sesion" tooltipPosition="right">
-          <i class="pi pi-sign-out" aria-hidden="true"></i>
-          <span>Salir</span>
-        </button>
-      </div>
-    </div>
-
     <!-- Tirador de expandir/contraer, anclado al borde -->
     <button type="button" class="side__tirador" (click)="alternarSidebar()"
       [attr.aria-expanded]="sidebarExpandido"
@@ -71,10 +44,15 @@
       <a class="shell__title" [routerLink]="['/landing']">Activate Guajira</a>
 
       <div class="shell__topbar-actions">
-        <button type="button" class="shell__user" (click)="abrirEditarPerfil()" aria-label="Editar perfil">
+        <button type="button" class="shell__user" (click)="menuCuenta.toggle($event)"
+          aria-haspopup="true" aria-label="Abrir menu de cuenta">
           <img *ngIf="profileImage" [src]="profileImage" alt="" class="shell__avatar">
           <span class="shell__user-name" *ngIf="nombre">{{ nombre }}</span>
+          <i class="pi pi-chevron-down shell__user-caret" aria-hidden="true"></i>
         </button>
+
+        <p-menu #menuCuenta [popup]="true" [model]="items" appendTo="body"
+          styleClass="menu-cuenta"></p-menu>
       </div>
     </header>
 
