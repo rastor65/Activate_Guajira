@@ -32,9 +32,21 @@ class CustomUserSerializer(serializers.ModelSerializer):
             return []
         
     def get_avatar_url(self, user):
-        if user.avatar:
-            return self.context['request'].build_absolute_uri(user.avatar.url)
-        return None
+        """URL de descarga del avatar.
+
+        No se usa user.avatar.url porque MEDIA_URL solo esta montado bajo
+        /api/, asi que /media/... devuelve 404 y la imagen sale rota. El
+        endpoint de descarga si esta publicado.
+        """
+        try:
+            if not user.avatar:
+                return None
+            request = self.context.get('request')
+            if request is None:
+                return None
+            return request.build_absolute_uri(f'/api/user/{user.id}/descargar/')
+        except Exception:
+            return None
     
 # class CustomLogEntrySerializer(serializers.ModelSerializer):
 #     class Meta:

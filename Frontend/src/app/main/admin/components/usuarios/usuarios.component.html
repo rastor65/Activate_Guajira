@@ -136,9 +136,9 @@
                         <td data-label="Usuario">
                             <button type="button" class="persona" (click)="verDetalle(usuario)"
                                 [attr.aria-label]="'Ver ficha de ' + usuario.username">
-                                <img *ngIf="usuario.avatar_url" [src]="usuario.avatar_url" alt=""
-                                    class="persona__avatar">
-                                <span *ngIf="!usuario.avatar_url" class="persona__inicial">
+                                <img *ngIf="avatarVisible(usuario)" [src]="usuario.avatar_url" alt=""
+                                    class="persona__avatar" (error)="onAvatarError(usuario)">
+                                <span *ngIf="!avatarVisible(usuario)" class="persona__inicial">
                                     {{ inicialesDe(usuario) }}
                                 </span>
                                 <span class="persona__datos">

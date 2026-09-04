@@ -376,6 +376,18 @@ export class UsuariosComponent implements OnInit {
     return /[",\r\n]/.test(valor) ? '"' + valor.replace(/"/g, '""') + '"' : valor;
   }
 
+  /** Usuarios cuyo avatar no se pudo cargar: se cae a las iniciales. */
+  private avataresRotos = new Set<number>();
+
+  avatarVisible(usuario: any): boolean {
+    return !!usuario?.avatar_url && !this.avataresRotos.has(usuario.id);
+  }
+
+  onAvatarError(usuario: any): void {
+    this.avataresRotos.add(usuario.id);
+    this.cdRef.detectChanges();
+  }
+
   /** Iniciales para el avatar de la fila. */
   inicialesDe(usuario: any): string {
     const nombre = (usuario?.first_name || '').trim();
@@ -426,27 +438,17 @@ export class UsuariosComponent implements OnInit {
     };
   }
 
+  /**
+   * El endpoint de usuarios ya devuelve los nombres de los roles, asi que
+   * aqui solo se refresca el filtrado.
+   *
+   * Antes este metodo los recalculaba comparando role.userId con el correo
+   * del usuario. Esa comparacion nunca casaba, de modo que sobrescribia con
+   * un array vacio los roles buenos que venian de la API, y la columna salia
+   * siempre como 'Sin rol'.
+   */
   procesarRoles() {
-    this.cargando = true;
-  
-    if (!Array.isArray(this.AllRoles)) {
-      console.error('AllRoles no es un array:', this.AllRoles);
-      this.cargando = false;
-      return;
-    }
-  
-    this.usuarios.forEach(usuario => {
-      const rolesUsuario = this.AllRoles.filter(role =>
-        role.userId === usuario.email
-      );
-  
-      usuario.roles = [...new Set(
-        rolesUsuario.map(role => role.rolesId).filter(r => !!r)
-      )];
-    });
-  
     this.filtrarUsuarios();
-    this.cargando = false;
   }  
 
   filtrarUsuarios() {
@@ -454,11 +456,14 @@ export class UsuariosComponent implements OnInit {
     const filtro = this.searchValue?.toLowerCase() || '';
   
     this.usuariosFiltrados = this.usuarios.filter(usuario => {
-      const username = usuario.username?.toLowerCase() || '';
-      const firstName = usuario.first_name?.toLowerCase() || '';
-      const lastName = usuario.last_name?.toLowerCase() || '';
-  
-      return username.includes(filtro) || firstName.includes(filtro) || lastName.includes(filtro);
+      // El campo dice "usuario o correo": el correo tambien debe contar
+      const campos = [
+        usuario.username,
+        usuario.email,
+        usuario.first_name,
+        usuario.last_name,
+      ];
+      return campos.some(c => (c ?? '').toLowerCase().includes(filtro));
     });
   
     this.cargando = false;
