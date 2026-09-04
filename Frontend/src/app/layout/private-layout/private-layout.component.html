@@ -108,76 +108,69 @@
 
 <!-- ===================== EDITAR PERFIL ===================== -->
 <p-dialog [(visible)]="Dialog2" [modal]="true" [resizable]="false" [draggable]="false"
-  [style]="{ width: '56rem' }" [breakpoints]="{ '900px': '95vw' }" styleClass="dialog-perfil"
-  [showHeader]="false">
+  [style]="{ width: '58rem' }" [breakpoints]="{ '900px': '95vw' }" [showHeader]="false"
+  styleClass="dialog-perfil" contentStyleClass="dialog-perfil__body">
 
-  <!-- Cabecera propia: identidad y avance del perfil -->
-  <header class="perfil-head">
-    <img [src]="profileImage || 'assets/avatars/user.png'" alt="" class="perfil-head__avatar">
+  <div class="pf">
 
-    <div class="perfil-head__info">
-      <p class="perfil-head__eyebrow">Editar perfil</p>
-      <h2 class="perfil-head__nombre">{{ usuario.nombres }} {{ usuario.apellidos }}</h2>
-
-      <div class="perfil-head__avance">
-        <div class="barra" [attr.aria-valuenow]="completitud" aria-valuemin="0" aria-valuemax="100"
-          role="progressbar" aria-label="Avance del perfil">
-          <span class="barra__relleno" [style.width.%]="completitud"></span>
-        </div>
-        <span class="perfil-head__pct">{{ completitud }}%</span>
+    <!-- ============ Columna de navegacion ============ -->
+    <aside class="pf__rail">
+      <div class="pf__identidad">
+        <img [src]="profileImage || 'assets/avatars/user.png'" alt="" class="pf__avatar">
+        <p class="pf__nombre">{{ usuario.nombres }} {{ usuario.apellidos }}</p>
+        <p class="pf__correo">{{ user.email }}</p>
       </div>
-    </div>
 
-    <button type="button" class="perfil-head__cerrar" (click)="cerrarEditarPerfil()"
-      aria-label="Cerrar">
-      <i class="pi pi-times" aria-hidden="true"></i>
-    </button>
-  </header>
+      <div class="pf__avance">
+        <div class="pf__avance-cifras">
+          <span>Perfil completo</span>
+          <strong>{{ completitud }}%</strong>
+        </div>
+        <div class="pf__barra" role="progressbar" [attr.aria-valuenow]="completitud"
+          aria-valuemin="0" aria-valuemax="100" aria-label="Avance del perfil">
+          <span class="pf__barra-relleno" [style.width.%]="completitud"></span>
+        </div>
+      </div>
 
-  <p-progressBar *ngIf="cargandopersona" mode="indeterminate" [style]="{ height: '3px' }"
-    aria-label="Cargando datos"></p-progressBar>
+      <nav class="pf__nav" aria-label="Secciones del perfil">
+        <button *ngFor="let s of seccionesPerfil" type="button" class="pf__nav-item"
+          [class.is-active]="seccionPerfil === s.id" [attr.aria-current]="seccionPerfil === s.id"
+          (click)="irASeccion(s.id)">
+          <i [ngClass]="s.icono" aria-hidden="true"></i>
+          <span>{{ s.titulo }}</span>
+          <em class="pf__pendiente" *ngIf="faltantesEn(s.id)">{{ faltantesEn(s.id) }}</em>
+          <i class="pi pi-check pf__ok" *ngIf="!faltantesEn(s.id)" aria-hidden="true"></i>
+        </button>
+      </nav>
+    </aside>
 
-  <!-- Aviso: sin estos datos no se calcula la composicion corporal -->
-  <p class="perfil-aviso" *ngIf="faltaParaComposicion.length">
-    <i class="pi pi-info-circle" aria-hidden="true"></i>
-    <span>
-      Completa tu <strong>{{ faltaParaComposicion.join(' y ') }}</strong> para que la
-      plataforma calcule tu grasa corporal en las mediciones.
-    </span>
-  </p>
+    <!-- ============ Columna de campos ============ -->
+    <section class="pf__panel">
+      <header class="pf__panel-head">
+        <h2 class="pf__panel-titulo">Editar perfil</h2>
+        <button type="button" class="pf__cerrar" (click)="cerrarEditarPerfil()" aria-label="Cerrar">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </header>
 
-  <p-tabs value="identificacion" [scrollable]="true">
-    <p-tablist>
-      <p-tab value="identificacion">
-        <i class="pi pi-id-card" aria-hidden="true"></i>
-        <span>Identificacion</span>
-        <em class="tab-pendiente" *ngIf="faltantesEn('identificacion')">{{ faltantesEn('identificacion') }}</em>
-      </p-tab>
-      <p-tab value="socioeconomico">
-        <i class="pi pi-briefcase" aria-hidden="true"></i>
-        <span>Socioeconomico</span>
-        <em class="tab-pendiente" *ngIf="faltantesEn('socioeconomico')">{{ faltantesEn('socioeconomico') }}</em>
-      </p-tab>
-      <p-tab value="residencia">
-        <i class="pi pi-map-marker" aria-hidden="true"></i>
-        <span>Residencia</span>
-        <em class="tab-pendiente" *ngIf="faltantesEn('residencia')">{{ faltantesEn('residencia') }}</em>
-      </p-tab>
-      <p-tab value="demograficos">
-        <i class="pi pi-users" aria-hidden="true"></i>
-        <span>Demograficos</span>
-        <em class="tab-pendiente" *ngIf="faltantesEn('demograficos')">{{ faltantesEn('demograficos') }}</em>
-      </p-tab>
-    </p-tablist>
+      <p-progressBar *ngIf="cargandopersona" mode="indeterminate" [style]="{ height: '3px' }"
+        aria-label="Cargando datos"></p-progressBar>
 
-    <p-tabpanels>
-      <!-- ---------- Identificacion ---------- -->
-      <p-tabpanel value="identificacion">
-        <div class="perfil-grid">
+      <p class="pf__aviso" *ngIf="faltaParaComposicion.length">
+        <i class="pi pi-info-circle" aria-hidden="true"></i>
+        <span>
+          Completa tu <strong>{{ faltaParaComposicion.join(' y ') }}</strong> para que la
+          plataforma calcule tu grasa corporal.
+        </span>
+      </p>
+
+      <div class="pf__contenido">
+        <!-- ---------- Identificacion ---------- -->
+        <div class="pf__grid" *ngIf="seccionPerfil === 'identificacion'">
           <div class="campo">
             <label for="document_type">Tipo de documento</label>
             <p-select inputId="document_type" [options]="documentTypes" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.document_type" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.document_type" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
@@ -201,54 +194,50 @@
                 [(ngModel)]="usuario.edad">
               <span class="campo__sufijo">anos</span>
             </div>
-            <small class="campo__nota">Se calcula a partir de la fecha de nacimiento.</small>
+            <small class="campo__nota">Se calcula sola.</small>
           </div>
         </div>
-      </p-tabpanel>
 
-      <!-- ---------- Socioeconomico ---------- -->
-      <p-tabpanel value="socioeconomico">
-        <div class="perfil-grid">
+        <!-- ---------- Socioeconomico ---------- -->
+        <div class="pf__grid" *ngIf="seccionPerfil === 'socioeconomico'">
           <div class="campo">
             <label for="nivelFormacion">Nivel de formacion</label>
             <p-select inputId="nivelFormacion" [options]="niveles_formacion" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.nivelFormacion" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.nivelFormacion" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
             <label for="estrato">Estrato</label>
             <p-select inputId="estrato" [options]="estrato" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.estrato" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.estrato" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
             <label for="situacion_laboral">Situacion laboral</label>
             <p-select inputId="situacion_laboral" [options]="situacionLaboral" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.situacion_laboral" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.situacion_laboral" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
         </div>
-      </p-tabpanel>
 
-      <!-- ---------- Residencia ---------- -->
-      <p-tabpanel value="residencia">
-        <div class="perfil-grid">
+        <!-- ---------- Residencia ---------- -->
+        <div class="pf__grid" *ngIf="seccionPerfil === 'residencia'">
           <div class="campo">
             <label for="departamento">Departamento</label>
             <p-select inputId="departamento" [options]="departamento" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.departamento" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.departamento" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
             <label for="ciudad_residencia">Ciudad de residencia</label>
             <p-select inputId="ciudad_residencia" [options]="ciudad" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.ciudad_residencia" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.ciudad_residencia" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
             <label for="barrio">Barrio</label>
             <p-select inputId="barrio" [options]="barrio" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.barrio" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.barrio" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
@@ -258,58 +247,57 @@
             </div>
           </div>
         </div>
-      </p-tabpanel>
 
-      <!-- ---------- Demograficos ---------- -->
-      <p-tabpanel value="demograficos">
-        <div class="perfil-grid">
+        <!-- ---------- Demograficos ---------- -->
+        <div class="pf__grid" *ngIf="seccionPerfil === 'demograficos'">
           <div class="campo">
             <label for="genero">Genero</label>
             <p-select inputId="genero" [options]="genero" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.genero" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.genero" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
-            <small class="campo__nota">Necesario para calcular tu grasa corporal.</small>
+            <small class="campo__nota">Necesario para tu grasa corporal.</small>
           </div>
           <div class="campo">
             <label for="ciudad_nacimiento">Ciudad de nacimiento</label>
             <p-select inputId="ciudad_nacimiento" [options]="ciudad" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.ciudad_nacimiento" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.ciudad_nacimiento" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
             <label for="estado_civil">Estado civil</label>
             <p-select inputId="estado_civil" [options]="estadoCivil" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.estado_civil" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.estado_civil" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
           <div class="campo">
             <label for="grupoEtnico">Grupo etnico</label>
             <p-select inputId="grupoEtnico" [options]="grupoEtnico" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.grupoEtnico" placeholder="Selecciona una opcion" [filter]="true"
+              [(ngModel)]="usuario.grupoEtnico" placeholder="Selecciona" [filter]="true"
               [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
           </div>
         </div>
-      </p-tabpanel>
-    </p-tabpanels>
-  </p-tabs>
+      </div>
 
-  <!-- El consentimiento aplica a todo el perfil: siempre visible -->
-  <label class="consent" for="consentimiento-perfil">
-    <input type="checkbox" id="consentimiento-perfil" required [(ngModel)]="user.consentimiento">
-    <span>
-      He leido y acepto el
-      <a href="assets/Consentimiento_informado.pdf" target="_blank" rel="noopener noreferrer">
-        consentimiento informado</a>.
-    </span>
-  </label>
+      <footer class="pf__pie">
+        <label class="consent" for="consentimiento-perfil">
+          <input type="checkbox" id="consentimiento-perfil" required [(ngModel)]="user.consentimiento">
+          <span>
+            Acepto el
+            <a href="assets/Consentimiento_informado.pdf" target="_blank" rel="noopener noreferrer">
+              consentimiento informado</a>.
+          </span>
+        </label>
 
-  <ng-template pTemplate="footer">
-    <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-      (click)="cerrarEditarPerfil()" [disabled]="botonesDesactivados"></button>
-    <button pButton pRipple type="button" label="Guardar cambios" (click)="guardarDatos()"
-      [disabled]="botonesDesactivados"
-      [icon]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'"></button>
-  </ng-template>
+        <div class="pf__acciones">
+          <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
+            (click)="cerrarEditarPerfil()" [disabled]="botonesDesactivados"></button>
+          <button pButton pRipple type="button" label="Guardar cambios" (click)="guardarDatos()"
+            [disabled]="botonesDesactivados"
+            [icon]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'"></button>
+        </div>
+      </footer>
+    </section>
+  </div>
 </p-dialog>
 
 

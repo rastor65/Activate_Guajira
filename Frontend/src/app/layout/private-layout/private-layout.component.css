@@ -386,70 +386,106 @@
 }
 
 /* ==========================================================================
-   DIALOGO DE PERFIL
+   DIALOGO DE PERFIL — dos columnas
    ========================================================================== */
 
-/* --- Cabecera propia, con identidad y avance --- */
-.perfil-head {
+/* El dialogo no aporta relleno: lo gestiona el layout interno */
+:host ::ng-deep .dialog-perfil .p-dialog-content.dialog-perfil__body {
+  padding: 0;
+  border-radius: var(--ag-radius-xl);
+  overflow: hidden;
+}
+
+.pf {
+  display: grid;
+  grid-template-columns: 16.5rem 1fr;
+  min-height: 32rem;
+}
+
+/* --------------------------------------------------------------------------
+   Columna izquierda: identidad, avance y navegacion
+   -------------------------------------------------------------------------- */
+.pf__rail {
   display: flex;
-  align-items: center;
-  gap: var(--ag-space-4);
-  margin: calc(var(--ag-space-6) * -1) calc(var(--ag-space-6) * -1) var(--ag-space-5);
-  padding: var(--ag-space-5) var(--ag-space-6);
-  border-radius: var(--ag-radius-xl) var(--ag-radius-xl) 0 0;
+  flex-direction: column;
+  padding: var(--ag-space-6) var(--ag-space-4);
   background:
-    radial-gradient(120% 160% at 100% 0%, var(--ag-navy-700) 0%, var(--ag-navy-800) 60%,
+    radial-gradient(130% 60% at 50% 0%, var(--ag-navy-700) 0%, var(--ag-navy-800) 55%,
                     var(--ag-navy-900) 100%);
   color: var(--ag-text-inverse);
 }
 
-.perfil-head__avatar {
-  flex: none;
-  width: 62px;
-  height: 62px;
+.pf__identidad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: var(--ag-space-5);
+}
+
+.pf__avatar {
+  width: 76px;
+  height: 76px;
   border-radius: var(--ag-radius-full);
   object-fit: cover;
   border: 2px solid var(--ag-action-accent);
   background: rgba(255, 255, 255, 0.08);
 }
 
-.perfil-head__info { flex: 1 1 auto; min-width: 0; }
-
-.perfil-head__eyebrow {
-  margin: 0;
-  font-size: var(--ag-text-xs);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--ag-action-accent);
+.pf__nombre {
+  margin: var(--ag-space-3) 0 0 0;
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-body-lg);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+  color: var(--ag-text-inverse);
 }
 
-.perfil-head__nombre {
-  margin: var(--ag-space-1) 0 var(--ag-space-3) 0;
-  font-size: var(--ag-text-h3);
-  color: var(--ag-text-inverse);
-  text-transform: none;
+.pf__correo {
+  margin: 2px 0 0 0;
+  max-width: 100%;
+  font-size: var(--ag-text-xs);
+  color: rgba(255, 255, 255, 0.45);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.perfil-head__avance {
-  display: flex;
-  align-items: center;
-  gap: var(--ag-space-3);
+/* --- Avance --- */
+.pf__avance {
+  padding: var(--ag-space-4) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.barra {
-  flex: 1 1 auto;
-  height: 6px;
-  max-width: 20rem;
+.pf__avance-cifras {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: var(--ag-space-2);
+  font-size: var(--ag-text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pf__avance-cifras strong {
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-body);
+  color: var(--ag-action-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.pf__barra {
+  height: 5px;
   border-radius: var(--ag-radius-full);
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
 }
 
-.barra__relleno {
+.pf__barra-relleno {
   display: block;
   height: 100%;
   border-radius: var(--ag-radius-full);
@@ -457,48 +493,145 @@
   transition: width var(--ag-dur-slow) var(--ag-ease-standard);
 }
 
-.perfil-head__pct {
-  flex: none;
-  font-family: var(--ag-font-display);
-  font-size: var(--ag-text-sm);
-  font-weight: 700;
-  color: var(--ag-action-accent);
-  font-variant-numeric: tabular-nums;
+/* --- Navegacion vertical --- */
+.pf__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--ag-space-4);
 }
 
-.perfil-head__cerrar {
-  flex: none;
-  align-self: flex-start;
-  display: inline-flex;
+.pf__nav-item {
+  position: relative;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
+  gap: var(--ag-space-3);
+  width: 100%;
+  min-height: 42px;
+  padding: 0 var(--ag-space-3);
   border: 0;
   border-radius: var(--ag-radius-md);
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.75);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--ag-font-body);
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  text-align: left;
   cursor: pointer;
   transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
               color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.perfil-head__cerrar:hover {
-  background: rgba(255, 255, 255, 0.16);
+.pf__nav-item > i:first-child {
+  flex: none;
+  width: 1.1rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.pf__nav-item > span { flex: 1 1 auto; }
+
+.pf__nav-item:hover {
+  background: rgba(255, 255, 255, 0.08);
   color: var(--ag-text-inverse);
 }
 
-.perfil-head__cerrar:focus-visible {
-  outline: 2px solid var(--ag-action-accent);
-  outline-offset: 2px;
+.pf__nav-item.is-active {
+  background: rgba(198, 242, 78, 0.14);
+  color: var(--ag-action-accent);
 }
 
-/* --- Aviso de datos que habilitan funciones --- */
-.perfil-aviso {
+.pf__nav-item.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  border-radius: 0 var(--ag-radius-full) var(--ag-radius-full) 0;
+  background: var(--ag-action-accent);
+}
+
+.pf__nav-item:focus-visible {
+  outline: 2px solid var(--ag-action-accent);
+  outline-offset: -2px;
+}
+
+/* Campos pendientes / seccion completa */
+.pf__pendiente {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: var(--ag-radius-full);
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.625rem;
+  font-style: normal;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.pf__ok {
+  flex: none;
+  font-size: 0.7rem;
+  color: var(--ag-action-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Columna derecha: campos
+   -------------------------------------------------------------------------- */
+.pf__panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--ag-bg-surface);
+}
+
+.pf__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ag-space-3);
+  padding: var(--ag-space-5) var(--ag-space-6);
+  border-bottom: 1px solid var(--ag-border-subtle);
+}
+
+.pf__panel-titulo {
+  margin: 0;
+  font-size: var(--ag-text-h3);
+}
+
+.pf__cerrar {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--ag-radius-md);
+  background: transparent;
+  color: var(--ag-text-muted);
+  cursor: pointer;
+  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
+              color var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.pf__cerrar:hover {
+  background: var(--ag-bg-sunken);
+  color: var(--ag-text-brand);
+}
+
+.pf__aviso {
   display: flex;
   align-items: flex-start;
   gap: var(--ag-space-3);
-  margin: 0 0 var(--ag-space-4) 0;
+  margin: var(--ag-space-5) var(--ag-space-6) 0;
   padding: var(--ag-space-3) var(--ag-space-4);
   border-left: 4px solid var(--ag-info);
   border-radius: var(--ag-radius-md);
@@ -508,76 +641,49 @@
   color: var(--ag-navy-900);
 }
 
-.perfil-aviso > i { color: var(--ag-info); margin-top: 2px; }
+.pf__aviso > i { color: var(--ag-info); margin-top: 2px; }
 
-/* --- Pestanas --- */
-:host ::ng-deep .dialog-perfil .p-tablist {
-  border-bottom: 1px solid var(--ag-border-subtle);
+.pf__contenido {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--ag-space-5) var(--ag-space-6);
 }
 
-:host ::ng-deep .dialog-perfil .p-tab {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--ag-space-2);
-  padding: var(--ag-space-3) var(--ag-space-4);
-  font-family: var(--ag-font-display);
-  font-size: var(--ag-text-sm);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--ag-text-muted);
-  white-space: nowrap;
-}
-
-:host ::ng-deep .dialog-perfil .p-tab:hover {
-  color: var(--ag-text-brand);
-  background: var(--ag-bg-tinted);
-}
-
-:host ::ng-deep .dialog-perfil .p-tab[data-p-active='true'],
-:host ::ng-deep .dialog-perfil .p-tab.p-tab-active {
-  color: var(--ag-text-brand);
-  background: transparent;
-}
-
-:host ::ng-deep .dialog-perfil .p-tablist-active-bar {
-  height: 3px;
-  background: var(--ag-action-accent);
-}
-
-/* Contador de campos pendientes en la pestana */
-.tab-pendiente {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: var(--ag-radius-full);
-  background: var(--ag-warning-soft);
-  color: var(--ag-warning);
-  font-size: 0.625rem;
-  font-style: normal;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-/* Altura estable: al cambiar de pestana el dialogo no debe saltar */
-:host ::ng-deep .dialog-perfil .p-tabpanels {
-  min-height: 15rem;
-  padding: var(--ag-space-5) 0 0 0;
-  background: transparent;
-}
-
-/* --- Rejilla de campos --- */
-.perfil-grid {
+.pf__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   gap: var(--ag-space-5) var(--ag-space-4);
   align-content: start;
+  animation: pf-entrar var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-/* --- Campo: mismo tratamiento que el dialogo de medicion --- */
+@keyframes pf-entrar {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- Pie --- */
+.pf__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ag-space-4);
+  padding: var(--ag-space-4) var(--ag-space-6);
+  border-top: 1px solid var(--ag-border-subtle);
+  background: var(--ag-bg-canvas);
+}
+
+.pf__acciones {
+  display: flex;
+  gap: var(--ag-space-2);
+  margin-left: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Campos — mismo tratamiento que el dialogo de medicion
+   -------------------------------------------------------------------------- */
 .campo {
   display: flex;
   flex-direction: column;
@@ -665,8 +771,7 @@
   color: var(--ag-text-muted);
 }
 
-/* Selects y fecha a la misma altura que los inputs, para que la rejilla
-   no quede desalineada */
+/* Selects y fecha a la misma altura que los inputs */
 :host ::ng-deep .campo__select.p-select,
 :host ::ng-deep .campo__fecha .p-datepicker-input {
   width: 100%;
@@ -681,6 +786,55 @@
 }
 
 :host ::ng-deep .campo__fecha { width: 100%; }
+
+/* --------------------------------------------------------------------------
+   Adaptativo
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .pf { grid-template-columns: 1fr; min-height: 0; }
+
+  .pf__rail { padding: var(--ag-space-5); }
+
+  .pf__identidad {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: var(--ag-space-4);
+    padding-bottom: var(--ag-space-4);
+  }
+
+  .pf__avatar { width: 54px; height: 54px; }
+
+  .pf__nombre { margin-top: 0; }
+
+  /* La navegacion pasa a fila desplazable */
+  .pf__nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: var(--ag-space-1);
+  }
+
+  .pf__nav-item { width: auto; white-space: nowrap; }
+
+  .pf__nav-item.is-active::before { display: none; }
+
+  .pf__contenido { padding: var(--ag-space-5) var(--ag-space-4); }
+
+  .pf__panel-head,
+  .pf__pie { padding-inline: var(--ag-space-4); }
+
+  .pf__aviso { margin-inline: var(--ag-space-4); }
+}
+
+@media (max-width: 560px) {
+  .pf__grid { grid-template-columns: 1fr; }
+
+  .pf__pie { flex-direction: column; align-items: stretch; }
+
+  .pf__acciones { margin-left: 0; }
+
+  .pf__acciones > * { flex: 1 1 auto; }
+}
 
 /* --- Consentimiento --- */
 .consent {

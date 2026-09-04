@@ -249,6 +249,21 @@ export class PrivateLayoutComponent implements OnInit {
     return faltan;
   }
 
+  /**
+   * Seccion activa del dialogo de perfil. Se gestiona aqui en vez de con
+   * p-tabs: la navegacion es vertical y necesita control propio del marcado.
+   */
+  seccionPerfil: 'identificacion' | 'socioeconomico' | 'residencia' | 'demograficos' = 'identificacion';
+
+  seccionesPerfil = [
+    { id: 'identificacion', titulo: 'Identificacion', icono: 'pi pi-id-card' },
+    { id: 'socioeconomico', titulo: 'Socioeconomico', icono: 'pi pi-briefcase' },
+    { id: 'residencia', titulo: 'Residencia', icono: 'pi pi-map-marker' },
+    { id: 'demograficos', titulo: 'Demograficos', icono: 'pi pi-users' },
+  ];
+
+  irASeccion(id: any) { this.seccionPerfil = id; }
+
   /** Cajon de navegacion en movil. En escritorio la barra lateral es fija. */
   public menuAbierto = false;
 
