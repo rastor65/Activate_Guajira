@@ -11,10 +11,10 @@
 
 .shell--expandido { grid-template-columns: var(--ag-sidebar-w) 1fr; }
 
-/* --------------------------------------------------------------------------
-   Barra lateral
-   -------------------------------------------------------------------------- */
-.shell__sidebar {
+/* ==========================================================================
+   BARRA LATERAL
+   ========================================================================== */
+.side {
   position: fixed;
   z-index: 40;
   top: 0;
@@ -23,198 +23,307 @@
   width: var(--ag-sidebar-w-collapsed);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--ag-space-4);
-  padding: var(--ag-space-4) var(--ag-space-2);
-  background: linear-gradient(180deg, var(--ag-navy-800) 0%, var(--ag-navy-900) 100%);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  padding: var(--ag-space-4) var(--ag-space-3);
+  background:
+    radial-gradient(120% 40% at 50% 0%, rgba(198, 242, 78, 0.10) 0%, transparent 60%),
+    linear-gradient(180deg, var(--ag-navy-800) 0%, var(--ag-navy-900) 100%);
   transition: width var(--ag-dur-slow) var(--ag-ease-standard),
               transform var(--ag-dur-slow) var(--ag-ease-standard);
 }
 
-.shell--expandido .shell__sidebar {
-  width: var(--ag-sidebar-w);
-  align-items: stretch;
-  padding: var(--ag-space-4) var(--ag-space-3);
+.shell--expandido .side { width: var(--ag-sidebar-w); }
+
+/* Filo derecho: hilo tenue en vez de un borde duro */
+.side::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    transparent 100%);
 }
 
-/* Cabecera: marca + boton de expandir */
-.shell__sidebar-head {
+/* --------------------------------------------------------------------------
+   Marca
+   -------------------------------------------------------------------------- */
+.side__brand {
   display: flex;
   align-items: center;
-  gap: var(--ag-space-2);
-  width: 100%;
-  flex-direction: column;
+  gap: var(--ag-space-3);
+  height: 48px;
+  padding: 0 var(--ag-space-1);
+  margin-bottom: var(--ag-space-6);
+  border-radius: var(--ag-radius-md);
+  text-decoration: none;
+  overflow: hidden;
 }
 
-.shell--expandido .shell__sidebar-head {
-  flex-direction: row;
-  justify-content: space-between;
-}
+.side__brand:hover { text-decoration: none; }
 
-/* Boton de expandir/contraer */
-.shell__toggle {
+.side__logo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  width: 40px;
+  height: 40px;
   border-radius: var(--ag-radius-md);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.72);
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
-              color var(--ag-dur-base) var(--ag-ease-standard);
-}
-
-.shell__toggle:hover {
-  background: rgba(198, 242, 78, 0.16);
-  color: var(--ag-action-accent);
-}
-
-.shell__toggle:focus-visible {
-  outline: 2px solid var(--ag-action-accent);
-  outline-offset: 2px;
-}
-
-.shell__brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  flex: none;
-  border-radius: var(--ag-radius-md);
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  text-decoration: none;
-  transition: background-color var(--ag-dur-base) var(--ag-ease-standard);
+  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
+              border-color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.shell__brand:hover { background: rgba(198, 242, 78, 0.16); }
+.side__brand:hover .side__logo {
+  background: rgba(198, 242, 78, 0.16);
+  border-color: rgba(198, 242, 78, 0.32);
+}
 
-.shell__brand img {
-  width: 64%;
-  height: 64%;
+.side__logo img {
+  width: 62%;
+  height: 62%;
   object-fit: contain;
 }
 
-.shell__brand-text {
-  display: none;
+.side__wordmark {
+  display: flex;
   flex-direction: column;
+  min-width: 0;
   line-height: 1.05;
   font-family: var(--ag-font-display);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.shell--expandido .shell__brand-text { display: flex; }
+.shell--expandido .side__wordmark { opacity: 1; }
 
-.shell__brand-text strong {
-  font-size: var(--ag-text-body);
+.side__wordmark strong {
+  font-size: 1rem;
   font-weight: 700;
   color: var(--ag-text-inverse);
 }
 
-.shell__brand-text em {
+.side__wordmark em {
   font-size: var(--ag-text-xs);
   font-style: normal;
   font-weight: 600;
   color: var(--ag-action-accent);
 }
 
-.shell--expandido .shell__brand {
-  width: auto;
+/* --------------------------------------------------------------------------
+   Navegacion
+   -------------------------------------------------------------------------- */
+.side__nav {
   flex: 1 1 auto;
-  min-width: 0;
-  justify-content: flex-start;
-  gap: var(--ag-space-3);
-  padding: var(--ag-space-1) var(--ag-space-2);
-  background: transparent;
-  border-color: transparent;
-}
-
-.shell--expandido .shell__brand img { width: 32px; height: 32px; flex: none; }
-
-.shell__nav {
-  flex: 1 1 auto;
-  width: 100%;
-  /* Sin recorte: el submenu flotante del modo contraido se sale de la caja.
+  min-height: 0;
+  /* Sin recorte: el submenu flotante del modo contraido sale de esta caja.
      Un overflow-y:auto aqui obliga al eje X a recortar aunque se pida
-     visible, que es justo lo que dejaba el submenu cortado. */
+     visible, que es lo que dejaba el submenu cortado. */
   overflow: visible;
 }
 
-/* Expandida, el submenu se despliega en linea, asi que ya se puede
-   desplazar sin cortar nada. */
-.shell--expandido .shell__nav {
+/* Expandida el submenu va en linea, asi que ya se puede desplazar */
+.shell--expandido .side__nav {
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-.shell__sidebar-footer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ag-space-2);
-  padding-top: var(--ag-space-4);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  width: 100%;
-  align-items: center;
+.side__seccion {
+  margin: 0 0 var(--ag-space-2) 0;
+  padding: 0 var(--ag-space-3);
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+  white-space: nowrap;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: opacity var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.shell__accion {
+.shell--expandido .side__seccion { opacity: 1; height: auto; }
+
+/* --------------------------------------------------------------------------
+   Bloque de cuenta
+   -------------------------------------------------------------------------- */
+.side__cuenta {
+  flex: none;
+  margin-top: var(--ag-space-4);
+  padding-top: var(--ag-space-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.side__perfil {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  width: 100%;
+  padding: var(--ag-space-2) var(--ag-space-1);
+  margin-bottom: var(--ag-space-2);
+  border: 0;
+  border-radius: var(--ag-radius-md);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.side__perfil:hover { background: rgba(255, 255, 255, 0.07); }
+
+.side__perfil:focus-visible {
+  outline: 2px solid var(--ag-action-accent);
+  outline-offset: -2px;
+}
+
+.side__perfil:hover .side__perfil-datos em { color: var(--ag-action-accent); }
+
+.side__avatar {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--ag-radius-full);
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(198, 242, 78, 0.5);
+}
+
+.side__perfil-datos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.shell--expandido .side__perfil-datos { opacity: 1; }
+
+.side__perfil-datos strong {
+  font-size: var(--ag-text-sm);
+  font-weight: 600;
+  color: var(--ag-text-inverse);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.side__perfil-datos em {
+  font-size: var(--ag-text-xs);
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+/* --- Acciones --- */
+.side__acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shell--expandido .side__acciones { flex-direction: row; gap: var(--ag-space-2); }
+
+.side__accion {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--ag-space-3);
+  gap: var(--ag-space-2);
   width: 44px;
-  height: 44px;
+  height: 40px;
   padding: 0;
   border: 0;
   border-radius: var(--ag-radius-md);
   background: transparent;
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.62);
   font-family: var(--ag-font-body);
-  font-size: 1.05rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
               color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.shell--expandido .shell__accion {
-  width: 100%;
-  justify-content: flex-start;
-  padding: 0 var(--ag-space-3);
+.shell--expandido .side__accion {
+  flex: 1 1 0;
+  width: auto;
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.shell__accion:hover {
-  background: rgba(255, 255, 255, 0.1);
+.side__accion span {
+  display: none;
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+}
+
+.shell--expandido .side__accion span { display: inline; }
+
+.side__accion:hover {
+  background: rgba(255, 255, 255, 0.12);
   color: var(--ag-action-accent);
 }
 
-.shell__accion--salir:hover {
-  background: rgba(255, 90, 71, 0.16);
+.side__accion--salir:hover {
+  background: rgba(255, 90, 71, 0.18);
   color: var(--ag-coral-400);
 }
 
-.shell__accion:focus-visible {
+.side__accion:focus-visible {
   outline: 2px solid var(--ag-action-accent);
   outline-offset: 2px;
 }
 
-.shell__accion i { flex: none; width: 1.3rem; text-align: center; }
-
-.shell__accion-texto {
-  display: none;
-  font-size: var(--ag-text-sm);
-  font-weight: 500;
-  white-space: nowrap;
+/* --------------------------------------------------------------------------
+   Tirador de expandir / contraer
+   Va anclado al borde derecho para no ocupar sitio dentro del menu.
+   -------------------------------------------------------------------------- */
+.side__tirador {
+  position: absolute;
+  z-index: 2;
+  top: 58px;
+  right: -11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-bg-surface);
+  color: var(--ag-navy-600);
+  font-size: 0.6rem;
+  cursor: pointer;
+  box-shadow: var(--ag-shadow-sm);
+  opacity: 0;
+  transition: opacity var(--ag-dur-base) var(--ag-ease-standard),
+              background-color var(--ag-dur-base) var(--ag-ease-standard),
+              color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.shell--expandido .shell__accion-texto { display: inline; }
+/* Discreto: aparece al acercarse a la barra, y siempre con el teclado */
+.side:hover .side__tirador,
+.side__tirador:focus-visible {
+  opacity: 1;
+}
+
+.side__tirador:hover {
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+  border-color: var(--ag-navy-800);
+}
+
+.side__tirador:focus-visible {
+  outline: 2px solid var(--ag-navy-500);
+  outline-offset: 2px;
+}
 
 /* --------------------------------------------------------------------------
    Barra superior
@@ -563,21 +672,34 @@
   .shell__main { grid-column: 1; }
 
   /* En movil el cajon siempre va expandido: no hay sitio para un riel */
-  .shell__sidebar {
+  .side {
     width: var(--ag-sidebar-w);
-    align-items: stretch;
-    padding: var(--ag-space-4) var(--ag-space-3);
     transform: translateX(-100%);
     box-shadow: var(--ag-shadow-xl);
   }
 
-  .shell__toggle { display: none; }
-  .shell__brand-text { display: flex; }
-  .shell__brand { width: auto; justify-content: flex-start; gap: var(--ag-space-3); }
-  .shell__accion { width: 100%; justify-content: flex-start; padding: 0 var(--ag-space-3); }
-  .shell__accion-texto { display: inline; }
+  .shell--menu-open .side { transform: none; }
 
-  .shell--menu-open .shell__sidebar { transform: none; }
+  /* El tirador no aplica: el cajon se abre y cierra con el velo o la hamburguesa */
+  .side__tirador { display: none; }
+
+  .side__wordmark,
+  .side__seccion,
+  .side__perfil-datos { opacity: 1; }
+
+  .side__seccion { height: auto; }
+
+  .side__nav { overflow-y: auto; overflow-x: hidden; }
+
+  .side__acciones { flex-direction: row; gap: var(--ag-space-2); }
+
+  .side__accion {
+    flex: 1 1 0;
+    width: auto;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .side__accion span { display: inline; }
 
   .shell__scrim {
     display: block;

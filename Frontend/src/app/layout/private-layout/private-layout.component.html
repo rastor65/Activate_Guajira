@@ -1,44 +1,60 @@
 <div class="shell" [class.shell--menu-open]="menuAbierto" [class.shell--expandido]="sidebarExpandido">
 
   <!-- ===================== BARRA LATERAL ===================== -->
-  <aside class="shell__sidebar" *ngIf="isLoggedIn === true">
-    <div class="shell__sidebar-head">
-      <a class="shell__brand" [routerLink]="['/landing']">
+  <aside class="side" *ngIf="isLoggedIn === true">
+
+    <!-- Marca -->
+    <a class="side__brand" [routerLink]="['/landing']" aria-label="Ir al inicio">
+      <span class="side__logo">
         <img src="assets/peakfit.png" alt="">
-        <span class="shell__brand-text">
-          <strong>Activate</strong>
-          <em>Guajira</em>
-        </span>
-      </a>
+      </span>
+      <span class="side__wordmark">
+        <strong>Activate</strong>
+        <em>Guajira</em>
+      </span>
+    </a>
 
-      <button type="button" class="shell__toggle" (click)="alternarSidebar()"
-        [attr.aria-expanded]="sidebarExpandido"
-        [attr.aria-label]="sidebarExpandido ? 'Contraer menu lateral' : 'Expandir menu lateral'"
-        [pTooltip]="sidebarExpandido ? 'Contraer' : 'Expandir'" tooltipPosition="right">
-        <i class="pi" [ngClass]="sidebarExpandido ? 'pi-angle-double-left' : 'pi-angle-double-right'"
-          aria-hidden="true"></i>
-      </button>
-    </div>
-
-    <nav class="shell__nav" aria-label="Navegacion principal">
+    <!-- Navegacion -->
+    <nav class="side__nav" aria-label="Navegacion principal">
+      <p class="side__seccion">Navegacion</p>
       <app-menu [menu]="menu1" [expandido]="sidebarExpandido" (funcion)="ocultarMenu($event)"></app-menu>
     </nav>
 
-    <div class="shell__sidebar-footer">
-      <button type="button" class="shell__accion" (click)="menu.toggle($event)" aria-label="Ajustes de cuenta"
-        [pTooltip]="sidebarExpandido ? '' : 'Ajustes'" tooltipPosition="right">
-        <i class="pi pi-cog" aria-hidden="true"></i>
-        <span class="shell__accion-texto">Ajustes</span>
+    <!-- Cuenta -->
+    <div class="side__cuenta">
+      <button type="button" class="side__perfil" (click)="abrirEditarPerfil()"
+        aria-label="Editar mi perfil" pTooltip="Editar perfil" tooltipPosition="right">
+        <img *ngIf="profileImage" [src]="profileImage" alt="" class="side__avatar">
+        <span class="side__perfil-datos">
+          <strong>{{ nombre || 'Mi cuenta' }}</strong>
+          <em>Editar perfil</em>
+        </span>
       </button>
-      <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
 
-      <button type="button" class="shell__accion shell__accion--salir" (click)="showConfirm()"
-        aria-label="Cerrar sesion" [pTooltip]="sidebarExpandido ? '' : 'Cerrar sesion'" tooltipPosition="right">
-        <i class="pi pi-sign-out" aria-hidden="true"></i>
-        <span class="shell__accion-texto">Cerrar sesion</span>
-      </button>
+      <div class="side__acciones">
+        <button type="button" class="side__accion" (click)="menu.toggle($event)" aria-label="Ajustes de cuenta"
+          pTooltip="Ajustes" tooltipPosition="right">
+          <i class="pi pi-cog" aria-hidden="true"></i>
+          <span>Ajustes</span>
+        </button>
+        <p-menu #menu [popup]="true" [model]="items" appendTo="body"></p-menu>
+
+        <button type="button" class="side__accion side__accion--salir" (click)="showConfirm()"
+          aria-label="Cerrar sesion" pTooltip="Cerrar sesion" tooltipPosition="right">
+          <i class="pi pi-sign-out" aria-hidden="true"></i>
+          <span>Salir</span>
+        </button>
+      </div>
     </div>
+
+    <!-- Tirador de expandir/contraer, anclado al borde -->
+    <button type="button" class="side__tirador" (click)="alternarSidebar()"
+      [attr.aria-expanded]="sidebarExpandido"
+      [attr.aria-label]="sidebarExpandido ? 'Contraer menu lateral' : 'Expandir menu lateral'">
+      <i class="pi" [ngClass]="sidebarExpandido ? 'pi-chevron-left' : 'pi-chevron-right'" aria-hidden="true"></i>
+    </button>
   </aside>
+
 
   <!-- Velo para el cajon en movil: es accionable, asi que debe ser un boton -->
   <button type="button" class="shell__scrim" *ngIf="menuAbierto" (click)="cerrarMenu()"

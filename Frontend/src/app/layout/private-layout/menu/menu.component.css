@@ -1,148 +1,131 @@
 /* Navegacion de la barra lateral.
-   Dos modos: riel de iconos (contraido) y lista con rotulos (expandido). */
+   Dos modos: riel de iconos (contraida) y lista con rotulos (expandida). */
 
 .nav {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--ag-space-1);
+  gap: 2px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.nav--expandido { align-items: stretch; }
-
 .nav__item {
   position: relative;
-  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
-
-.nav--expandido .nav__item { align-items: stretch; }
 
 /* --------------------------------------------------------------------------
    Item principal
    -------------------------------------------------------------------------- */
 .nav__link {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--ag-space-3);
-  width: 44px;
+  width: 100%;
   height: 44px;
-  padding: 0;
+  padding: 0 var(--ag-space-3);
   border: 0;
   border-radius: var(--ag-radius-md);
   background: transparent;
-  color: rgba(255, 255, 255, 0.66);
+  color: rgba(255, 255, 255, 0.62);
   font-family: var(--ag-font-body);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
+  overflow: hidden;
   transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
               color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.nav--expandido .nav__link {
-  width: 100%;
-  justify-content: flex-start;
-  padding: 0 var(--ag-space-3);
-}
-
 .nav__link:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--ag-text-inverse);
   text-decoration: none;
 }
 
 .nav__link:focus-visible {
   outline: 2px solid var(--ag-action-accent);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 .nav__icon {
   flex: none;
-  width: 1.3rem;
+  width: 1.35rem;
   text-align: center;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
 }
 
-/* El rotulo solo existe en modo expandido */
+/* El rotulo aparece solo con la barra expandida */
 .nav__texto {
   flex: 1 1 auto;
   min-width: 0;
   font-size: var(--ag-text-sm);
   font-weight: 500;
-  letter-spacing: 0.01em;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   opacity: 0;
-  width: 0;
   transition: opacity var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.nav--expandido .nav__texto { opacity: 1; width: auto; }
+.nav--expandido .nav__texto { opacity: 1; }
 
 /* --------------------------------------------------------------------------
-   Estado activo: barra lima + relleno, nunca solo color
+   Estado activo: relleno + barra lima. Nunca solo color.
    -------------------------------------------------------------------------- */
 .nav__link.is-active {
-  background: rgba(198, 242, 78, 0.14);
+  background: rgba(198, 242, 78, 0.13);
   color: var(--ag-action-accent);
 }
 
 .nav__link.is-active::before {
   content: '';
   position: absolute;
-  left: calc(var(--ag-space-2) * -1);
+  left: 0;
   top: 50%;
   transform: translateY(-50%);
   width: 3px;
-  height: 22px;
-  border-radius: var(--ag-radius-full);
+  height: 20px;
+  border-radius: 0 var(--ag-radius-full) var(--ag-radius-full) 0;
   background: var(--ag-action-accent);
 }
-
-.nav--expandido .nav__link.is-active::before { left: 0; }
 
 /* --------------------------------------------------------------------------
    Flecha del grupo
    -------------------------------------------------------------------------- */
 .nav__caret {
   flex: none;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   opacity: 0;
-  width: 0;
   transition: transform var(--ag-dur-base) var(--ag-ease-standard),
               opacity var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.nav--expandido .nav__caret { opacity: 0.75; width: auto; }
+.nav--expandido .nav__caret { opacity: 0.55; }
 
-.nav--expandido .nav__link.is-open .nav__caret { transform: rotate(180deg); }
+.nav--expandido .nav__link.is-open .nav__caret { transform: rotate(180deg); opacity: 1; }
 
 .nav--expandido .nav__link.is-open {
   color: var(--ag-text-inverse);
   background: rgba(255, 255, 255, 0.06);
 }
 
-/* En modo riel, un punto marca que el item tiene hijos */
+/* Contraida, un punto avisa de que el item tiene hijos */
 .nav:not(.nav--expandido) .nav__link:has(.nav__caret)::after {
   content: '';
   position: absolute;
-  right: 5px;
-  bottom: 6px;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 4px;
   height: 4px;
   border-radius: var(--ag-radius-full);
   background: currentColor;
-  opacity: 0.7;
+  opacity: 0.55;
 }
 
 /* --------------------------------------------------------------------------
@@ -151,12 +134,11 @@
 .nav__sub {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  margin: var(--ag-space-1) 0 var(--ag-space-2) 0;
-  padding: 0 0 0 var(--ag-space-6);
+  gap: 1px;
+  margin: 2px 0 var(--ag-space-2) calc(var(--ag-space-3) + 0.67rem);
+  padding: 0 0 0 var(--ag-space-4);
   list-style: none;
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
-  margin-left: var(--ag-space-5);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
   animation: nav-abrir var(--ag-dur-base) var(--ag-ease-standard);
 }
 
@@ -168,11 +150,11 @@
 .nav__sub-link {
   display: flex;
   align-items: center;
-  gap: var(--ag-space-2);
-  min-height: 38px;
+  gap: var(--ag-space-3);
+  min-height: 36px;
   padding: var(--ag-space-2) var(--ag-space-3);
   border-radius: var(--ag-radius-sm);
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.55);
   font-size: var(--ag-text-sm);
   text-decoration: none;
   transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
@@ -180,26 +162,28 @@
 }
 
 .nav__sub-link:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
   color: var(--ag-text-inverse);
   text-decoration: none;
 }
 
 .nav__sub-link.is-active {
-  background: rgba(198, 242, 78, 0.14);
+  background: rgba(198, 242, 78, 0.12);
   color: var(--ag-action-accent);
 }
 
 .nav__sub-punto {
   flex: none;
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
   border-radius: var(--ag-radius-full);
   background: currentColor;
-  opacity: 0.6;
+  opacity: 0.5;
+  transition: transform var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
-.nav__sub-link.is-active .nav__sub-punto { opacity: 1; }
+.nav__sub-link:hover .nav__sub-punto { transform: scale(1.5); }
+.nav__sub-link.is-active .nav__sub-punto { opacity: 1; transform: scale(1.5); }
 
 /* --------------------------------------------------------------------------
    Submenu flotante (barra contraida)
@@ -207,10 +191,10 @@
 .nav__flyout {
   position: absolute;
   z-index: 60;
-  top: 0;
-  left: calc(100% + var(--ag-space-2));
-  min-width: 15rem;
-  padding: var(--ag-space-3);
+  top: -6px;
+  left: calc(100% + var(--ag-space-3));
+  min-width: 14rem;
+  padding: var(--ag-space-2);
   border-radius: var(--ag-radius-lg);
   background: var(--ag-bg-surface);
   border: 1px solid var(--ag-border-subtle);
@@ -223,32 +207,33 @@
   to   { opacity: 1; transform: none; }
 }
 
-/* Puente invisible: permite cruzar el hueco sin que se cierre */
+/* Puente invisible: deja cruzar el hueco sin que se cierre */
 .nav__flyout::before {
   content: '';
   position: absolute;
   top: 0;
   bottom: 0;
-  left: calc(var(--ag-space-2) * -1);
-  width: var(--ag-space-2);
+  left: calc(var(--ag-space-3) * -1);
+  width: var(--ag-space-3);
 }
 
 .nav__flyout-title {
-  margin: 0 0 var(--ag-space-2) 0;
-  padding: 0 var(--ag-space-2);
+  margin: 0 0 var(--ag-space-1) 0;
+  padding: var(--ag-space-2) var(--ag-space-3) var(--ag-space-1);
   font-size: var(--ag-text-xs);
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ag-text-muted);
+  border-bottom: 1px solid var(--ag-border-subtle);
 }
 
 .nav__flyout-link {
   display: flex;
   align-items: center;
   gap: var(--ag-space-2);
-  padding: var(--ag-space-3) var(--ag-space-2);
-  min-height: 44px;
+  padding: var(--ag-space-2) var(--ag-space-3);
+  min-height: 40px;
   border-radius: var(--ag-radius-sm);
   color: var(--ag-text-primary);
   font-size: var(--ag-text-sm);
@@ -259,7 +244,7 @@
 }
 
 .nav__flyout-link i {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--ag-neutral-400);
   transition: transform var(--ag-dur-fast) var(--ag-ease-standard);
 }
@@ -278,3 +263,11 @@
 }
 
 .nav__flyout-link.is-active i { color: var(--ag-action-accent); }
+
+/* --------------------------------------------------------------------------
+   Movil: el cajon va siempre expandido
+   -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .nav__texto { opacity: 1; }
+  .nav__caret { opacity: 0.55; }
+}
