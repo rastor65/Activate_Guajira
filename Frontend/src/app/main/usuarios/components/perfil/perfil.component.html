@@ -166,171 +166,254 @@
 
 
 <!-- ===================== MEDICION ===================== -->
-<p-dialog [(visible)]="dialogMedicion" [header]="esEdicion ? 'Editar medicion' : 'Detalles de la medicion'"
-    [modal]="true" [resizable]="false" [draggable]="false" [style]="{ width: '58rem' }"
-    [breakpoints]="{ '900px': '94vw' }" styleClass="dialog-medicion">
+<p-dialog [(visible)]="dialogMedicion" [header]="tituloMedicion" [modal]="true" [resizable]="false"
+    [draggable]="false" [style]="{ width: '60rem' }" [breakpoints]="{ '900px': '94vw' }"
+    styleClass="dialog-medicion">
 
-    <p class="dialog__lede">
-        Solo <strong>altura</strong> y <strong>peso</strong> son obligatorios. El resto de pruebas
-        puedes dejarlas vacias si no se aplicaron.
+    <p class="dialog__lede" *ngIf="!soloLectura">
+        Solo <strong>altura</strong> y <strong>peso</strong> son obligatorios. Deja vacia
+        cualquier prueba que no se haya aplicado.
     </p>
 
-    <!-- Datos base + calculo en vivo -->
+    <!-- ---------- Datos base con calculo en vivo ---------- -->
     <section class="med-base">
         <div class="med-base__campos">
-            <div class="form__field">
-                <label for="talla">Altura <span class="form__unidad">m</span></label>
-                <input type="number" step="0.01" min="0.5" max="2.5" id="talla" placeholder="1.72"
-                    pInputText [(ngModel)]="formData.talla">
-            </div>
-
-            <div class="form__field">
-                <label for="peso">Peso <span class="form__unidad">kg</span></label>
-                <input type="number" step="0.1" min="1" max="300" id="peso" placeholder="68.5"
-                    pInputText [(ngModel)]="formData.peso">
-            </div>
+                <div class="campo">
+                    <label for="talla">Altura</label>
+                    <div class="campo__control">
+                        <input type="number" id="talla" step="0.01" min="0.5" max="2.5" placeholder="1.72" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.talla">
+                    <span class="campo__sufijo">m</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="peso">Peso</label>
+                    <div class="campo__control">
+                        <input type="number" id="peso" step="0.1" min="1" max="300" placeholder="68.5" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.peso">
+                    <span class="campo__sufijo">kg</span>
+                    </div>
+                </div>
         </div>
 
-        <div class="med-base__resultado" role="status" aria-live="polite">
-            <p class="med-base__label">IMC</p>
-            <p class="med-base__valor">{{ imcPrevisto ?? '—' }}</p>
-            <p class="med-base__nota" *ngIf="imcPrevisto">{{ getIMCLabel(imcPrevisto) }}</p>
-            <p class="med-base__nota" *ngIf="!imcPrevisto">Escribe altura y peso</p>
+        <div class="med-resultado" [class.med-resultado--activo]="imcPrevisto" role="status" aria-live="polite">
+            <p class="med-resultado__label">Indice de masa corporal</p>
+            <p class="med-resultado__valor">{{ imcPrevisto ?? '--' }}</p>
+            <span class="ag-badge" *ngIf="imcPrevisto" [ngClass]="'badge--' + getIMCClass(imcPrevisto)">
+                {{ getIMCLabel(imcPrevisto) }}
+            </span>
+            <p class="med-resultado__pista" *ngIf="!imcPrevisto">Se calcula al escribir altura y peso</p>
         </div>
     </section>
 
-    <!-- Perimetros -->
+    <!-- ---------- Perimetros ---------- -->
     <section class="med-seccion">
-        <div class="med-seccion__head">
+        <header class="med-seccion__head">
+            <i class="pi pi-arrows-h" aria-hidden="true"></i>
             <h3 class="med-seccion__titulo">Perimetros</h3>
-            <span class="ag-badge ag-badge--neutral" *ngIf="iccPrevisto">ICC {{ iccPrevisto }}</span>
-        </div>
+            <span class="med-seccion__dato" *ngIf="iccPrevisto">
+                ICC <strong>{{ iccPrevisto }}</strong>
+            </span>
+        </header>
         <div class="med-grid">
-            <div class="form__field">
-                <label for="perimetro_cintura">Cintura <span class="form__unidad">cm</span></label>
-                <input type="number" id="perimetro_cintura" placeholder="80" pInputText
-                    [(ngModel)]="formData.perimetro_cintura">
-            </div>
-            <div class="form__field">
-                <label for="perimetro_cadera">Cadera <span class="form__unidad">cm</span></label>
-                <input type="number" id="perimetro_cadera" placeholder="95" pInputText
-                    [(ngModel)]="formData.perimetro_cadera">
-            </div>
+                <div class="campo">
+                    <label for="perimetro_cintura">Cintura</label>
+                    <div class="campo__control">
+                        <input type="number" id="perimetro_cintura" placeholder="80" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.perimetro_cintura">
+                    <span class="campo__sufijo">cm</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="perimetro_cadera">Cadera</label>
+                    <div class="campo__control">
+                        <input type="number" id="perimetro_cadera" placeholder="95" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.perimetro_cadera">
+                    <span class="campo__sufijo">cm</span>
+                    </div>
+                </div>
         </div>
     </section>
 
-    <!-- Pliegues cutaneos -->
+    <!-- ---------- Pliegues cutaneos ---------- -->
     <section class="med-seccion">
-        <div class="med-seccion__head">
+        <header class="med-seccion__head">
+            <i class="pi pi-percentage" aria-hidden="true"></i>
             <h3 class="med-seccion__titulo">Pliegues cutaneos</h3>
-        </div>
+        </header>
 
         <p class="med-aviso" *ngIf="!generoConocido">
             <i class="pi pi-info-circle" aria-hidden="true"></i>
-            Registra el genero en tu perfil para habilitar los pliegues especificos y el
-            calculo de grasa corporal.
+            <span>
+                Registra tu <strong>genero</strong> en el perfil para habilitar los pliegues
+                especificos y el calculo de grasa corporal.
+            </span>
         </p>
 
         <div class="med-grid">
-            <div class="form__field" *ngIf="genero === 'Masculino'">
-                <label for="pliegue_pectoral">Pectoral <span class="form__unidad">mm</span></label>
-                <input type="number" id="pliegue_pectoral" pInputText [(ngModel)]="formData.pliegue_pectoral">
-            </div>
-            <div class="form__field" *ngIf="genero === 'Masculino'">
-                <label for="pliegue_abdominal">Abdominal <span class="form__unidad">mm</span></label>
-                <input type="number" id="pliegue_abdominal" pInputText [(ngModel)]="formData.pliegue_abdominal">
-            </div>
-            <div class="form__field" *ngIf="genero === 'Femenino'">
-                <label for="pliegue_tricipal">Tricipal <span class="form__unidad">mm</span></label>
-                <input type="number" id="pliegue_tricipal" pInputText [(ngModel)]="formData.pliegue_tricipal">
-            </div>
-            <div class="form__field" *ngIf="genero === 'Femenino'">
-                <label for="pliegue_iliocrestal">Iliocrestal <span class="form__unidad">mm</span></label>
-                <input type="number" id="pliegue_iliocrestal" pInputText [(ngModel)]="formData.pliegue_iliocrestal">
-            </div>
-            <div class="form__field">
-                <label for="pliegue_antemuslo">Antemuslo <span class="form__unidad">mm</span></label>
-                <input type="number" id="pliegue_antemuslo" pInputText [(ngModel)]="formData.pliegue_antemuslo">
-            </div>
+            <ng-container *ngIf="genero === 'Masculino'">
+                <div class="campo">
+                    <label for="pliegue_pectoral">Pectoral</label>
+                    <div class="campo__control">
+                        <input type="number" id="pliegue_pectoral" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.pliegue_pectoral">
+                    <span class="campo__sufijo">mm</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="pliegue_abdominal">Abdominal</label>
+                    <div class="campo__control">
+                        <input type="number" id="pliegue_abdominal" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.pliegue_abdominal">
+                    <span class="campo__sufijo">mm</span>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="genero === 'Femenino'">
+                <div class="campo">
+                    <label for="pliegue_tricipal">Tricipal</label>
+                    <div class="campo__control">
+                        <input type="number" id="pliegue_tricipal" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.pliegue_tricipal">
+                    <span class="campo__sufijo">mm</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="pliegue_iliocrestal">Iliocrestal</label>
+                    <div class="campo__control">
+                        <input type="number" id="pliegue_iliocrestal" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.pliegue_iliocrestal">
+                    <span class="campo__sufijo">mm</span>
+                    </div>
+                </div>
+            </ng-container>
+
+                <div class="campo">
+                    <label for="pliegue_antemuslo">Antemuslo</label>
+                    <div class="campo__control">
+                        <input type="number" id="pliegue_antemuslo" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.pliegue_antemuslo">
+                    <span class="campo__sufijo">mm</span>
+                    </div>
+                </div>
         </div>
     </section>
 
-    <!-- Fuerza -->
+    <!-- ---------- Fuerza ---------- -->
     <section class="med-seccion">
-        <div class="med-seccion__head">
+        <header class="med-seccion__head">
+            <i class="pi pi-bolt" aria-hidden="true"></i>
             <h3 class="med-seccion__titulo">Fuerza</h3>
-        </div>
+        </header>
         <div class="med-grid">
-            <div class="form__field">
-                <label for="fuerza_manoderecha">Mano derecha <span class="form__unidad">kg</span></label>
-                <input type="number" id="fuerza_manoderecha" pInputText [(ngModel)]="formData.fuerza_manoderecha">
-            </div>
-            <div class="form__field">
-                <label for="fuerza_manoizquierda">Mano izquierda <span class="form__unidad">kg</span></label>
-                <input type="number" id="fuerza_manoizquierda" pInputText
-                    [(ngModel)]="formData.fuerza_manoizquierda">
-            </div>
-            <div class="form__field">
-                <label for="fuerza_explosiva_i">Explosiva inicial</label>
-                <input type="number" id="fuerza_explosiva_i" pInputText [(ngModel)]="formData.fuerza_explosiva_i">
-            </div>
-            <div class="form__field">
-                <label for="fuerza_explosiva_f">Explosiva final</label>
-                <input type="number" id="fuerza_explosiva_f" pInputText [(ngModel)]="formData.fuerza_explosiva_f">
-            </div>
-            <div class="form__field">
-                <label for="resistencia_abdominal">Resistencia abdominal</label>
-                <input type="number" id="resistencia_abdominal" pInputText
-                    [(ngModel)]="formData.resistencia_abdominal">
-            </div>
+                <div class="campo">
+                    <label for="fuerza_manoderecha">Mano derecha</label>
+                    <div class="campo__control">
+                        <input type="number" id="fuerza_manoderecha" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.fuerza_manoderecha">
+                    <span class="campo__sufijo">kg</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="fuerza_manoizquierda">Mano izquierda</label>
+                    <div class="campo__control">
+                        <input type="number" id="fuerza_manoizquierda" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.fuerza_manoizquierda">
+                    <span class="campo__sufijo">kg</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="fuerza_explosiva_i">Explosiva inicial</label>
+                    <div class="campo__control">
+                        <input type="number" id="fuerza_explosiva_i" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.fuerza_explosiva_i">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="fuerza_explosiva_f">Explosiva final</label>
+                    <div class="campo__control">
+                        <input type="number" id="fuerza_explosiva_f" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.fuerza_explosiva_f">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="resistencia_abdominal">Resistencia abdominal</label>
+                    <div class="campo__control">
+                        <input type="number" id="resistencia_abdominal" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.resistencia_abdominal">
+                    </div>
+                </div>
         </div>
     </section>
 
-    <!-- Capacidad funcional -->
+    <!-- ---------- Capacidad funcional ---------- -->
     <section class="med-seccion">
-        <div class="med-seccion__head">
+        <header class="med-seccion__head">
+            <i class="pi pi-heart" aria-hidden="true"></i>
             <h3 class="med-seccion__titulo">Capacidad funcional</h3>
-        </div>
+        </header>
         <div class="med-grid">
-            <div class="form__field">
-                <label for="equilibrio">Equilibrio</label>
-                <input type="number" id="equilibrio" pInputText [(ngModel)]="formData.equilibrio">
-            </div>
-            <div class="form__field">
-                <label for="flexibilidad">Flexibilidad <span class="form__unidad">cm</span></label>
-                <input type="number" id="flexibilidad" pInputText [(ngModel)]="formData.flexibilidad">
-            </div>
-            <div class="form__field">
-                <label for="frecuencia_cardiaca">Frecuencia cardiaca <span class="form__unidad">ppm</span></label>
-                <input type="number" id="frecuencia_cardiaca" pInputText [(ngModel)]="formData.frecuencia_cardiaca">
-            </div>
-            <div class="form__field">
-                <label for="resistencia_cardiorespiratoria">Resistencia cardiorrespiratoria</label>
-                <input type="number" id="resistencia_cardiorespiratoria" pInputText
-                    [(ngModel)]="formData.resistencia_cardiorespiratoria">
-            </div>
-            <div class="form__field">
-                <label for="tiempo_resistencia_cardiorespiratoria">
-                    Tiempo de resistencia <span class="form__unidad">min</span>
-                </label>
-                <input type="number" id="tiempo_resistencia_cardiorespiratoria" pInputText
-                    [(ngModel)]="formData.tiempo_resistencia_cardiorespiratoria">
-            </div>
-            <div class="form__field">
-                <label for="volumen_max_oxigeno">Volumen maximo de oxigeno</label>
-                <input type="number" id="volumen_max_oxigeno" pInputText [(ngModel)]="formData.volumen_max_oxigeno">
-            </div>
-            <div class="form__field">
-                <label for="caff">CAFF</label>
-                <input type="number" id="caff" pInputText [(ngModel)]="formData.caff">
-            </div>
+                <div class="campo">
+                    <label for="equilibrio">Equilibrio</label>
+                    <div class="campo__control">
+                        <input type="number" id="equilibrio" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.equilibrio">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="flexibilidad">Flexibilidad</label>
+                    <div class="campo__control">
+                        <input type="number" id="flexibilidad" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.flexibilidad">
+                    <span class="campo__sufijo">cm</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="frecuencia_cardiaca">Frecuencia cardiaca</label>
+                    <div class="campo__control">
+                        <input type="number" id="frecuencia_cardiaca" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.frecuencia_cardiaca">
+                    <span class="campo__sufijo">ppm</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="resistencia_cardiorespiratoria">Resistencia cardio.</label>
+                    <div class="campo__control">
+                        <input type="number" id="resistencia_cardiorespiratoria" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.resistencia_cardiorespiratoria">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="tiempo_resistencia_cardiorespiratoria">Tiempo de resistencia</label>
+                    <div class="campo__control">
+                        <input type="number" id="tiempo_resistencia_cardiorespiratoria" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.tiempo_resistencia_cardiorespiratoria">
+                    <span class="campo__sufijo">min</span>
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="volumen_max_oxigeno">Volumen max. oxigeno</label>
+                    <div class="campo__control">
+                        <input type="number" id="volumen_max_oxigeno" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.volumen_max_oxigeno">
+                    </div>
+                </div>
+                <div class="campo">
+                    <label for="caff">CAFF</label>
+                    <div class="campo__control">
+                        <input type="number" id="caff" pInputText
+                            [readonly]="soloLectura" [(ngModel)]="formData.caff">
+                    </div>
+                </div>
         </div>
     </section>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple type="button" label="Cancelar" class="p-button-text" (click)="cerrarMedicion()"
-            [disabled]="botonesDesactivados"></button>
-        <button pButton pRipple type="button" label="Guardar medicion" (click)="guardarMedicion()"
+        <button pButton pRipple type="button" [label]="soloLectura ? 'Cerrar' : 'Cancelar'"
+            class="p-button-text" (click)="cerrarMedicion()" [disabled]="botonesDesactivados"></button>
+        <button *ngIf="!soloLectura" pButton pRipple type="button"
+            [label]="esNueva ? 'Guardar medicion' : 'Guardar cambios'" (click)="guardarMedicion()"
             [disabled]="botonesDesactivados || !imcPrevisto"
             [icon]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'"></button>
     </ng-template>

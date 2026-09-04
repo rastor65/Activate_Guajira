@@ -74,6 +74,26 @@ export class PerfilComponent implements OnInit {
   }
 
   /**
+   * `esEdicion` significa "los campos son editables", no "se edita una
+   * existente": al crear una medicion nueva tambien vale true. El titulo se
+   * decide por si el registro ya tiene id.
+   */
+  get esNueva(): boolean {
+    return !this.formData?.id;
+  }
+
+  get soloLectura(): boolean {
+    return !this.esEdicion;
+  }
+
+  get tituloMedicion(): string {
+    if (this.soloLectura) {
+      return 'Detalles de la medicion';
+    }
+    return this.esNueva ? 'Nueva medicion' : 'Editar medicion';
+  }
+
+  /**
    * IMC calculado sobre lo que se esta escribiendo, para dar respuesta
    * inmediata sin esperar a guardar. El valor definitivo lo calcula el backend.
    */
