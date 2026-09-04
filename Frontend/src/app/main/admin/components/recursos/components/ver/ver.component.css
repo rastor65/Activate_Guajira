@@ -92,3 +92,186 @@
 @media (max-width: 640px) {
   .form__row { grid-template-columns: 1fr; }
 }
+
+
+/* ==========================================================================
+   SELECTOR DE ICONO
+   ========================================================================== */
+.selector-icono {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--ag-space-3) 0 var(--ag-space-2);
+  border: 1px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  cursor: pointer;
+  transition: border-color var(--ag-dur-fast) var(--ag-ease-standard),
+              box-shadow var(--ag-dur-fast) var(--ag-ease-standard);
+}
+
+.selector-icono:hover { border-color: var(--ag-navy-400); }
+
+.selector-icono:focus-visible {
+  outline: none;
+  border-color: var(--ag-border-focus);
+  box-shadow: 0 0 0 4px rgba(47, 90, 143, 0.16);
+}
+
+.selector-icono__muestra {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+  font-size: 1rem;
+}
+
+/* Sin icono elegido el hueco se ve como una invitacion, no como un error */
+.selector-icono__muestra.is-vacia {
+  background: var(--ag-bg-sunken);
+  border: 1px dashed var(--ag-border-default);
+  color: var(--ag-text-muted);
+  font-size: 0.75rem;
+}
+
+.selector-icono__texto {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-primary);
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selector-icono__flecha {
+  flex: none;
+  font-size: 0.65rem;
+  color: var(--ag-text-muted);
+}
+
+.form__enlace {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ag-navy-600);
+  font-family: inherit;
+  font-size: var(--ag-text-xs);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.form__enlace:hover { color: var(--ag-danger); }
+
+:host ::ng-deep .form__select.p-select { width: 100%; height: 44px; }
+
+:host ::ng-deep .form__select .p-select-label {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--ag-space-4);
+}
+
+/* ==========================================================================
+   CATALOGO DE ICONOS
+   ========================================================================== */
+.iconos__buscador {
+  position: relative;
+  margin-bottom: var(--ag-space-4);
+}
+
+.iconos__buscador > i {
+  position: absolute;
+  top: 50%;
+  left: var(--ag-space-4);
+  transform: translateY(-50%);
+  color: var(--ag-text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.iconos__buscador input {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--ag-space-3) var(--ag-space-4) var(--ag-space-3) var(--ag-space-10);
+  border: 1px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  font-size: var(--ag-text-body);
+}
+
+.iconos__buscador input:focus {
+  outline: none;
+  border-color: var(--ag-border-focus);
+  box-shadow: 0 0 0 4px rgba(47, 90, 143, 0.16);
+}
+
+.iconos__cuerpo {
+  max-height: 24rem;
+  overflow-y: auto;
+  padding-right: var(--ag-space-1);
+}
+
+.iconos__grupo + .iconos__grupo { margin-top: var(--ag-space-5); }
+
+.iconos__titulo {
+  margin: 0 0 var(--ag-space-3) 0;
+  padding-bottom: var(--ag-space-2);
+  border-bottom: 1px solid var(--ag-border-subtle);
+  font-size: var(--ag-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+}
+
+.iconos__rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+  gap: var(--ag-space-2);
+}
+
+.icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  color: var(--ag-text-secondary);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
+              border-color var(--ag-dur-fast) var(--ag-ease-standard),
+              color var(--ag-dur-fast) var(--ag-ease-standard),
+              transform var(--ag-dur-fast) var(--ag-ease-standard);
+}
+
+.icono:hover {
+  background: var(--ag-bg-tinted);
+  border-color: var(--ag-navy-300);
+  color: var(--ag-text-brand);
+  transform: translateY(-1px);
+}
+
+/* El elegido se marca con relleno y borde, no solo con color */
+.icono.is-elegido {
+  background: var(--ag-navy-800);
+  border-color: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+}
+
+.icono:focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
+}

@@ -38,7 +38,7 @@
                     <td class="ag-num">{{ resource.id }}</td>
                     <td>{{ resource.titulo }}</td>
                     <td><code class="ruta">{{ resource.path }}</code></td>
-                    <td class="ag-num">{{ resource.id_padre }}</td>
+                    <td>{{ nombrePadre(resource.id_padre) }}</td>
                     <td><span class="ag-badge ag-badge--neutral">{{ resource.method }}</span></td>
                     <td>
                         <i [ngClass]="resource.icono" class="icono-recurso" aria-hidden="true"></i>
@@ -109,14 +109,29 @@
 
             <div class="form__row">
                 <div class="form__field">
-                    <label for="id_padre">ID del recurso padre</label>
-                    <input type="number" id="id_padre" pInputText [(ngModel)]="selectedResource.id_padre">
-                    <small class="form__hint">Usa 0 si es un elemento de primer nivel.</small>
+                    <label for="id_padre">Recurso padre</label>
+                    <p-select inputId="id_padre" [options]="opcionesPadre" optionLabel="label"
+                        optionValue="value" [(ngModel)]="selectedResource.id_padre"
+                        placeholder="Selecciona" [filter]="true" appendTo="body"
+                        styleClass="form__select"></p-select>
+                    <small class="form__hint">Cuelga esta opcion dentro de otra del menu.</small>
                 </div>
+
                 <div class="form__field">
                     <label for="icono">Icono</label>
-                    <input type="text" id="icono" pInputText [(ngModel)]="selectedResource.icono"
-                        placeholder="pi pi-home">
+                    <button type="button" id="icono" class="selector-icono" (click)="abrirIconos()"
+                        [attr.aria-label]="iconoActual ? 'Cambiar icono' : 'Elegir icono'">
+                        <span class="selector-icono__muestra" [class.is-vacia]="!iconoActual">
+                            <i *ngIf="iconoActual" [ngClass]="iconoActual" aria-hidden="true"></i>
+                            <i *ngIf="!iconoActual" class="pi pi-plus" aria-hidden="true"></i>
+                        </span>
+                        <span class="selector-icono__texto">
+                            {{ iconoActual || 'Elegir icono' }}
+                        </span>
+                        <i class="pi pi-chevron-down selector-icono__flecha" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="form__enlace" *ngIf="iconoActual"
+                        (click)="quitarIcono()">Quitar icono</button>
                 </div>
             </div>
 
@@ -145,5 +160,41 @@
 
         <button *ngIf="dialogType === 'delete'" pButton pRipple type="button" label="Eliminar recurso"
             icon="pi pi-trash" class="p-button-danger" (click)="deleteResource(selectedResource.id)"></button>
+    </ng-template>
+</p-dialog>
+
+
+<!-- ===================== CATALOGO DE ICONOS ===================== -->
+<p-dialog [(visible)]="dialogIconos" header="Elegir icono" [modal]="true" [resizable]="false"
+    [draggable]="false" [style]="{ width: '34rem' }" [breakpoints]="{ '640px': '94vw' }">
+
+    <div class="iconos__buscador">
+        <i class="pi pi-search" aria-hidden="true"></i>
+        <input type="text" pInputText [(ngModel)]="filtroIcono" placeholder="Buscar icono"
+            aria-label="Buscar icono">
+    </div>
+
+    <div class="iconos__cuerpo">
+        <section class="iconos__grupo" *ngFor="let grupo of gruposFiltrados">
+            <h4 class="iconos__titulo">{{ grupo.titulo }}</h4>
+            <div class="iconos__rejilla">
+                <button *ngFor="let icono of grupo.iconos" type="button" class="icono"
+                    [class.is-elegido]="esIconoElegido(icono)" [attr.aria-label]="icono"
+                    [attr.aria-pressed]="esIconoElegido(icono)" [pTooltip]="icono"
+                    (click)="elegirIcono(icono)">
+                    <i [ngClass]="'pi ' + icono" aria-hidden="true"></i>
+                </button>
+            </div>
+        </section>
+
+        <div class="ag-empty" *ngIf="!hayResultadosIcono">
+            <span class="ag-empty__icon"><i class="pi pi-search" aria-hidden="true"></i></span>
+            <p class="ag-empty__text">Ningun icono coincide con "{{ filtroIcono }}".</p>
+        </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple type="button" label="Cerrar" class="p-button-text"
+            (click)="dialogIconos = false"></button>
     </ng-template>
 </p-dialog>
