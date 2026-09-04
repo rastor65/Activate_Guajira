@@ -231,7 +231,7 @@
           <div class="campo">
             <label for="ciudad_residencia">Ciudad de residencia</label>
             <p-select inputId="ciudad_residencia" [options]="ciudadesResidencia" optionLabel="nombre"
-              optionValue="id" [(ngModel)]="usuario.ciudad_residencia"
+              optionValue="id" [(ngModel)]="usuario.ciudad_residencia" (onChange)="onCiudadChange()"
               [placeholder]="hayDepartamentoElegido ? 'Selecciona' : 'Elige primero el departamento'"
               [filter]="true" [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
             <small class="campo__nota" *ngIf="hayDepartamentoElegido">
@@ -240,9 +240,13 @@
           </div>
           <div class="campo">
             <label for="barrio">Barrio</label>
-            <p-select inputId="barrio" [options]="barrio" optionLabel="nombre" optionValue="id"
-              [(ngModel)]="usuario.barrio" placeholder="Selecciona" [filter]="true"
-              [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
+            <p-select inputId="barrio" [options]="barriosCiudad" optionLabel="nombre" optionValue="id"
+              [(ngModel)]="usuario.barrio"
+              [placeholder]="hayCiudadElegida ? 'Selecciona' : 'Elige primero la ciudad'"
+              [filter]="true" [showClear]="true" appendTo="body" styleClass="campo__select"></p-select>
+            <small class="campo__nota" *ngIf="hayCiudadElegida && !barriosCiudad.length">
+              Aun no hay barrios registrados para esta ciudad.
+            </small>
           </div>
           <div class="campo">
             <label for="telefono">Telefono</label>

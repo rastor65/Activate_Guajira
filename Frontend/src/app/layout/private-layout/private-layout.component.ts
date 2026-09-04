@@ -223,11 +223,38 @@ export class PrivateLayoutComponent implements OnInit {
         !validas.some(c => c.id === this.usuario.ciudad_residencia)) {
       this.usuario.ciudad_residencia = null as any;
     }
+    // El barrio cuelga de la ciudad: si esta cambia, hay que revisarlo
+    this.onCiudadChange();
   }
 
   /** Cuantas ciudades quedan tras el filtro, para orientar al usuario. */
   get hayDepartamentoElegido(): boolean {
     return !!this.usuario.departamento;
+  }
+
+  /**
+   * Barrios de la ciudad de residencia elegida. Su codigo es
+   * "<codigo del municipio>-<consecutivo>", asi que basta el prefijo.
+   */
+  get barriosCiudad(): tablaMaestra[] {
+    const ciudad = this.ciudad.find(c => c.id === this.usuario.ciudad_residencia);
+    const codigo = (ciudad as any)?.codigo;
+    if (!codigo) {
+      return [];
+    }
+    return this.barrio.filter(b => String((b as any).codigo ?? '').startsWith(codigo + '-'));
+  }
+
+  get hayCiudadElegida(): boolean {
+    return !!this.usuario.ciudad_residencia;
+  }
+
+  /** Al cambiar de ciudad, un barrio de otra deja de tener sentido. */
+  onCiudadChange(): void {
+    const validos = this.barriosCiudad;
+    if (this.usuario.barrio && !validos.some(b => b.id === this.usuario.barrio)) {
+      this.usuario.barrio = null as any;
+    }
   }
 
   // ==========================================================================
