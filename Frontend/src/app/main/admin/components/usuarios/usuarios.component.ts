@@ -17,6 +17,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { Usuario, Rol } from 'src/app/models/user/person';
 
 @Component({
+  standalone: false,
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
   styleUrls: ['./usuarios.component.css']
@@ -43,6 +44,43 @@ export class UsuariosComponent implements OnInit {
   CargandoUsuario: boolean = false;
   verPassword: boolean = false;
 
+  // --- Detalle del usuario -------------------------------------------------
+  // La pantalla de Personas mostraba estos mismos datos por separado. Se
+  // unifican aqui: al pulsar un usuario se ve su ficha completa, tanto la
+  // parte de cuenta como la de persona.
+  dialogDetalle: boolean = false;
+  cargandoDetalle: boolean = false;
+  usuarioDetalle: any = null;
+  personaDetalle: any = null;
+  errorDetalle: string | null = null;
+
+  /** id de tablaMaestra -> nombre, para resolver los campos parametricos. */
+  private catalogo = new Map<number, string>();
+
+  // --- Editor: seccion activa y datos de persona ---------------------------
+  seccionEditor: string = 'cuenta';
+  personaEditada: any = null;
+  guardandoUsuario: boolean = false;
+
+  readonly seccionesEditor = [
+    { id: 'cuenta', titulo: 'Cuenta', icono: 'pi pi-user' },
+    { id: 'identificacion', titulo: 'Identificacion', icono: 'pi pi-id-card' },
+    { id: 'residencia', titulo: 'Residencia', icono: 'pi pi-map-marker' },
+    { id: 'perfil', titulo: 'Perfil', icono: 'pi pi-briefcase' },
+  ];
+
+  // Listas parametricas, agrupadas por categoria
+  barrios: any[] = [];
+  ciudades: any[] = [];
+  generos: any[] = [];
+  estratos: any[] = [];
+  estadosCiviles: any[] = [];
+  gruposEtnicos: any[] = [];
+  departamentos: any[] = [];
+  tiposDocumento: any[] = [];
+  nivelesFormacion: any[] = [];
+  situacionesLaborales: any[] = [];
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -55,6 +93,9 @@ export class UsuariosComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // El formulario se arma antes que nada: la plantilla del editor se evalua
+    // en el primer ciclo de render, y si aqui todavia esta el grupo vacio del
+    // campo, Angular lanza "Cannot find control with name: 'first_name'".
     this.formUsuario = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
@@ -66,6 +107,10 @@ export class UsuariosComponent implements OnInit {
       last_login: [''],
       date_joined: ['']
     });
+
+    // Los campos de persona se guardan como ids de tabla maestra: hace falta
+    // el catalogo para mostrar nombres en la ficha.
+    this.cargarCatalogo();
 
     this.cargarDatos();
 
@@ -92,10 +137,169 @@ export class UsuariosComponent implements OnInit {
 
   }
 
+  /**
+   * Carga la tabla maestra una vez. Sirve para dos cosas: resolver ids a
+   * nombres en la ficha y alimentar los desplegables del editor.
+   */
+  private cargarCatalogo(): void {
+    this.userService.obtenerTipoCategoria().subscribe({
+      next: (categorias: any[]) => {
+        const porId: Record<number, string> = {};
+        for (const c of categorias ?? []) {
+          porId[c.id] = c.nombre;
+        }
+
+        this.userService.obtenerTipo().subscribe({
+          next: (tipos: any[]) => {
+            this.catalogo.clear();
+            for (const t of tipos ?? []) {
+              this.catalogo.set(t.id, t.nombre);
+            }
+
+            const de = (nombre: string) =>
+              (tipos ?? []).filter(t => porId[t.categoria] === nombre);
+
+            this.barrios = de('Barrio');
+            this.ciudades = de('Ciudad');
+            this.generos = de('Genero');
+            this.estratos = de('Estrato');
+            this.estadosCiviles = de('Estado civil');
+            this.gruposEtnicos = de('Grupo étnico');
+            this.departamentos = de('Departamento');
+            this.tiposDocumento = de('Tipo de documento');
+            this.nivelesFormacion = de('Nivel de formación');
+            this.situacionesLaborales = de('Situación Laboral');
+
+            this.cdRef.detectChanges();
+          },
+          error: (e) => console.error('No se pudo cargar la tabla maestra:', e),
+        });
+      },
+      error: (e) => console.error('No se pudieron cargar las categorias:', e),
+    });
+  }
+
+  irASeccionEditor(id: string) { this.seccionEditor = id; }
+
+  // --- Cascadas: el codigo DANE encadena departamento, ciudad y barrio -----
+
+  private codigoDe(lista: any[], id: any): string {
+    return String(lista.find(x => x.id === id)?.codigo ?? '');
+  }
+
+  get ciudadesDelDepartamento(): any[] {
+    const prefijo = this.codigoDe(this.departamentos, this.personaEditada?.departamento);
+    return prefijo
+      ? this.ciudades.filter(c => String(c.codigo ?? '').startsWith(prefijo))
+      : this.ciudades;
+  }
+
+  get barriosDeLaCiudad(): any[] {
+    const codigo = this.codigoDe(this.ciudades, this.personaEditada?.ciudad_residencia);
+    return codigo
+      ? this.barrios.filter(b => String(b.codigo ?? '').startsWith(codigo + '-'))
+      : [];
+  }
+
+  onDepartamentoEditor(): void {
+    const validas = this.ciudadesDelDepartamento;
+    if (this.personaEditada?.ciudad_residencia &&
+        !validas.some(c => c.id === this.personaEditada.ciudad_residencia)) {
+      this.personaEditada.ciudad_residencia = null;
+    }
+    this.onCiudadEditor();
+  }
+
+  onCiudadEditor(): void {
+    const validos = this.barriosDeLaCiudad;
+    if (this.personaEditada?.barrio &&
+        !validos.some(b => b.id === this.personaEditada.barrio)) {
+      this.personaEditada.barrio = null;
+    }
+  }
+
+  /** Nombre de un valor parametrico, o un guion si no hay dato. */
+  nombreDe(id: any): string {
+    if (id === null || id === undefined || id === '') {
+      return '—';
+    }
+    return this.catalogo.get(Number(id)) ?? String(id);
+  }
+
+  /** Muestra un valor simple, con guion cuando falta. */
+  valor(v: any): string {
+    return v === null || v === undefined || v === '' ? '—' : String(v);
+  }
+
+  /** Nombres de los roles de un usuario. */
+  rolesDe(usuario: any): string[] {
+    const ids: any[] = usuario?.roles ?? [];
+    return ids
+      .map(r => (typeof r === 'object' ? r?.name : this.roles.find(x => x.id === r)?.name ?? r))
+      .filter(Boolean);
+  }
+
+  /** Abre la ficha completa: datos de cuenta y de persona. */
+  verDetalle(usuario: any): void {
+    this.usuarioDetalle = usuario;
+    this.personaDetalle = null;
+    this.errorDetalle = null;
+    this.dialogDetalle = true;
+    this.cargandoDetalle = true;
+
+    this.userService.getPeopleByUserId(usuario.id).subscribe({
+      next: (personas) => {
+        // Sin persona asociada no es un error: el registro puede ser antiguo
+        this.personaDetalle = personas?.length ? personas[0] : null;
+        this.cargandoDetalle = false;
+        this.cdRef.detectChanges();
+      },
+      error: (e) => {
+        console.error('Error cargando la persona del usuario:', e);
+        this.errorDetalle = 'No se pudieron cargar los datos personales.';
+        this.cargandoDetalle = false;
+        this.cdRef.detectChanges();
+      },
+    });
+  }
+
+  cerrarDetalle(): void {
+    this.dialogDetalle = false;
+    this.usuarioDetalle = null;
+    this.personaDetalle = null;
+  }
+
+  /** Desde la ficha se pasa a editar sin tener que cerrarla y buscar de nuevo. */
+  editarDesdeDetalle(): void {
+    const usuario = this.usuarioDetalle;
+    this.cerrarDetalle();
+    if (usuario) {
+      this.vereditarUsuario(usuario);
+    }
+  }
+
   vereditarUsuario(usuario: any) {
     this.dialogUsuario = true;
     this.CargandoUsuario = true;
     this.usuarioSeleccionado = usuario;
+    this.seccionEditor = 'cuenta';
+    this.personaEditada = null;
+
+    // Los datos de persona viven en otro registro: se cargan en paralelo
+    this.userService.getPeopleByUserId(usuario.id).subscribe({
+      next: (personas) => {
+        this.personaEditada = personas?.length
+          ? { ...personas[0] }
+          : { user: usuario.id, status: true };
+        this.cdRef.detectChanges();
+      },
+      error: (e) => {
+        console.error('No se pudo cargar la persona:', e);
+        // Se permite seguir editando la cuenta aunque falle la persona
+        this.personaEditada = { user: usuario.id, status: true };
+        this.cdRef.detectChanges();
+      },
+    });
     this.usuariosService.getUsuarioCompleto(usuario.id).subscribe({
       next: (datos) => {
         console.log(datos)
@@ -140,6 +344,70 @@ export class UsuariosComponent implements OnInit {
 
   }
 
+  /**
+   * Cabeceras que espera la carga masiva. Son las mismas que lee
+   * createUserRequests, para que la plantilla no pueda quedar desfasada.
+   */
+  readonly columnasCsv = ['first_name', 'last_name', 'email', 'password'];
+
+  /** Descarga una plantilla CSV con las cabeceras y una fila de ejemplo. */
+  descargarPlantilla(): void {
+    const ejemplo = [
+      ['Maria', 'Epieyu', 'maria.epieyu@uniguajira.edu.co', 'Cambiar123*'],
+      ['Juan', 'Uriana', 'juan.uriana@uniguajira.edu.co', 'Cambiar123*'],
+    ];
+
+    const filas = [this.columnasCsv, ...ejemplo]
+      .map(fila => fila.map(c => this.escaparCsv(c)).join(','))
+      .join('\r\n');
+
+    // El BOM hace que Excel abra el archivo como UTF-8 y no rompa las tildes
+    const contenido = '\uFEFF' + filas + '\r\n';
+    const blob = new Blob([contenido], { type: 'text/csv;charset=utf-8;' });
+
+    const enlace = document.createElement('a');
+    enlace.href = URL.createObjectURL(blob);
+    enlace.download = 'plantilla_usuarios.csv';
+    document.body.appendChild(enlace);
+    enlace.click();
+    document.body.removeChild(enlace);
+    URL.revokeObjectURL(enlace.href);
+  }
+
+  /** Entrecomilla el valor si lleva coma, comillas o salto de linea. */
+  private escaparCsv(valor: string): string {
+    return /[",\r\n]/.test(valor) ? '"' + valor.replace(/"/g, '""') + '"' : valor;
+  }
+
+  /** Usuarios cuyo avatar no se pudo cargar: se cae a las iniciales. */
+  private avataresRotos = new Set<number>();
+
+  avatarVisible(usuario: any): boolean {
+    return !!usuario?.avatar_url && !this.avataresRotos.has(usuario.id);
+  }
+
+  onAvatarError(usuario: any): void {
+    this.avataresRotos.add(usuario.id);
+    this.cdRef.detectChanges();
+  }
+
+  /** Iniciales para el avatar de la fila. */
+  inicialesDe(usuario: any): string {
+    const nombre = (usuario?.first_name || '').trim();
+    const apellido = (usuario?.last_name || '').trim();
+    if (nombre || apellido) {
+      return ((nombre[0] ?? '') + (apellido[0] ?? '')).toUpperCase();
+    }
+    return (usuario?.username ?? '?').charAt(0).toUpperCase();
+  }
+
+  /** Nombre completo, o el usuario si no hay nombres registrados. */
+  nombreCompleto(usuario: any): string {
+    const completo = [usuario?.first_name, usuario?.last_name]
+      .filter(Boolean).join(' ').trim();
+    return completo || usuario?.username || '—';
+  }
+
   onFileChange(event: any) {
     const file = event.target.files[0];
 
@@ -173,27 +441,17 @@ export class UsuariosComponent implements OnInit {
     };
   }
 
+  /**
+   * El endpoint de usuarios ya devuelve los nombres de los roles, asi que
+   * aqui solo se refresca el filtrado.
+   *
+   * Antes este metodo los recalculaba comparando role.userId con el correo
+   * del usuario. Esa comparacion nunca casaba, de modo que sobrescribia con
+   * un array vacio los roles buenos que venian de la API, y la columna salia
+   * siempre como 'Sin rol'.
+   */
   procesarRoles() {
-    this.cargando = true;
-  
-    if (!Array.isArray(this.AllRoles)) {
-      console.error('AllRoles no es un array:', this.AllRoles);
-      this.cargando = false;
-      return;
-    }
-  
-    this.usuarios.forEach(usuario => {
-      const rolesUsuario = this.AllRoles.filter(role =>
-        role.userId === usuario.email
-      );
-  
-      usuario.roles = [...new Set(
-        rolesUsuario.map(role => role.rolesId).filter(r => !!r)
-      )];
-    });
-  
     this.filtrarUsuarios();
-    this.cargando = false;
   }  
 
   filtrarUsuarios() {
@@ -201,11 +459,14 @@ export class UsuariosComponent implements OnInit {
     const filtro = this.searchValue?.toLowerCase() || '';
   
     this.usuariosFiltrados = this.usuarios.filter(usuario => {
-      const username = usuario.username?.toLowerCase() || '';
-      const firstName = usuario.first_name?.toLowerCase() || '';
-      const lastName = usuario.last_name?.toLowerCase() || '';
-  
-      return username.includes(filtro) || firstName.includes(filtro) || lastName.includes(filtro);
+      // El campo dice "usuario o correo": el correo tambien debe contar
+      const campos = [
+        usuario.username,
+        usuario.email,
+        usuario.first_name,
+        usuario.last_name,
+      ];
+      return campos.some(c => (c ?? '').toLowerCase().includes(filtro));
     });
   
     this.cargando = false;
@@ -294,17 +555,84 @@ export class UsuariosComponent implements OnInit {
       roles: Array.isArray(this.formUsuario.value.roles) ? this.formUsuario.value.roles : []
     };
 
+    this.guardandoUsuario = true;
+
     this.usuariosService.editarUsuario(this.usuarioSeleccionado.id, datosActualizados).subscribe({
-      next: () => {
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Usuario actualizado correctamente.' });
-        this.dialogUsuario = false;
-        this.cargarDatos();
-      },
+      next: () => this.guardarPersona(),
       error: (err) => {
         console.error('Error al actualizar usuario:', err);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo actualizar el usuario. Inténtelo de nuevo.' });
+        this.guardandoUsuario = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'No se pudo actualizar la cuenta',
+          detail: this.describirError(err),
+        });
       }
     });
+  }
+
+  /**
+   * Guarda la parte de persona. Se hace tras la cuenta porque puede no existir
+   * todavia: en ese caso se crea, y si no se actualiza.
+   */
+  private guardarPersona(): void {
+    const persona = this.personaEditada;
+
+    if (!persona) {
+      this.terminarGuardado('Usuario actualizado correctamente.');
+      return;
+    }
+
+    const datos = {
+      ...persona,
+      user: this.usuarioSeleccionado.id,
+      status: persona.status !== undefined ? persona.status : true,
+    };
+
+    const peticion = persona.id
+      ? this.userService.editarUsuario(datos as any)
+      : this.userService.crearPerson(datos as any);
+
+    peticion.subscribe({
+      next: () => this.terminarGuardado('Usuario y datos personales actualizados.'),
+      error: (err) => {
+        console.error('Error al guardar la persona:', err);
+        this.guardandoUsuario = false;
+        // La cuenta si se guardo: hay que decirlo para no inducir a error
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Cuenta guardada, datos personales no',
+          detail: this.describirError(err),
+        });
+      }
+    });
+  }
+
+  private terminarGuardado(mensaje: string): void {
+    this.guardandoUsuario = false;
+    this.messageService.add({ severity: 'success', summary: 'Guardado', detail: mensaje });
+    this.dialogUsuario = false;
+    this.cargarDatos();
+  }
+
+  /** Extrae del error de la API un mensaje util. */
+  private describirError(error: any): string {
+    const cuerpo = error?.error;
+    if (typeof cuerpo === 'string' && cuerpo.trim()) {
+      return cuerpo;
+    }
+    if (cuerpo && typeof cuerpo === 'object') {
+      const partes: string[] = [];
+      for (const campo of Object.keys(cuerpo)) {
+        const valor = (cuerpo as any)[campo];
+        const texto = Array.isArray(valor) ? valor.join(' ') : String(valor);
+        partes.push(campo === 'detail' ? texto : `${campo}: ${texto}`);
+      }
+      if (partes.length) {
+        return partes.join(' · ');
+      }
+    }
+    return `Error ${error?.status ?? 'desconocido'} al contactar el servidor.`;
   }
 
 

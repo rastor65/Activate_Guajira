@@ -1,10 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AdminComponent } from './admin.component';
+import { AccesosComponent } from './components/accesos/accesos.component';
+import { RolesModule } from './components/roles/roles.module';
+import { RecursosModule } from './components/recursos/recursos.module';
+import { RolesRecursosModule } from './components/roles-recursos/roles-recursos.module';
+import { UserRolesModule } from './components/user-roles/user-roles.module';
 import { RolesRecursosComponent } from './components/roles-recursos/roles-recursos.component';
 import { UserRolesComponent } from './components/user-roles/user-roles.component';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { TablaMaestraComponent } from './components/tabla-maestra/tabla-maestra.component';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -18,10 +25,13 @@ import { ToastModule } from 'primeng/toast';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { InputSwitch, InputSwitchModule } from 'primeng/inputswitch';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { RippleModule } from 'primeng/ripple';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
   declarations: [
+    AccesosComponent,
     RolesRecursosComponent,
     UserRolesComponent,
     AdminComponent,
@@ -33,8 +43,16 @@ import { InputSwitch, InputSwitchModule } from 'primeng/inputswitch';
   ]
   ,
   imports: [
+    InputTextModule,
+    RippleModule,
+    DatePickerModule,
+    RolesModule,
+    RecursosModule,
+    RolesRecursosModule,
+    UserRolesModule,
+    TooltipModule,
     CommonModule,
-    DropdownModule,
+    SelectModule,
     AdminRoutingModule,
     DialogModule,
     ButtonModule,
@@ -46,7 +64,7 @@ import { InputSwitch, InputSwitchModule } from 'primeng/inputswitch';
     MultiSelectModule,
     ReactiveFormsModule,
     ProgressBarModule,
-    InputSwitchModule
+    ToggleSwitchModule
   ],
   providers: [ConfirmationService, ], 
 })

@@ -1,391 +1,1130 @@
-<br>
-<div *ngIf="!cargando" class="p-personas-controls">
+<div class="ag-page entrenador">
 
-  <div class="p-personas-search">
-    <span class="search-icon-container">
-      <i class="pi pi-search search-icon"></i>
-    </span>
-    <input type="text" pInputText placeholder="Buscar..." [(ngModel)]="searchValue" (input)="filterCards()"
-      class="search-box">
+  <header class="ag-page__header">
+    <div>
+      <p class="ag-overline">Modulo de entrenador</p>
+      <h1 class="ag-page__title">Usuarios a cargo</h1>
+      <p class="ag-page__subtitle">
+        Consulta mediciones, asigna entrenamientos y planes de alimentacion.
+      </p>
+    </div>
+
+    <div class="ag-page__actions">
+      <button pButton pRipple type="button"
+        class="p-button-outlined" (click)="verEntrenamientosMasivos()">
+        <i class="pi pi-eject" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Entrenamiento por region</span>
+      </button>
+      <button pButton pRipple type="button" class="ag-accent"
+        (click)="verAlimentacionesMasivas()">
+        <i class="pi pi-heart" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Alimentacion por region</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Centro de Control de Búsqueda y Filtros -->
+  <section class="filtros-panel" *ngIf="!cargando" aria-label="Panel de búsqueda y filtros de usuarios">
+    <div class="filtros-panel__top">
+      <!-- Buscador principal -->
+      <div class="filtros-search">
+        <i class="pi pi-search filtros-search__icon" aria-hidden="true"></i>
+        <input type="text" pInputText placeholder="Buscar por nombre, usuario, correo o ciudad..."
+          [(ngModel)]="searchValue" (input)="filterCards()" aria-label="Buscar deportistas"
+          class="filtros-search__input">
+        <button *ngIf="searchValue" type="button" class="filtros-search__clear" (click)="searchValue = ''; filterCards()"
+          title="Limpiar búsqueda" aria-label="Limpiar búsqueda">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <!-- Desplegables de filtrado -->
+      <div class="filtros-dropdowns">
+        <!-- Filtro por Ciudad -->
+        <div class="filtro-group">
+          <label class="filtro-group__label">
+            <i class="pi pi-map-marker" aria-hidden="true"></i> Ciudad
+          </label>
+          <p-select class="filtro-group__select" [options]="ciudad" [(ngModel)]="selectedCiudad"
+            optionLabel="nombre" optionValue="id" placeholder="Todas las ciudades"
+            (onChange)="filterCards()" [filter]="true" [showClear]="true"></p-select>
+        </div>
+
+        <!-- Filtro por Género -->
+        <div class="filtro-group">
+          <label class="filtro-group__label">
+            <i class="pi pi-user" aria-hidden="true"></i> Género
+          </label>
+          <p-select class="filtro-group__select" [options]="generosOpciones" [(ngModel)]="selectedGenero"
+            optionLabel="label" optionValue="value" placeholder="Todos los géneros"
+            (onChange)="filterCards()" [showClear]="true"></p-select>
+        </div>
+
+        <!-- Filtro por Rango de Edad -->
+        <div class="filtro-group">
+          <label class="filtro-group__label">
+            <i class="pi pi-id-card" aria-hidden="true"></i> Edad
+          </label>
+          <p-select class="filtro-group__select" [options]="edadesOpciones" [(ngModel)]="selectedRangoEdad"
+            optionLabel="label" optionValue="value" placeholder="Todas las edades"
+            (onChange)="filterCards()" [showClear]="true"></p-select>
+        </div>
+
+        <!-- Ordenamiento -->
+        <div class="filtro-group">
+          <label class="filtro-group__label">
+            <i class="pi pi-sort-alt" aria-hidden="true"></i> Ordenar
+          </label>
+          <p-select class="filtro-group__select" [options]="ordenOpciones" [(ngModel)]="selectedOrden"
+            optionLabel="label" optionValue="value" (onChange)="filterCards()"></p-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barra de estado de filtros, chips activos y contador -->
+    <div class="filtros-panel__bottom">
+      <div class="filtros-status">
+        <span class="filtros-status__count">
+          Mostrando <strong>{{ filteredTrainers.length }}</strong> de {{ trainers.length }} deportistas
+        </span>
+
+        <!-- Badges activos de filtros -->
+        <div class="filtros-status__badges" *ngIf="hayFiltrosActivos">
+          <span class="active-badge" *ngIf="searchValue">
+            Texto: "{{ searchValue }}"
+            <i class="pi pi-times active-badge__remove" (click)="searchValue = ''; filterCards()" title="Quitar filtro de texto"></i>
+          </span>
+          <span class="active-badge" *ngIf="selectedCiudadNombre">
+            📍 {{ selectedCiudadNombre }}
+            <i class="pi pi-times active-badge__remove" (click)="selectedCiudad = null; filterCards()" title="Quitar filtro de ciudad"></i>
+          </span>
+          <span class="active-badge" *ngIf="selectedGenero">
+            👤 {{ selectedGenero }}
+            <i class="pi pi-times active-badge__remove" (click)="selectedGenero = null; filterCards()" title="Quitar filtro de género"></i>
+          </span>
+          <span class="active-badge" *ngIf="selectedRangoEdad">
+            🪪 {{ getLabelRangoEdad(selectedRangoEdad) }}
+            <i class="pi pi-times active-badge__remove" (click)="selectedRangoEdad = null; filterCards()" title="Quitar filtro de edad"></i>
+          </span>
+        </div>
+      </div>
+
+      <!-- Botón Limpiar Filtros -->
+      <button *ngIf="hayFiltrosActivos" pButton pRipple type="button" class="p-button-text p-button-sm p-button-danger filtros-clear-btn"
+        (click)="limpiarFiltros()">
+        <i class="pi pi-filter-slash" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Limpiar filtros</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Cargando -->
+  <div *ngIf="cargando" class="ag-empty" role="status" aria-live="polite">
+    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+    <p class="ag-empty__text">Cargando usuarios...</p>
   </div>
 
-  <p-dropdown class="custom-dropdown" [options]="ciudad" [(ngModel)]="selectedCiudad" optionLabel="nombre"
-    optionValue="id" placeholder="Filtrar por ciudad" (onChange)="filterCards()" [filter]="true">
-  </p-dropdown>
-</div>
+  <!-- Rejilla de usuarios -->
+  <div class="trainers" *ngIf="!cargando && filteredTrainers.length">
+    <article class="trainer" *ngFor="let trainer of filteredTrainers">
+      <!-- Decoración superior / ambient glow -->
+      <div class="trainer__ambient" aria-hidden="true"></div>
 
-<div *ngIf="!cargando" class="button-container">
-  <button class="btn" (click)="verEntrenamientosMasivos()">
-    <i class="pi pi-eject"></i> Entrenamiento por región</button>
-  <button class="btn" (click)="verAlimentacionesMasivas()">
-    <i class="pi pi-heart"></i> Alimentación por región</button>
-</div>
-
-<div *ngIf="cargando" class="loading-container">
-  <p-progressSpinner styleClass="spinner"></p-progressSpinner>
-  <span class="loading-text">Cargando usuarios...</span>
-</div>
-
-<!-- CARDS -->
-<div class="card-container">
-  <p-card *ngFor="let trainer of filteredTrainers" class="trainer-card clickable-card">
-    <ng-template pTemplate="header">
-      <div class="card-header">
-        <p-avatar *ngIf="trainer.avatar_url" [image]="trainer.avatar_url" shape="circle" size="large"></p-avatar>
-        <p-avatar *ngIf="!trainer.avatar_url" shape="circle" size="large">
-          {{ getInitials(trainer.first_name, trainer.last_name) }}
-        </p-avatar>
-        <div class="trainer-info">
-          <h3>{{ trainer.first_name }} {{ trainer.last_name }}</h3>
+      <!-- Cabecera de la tarjeta: Avatar + Identidad + Badge -->
+      <header class="trainer__head">
+        <div class="trainer__avatar-wrap">
+          <p-avatar *ngIf="trainer.avatar_url" [image]="trainer.avatar_url" shape="circle" size="large"></p-avatar>
+          <p-avatar *ngIf="!trainer.avatar_url" shape="circle" size="large"
+            [label]="getInitials(trainer.first_name, trainer.last_name, trainer.username)"></p-avatar>
+          <span class="trainer__status-indicator" title="Atleta activo" aria-label="Atleta activo"></span>
         </div>
-      </div>
-    </ng-template>
 
-    <ng-template pTemplate="content">
-      <div class="card-content">
-        <p><i class="pi pi-user"></i> {{ trainer.username }}</p>
-        <p><i class="pi pi-envelope"></i> {{ trainer.email }}</p>
-        <p><i class="pi pi-map-marker"></i> {{ trainer.ciudad_residencia?.nombre }}</p>
+        <div class="trainer__identity">
+          <h2 class="trainer__name" [title]="nombreVisible(trainer)">{{ nombreVisible(trainer) }}</h2>
+          <span class="trainer__handle" *ngIf="trainer.username">@{{ trainer.username }}</span>
+        </div>
+      </header>
 
+      <!-- Chips de información rápida: Ciudad, Género, Edad -->
+      <div class="trainer__chips" *ngIf="ciudadVisible(trainer) || trainer.gender_name || edadVisible(trainer)">
+        <span class="trainer__chip" *ngIf="ciudadVisible(trainer)">
+          <i class="pi pi-map-marker" aria-hidden="true"></i>
+          {{ ciudadVisible(trainer) }}
+        </span>
+        <span class="trainer__chip" *ngIf="trainer.gender_name">
+          <i class="pi pi-user" aria-hidden="true"></i>
+          {{ trainer.gender_name }}
+        </span>
+        <span class="trainer__chip" *ngIf="edadVisible(trainer)">
+          <i class="pi pi-id-card" aria-hidden="true"></i>
+          {{ edadVisible(trainer) }}
+        </span>
       </div>
-      <div class="button-container">
-        <button class="btn2" (click)="verPerfil(trainer)">
-          <i class="pi pi-check-circle"></i> Mediciones
-        </button>
-        <button class="btn2" (click)="verEntrenamiento(trainer)">
-          <i class="pi pi-eject"></i> Entrenamiento
-        </button>
-        <button class="btn2" (click)="verAlimentacion(trainer)">
-          <i class="pi pi-heart"></i> Alimentación
-        </button>
-      </div>
-    </ng-template>
-  </p-card>
 
+      <!-- Fila de contacto: Correo estilizado -->
+      <div class="trainer__contact" [title]="trainer.email || 'Sin correo registrado'">
+        <i class="pi pi-envelope trainer__contact-icon" aria-hidden="true"></i>
+        <span class="trainer__contact-text">{{ trainer.email || 'Sin correo registrado' }}</span>
+      </div>
+
+      <!-- Acciones principales y secundarias -->
+      <footer class="trainer__actions">
+        <div class="trainer__secondary-actions">
+          <button pButton pRipple type="button"
+            class="trainer__btn trainer__btn--training p-button-sm" (click)="verEntrenamiento(trainer)"
+            pTooltip="Plan de entrenamiento" tooltipPosition="top">
+            <i class="pi pi-bolt" pButtonIcon aria-hidden="true"></i>
+            <span pButtonLabel>Entrenamiento</span>
+          </button>
+          <button pButton pRipple type="button"
+            class="trainer__btn trainer__btn--nutrition p-button-sm" (click)="verAlimentacion(trainer)"
+            pTooltip="Plan de alimentación" tooltipPosition="top">
+            <i class="pi pi-heart-fill" pButtonIcon aria-hidden="true"></i>
+            <span pButtonLabel>Alimentación</span>
+          </button>
+        </div>
+        <button pButton pRipple type="button"
+          class="trainer__btn trainer__btn--primary p-button-sm" (click)="verPerfil(trainer)"
+          pTooltip="Historial y registro de mediciones" tooltipPosition="bottom">
+          <i class="pi pi-chart-line" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Mediciones y Progreso</span>
+        </button>
+      </footer>
+    </article>
+  </div>
+
+  <!-- Sin resultados -->
+  <div class="ag-empty" *ngIf="!cargando && !filteredTrainers.length">
+    <span class="ag-empty__icon"><i class="pi pi-users" aria-hidden="true"></i></span>
+    <h2 class="ag-empty__title">Sin usuarios que coincidan</h2>
+    <p class="ag-empty__text">
+      Ajusta el texto de busqueda o cambia el filtro de ciudad para ver mas resultados.
+    </p>
+  </div>
 </div>
+
 
 <!-- MEDICIONES -->
-<p-dialog [(visible)]="dialogMediciones" [style]="{'width': '80vw'}" [resizable]="false" zindex="100" [modal]="true"
-  [closable]="true" [showHeader]="false">
-  <ng-template pTemplate="content">
-    <div *ngIf="selectedTrainer">
-      <div class="profile-header">
-        <h2>{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h2>
+<p-dialog [(visible)]="dialogMediciones" [modal]="true" [resizable]="false" [draggable]="false"
+  [style]="{ width: '74rem', maxWidth: '96vw' }" styleClass="ag-dialog ag-dialog--trainer ag-dialog--mediciones"
+  [breakpoints]="{ '1024px': '95vw', '640px': '98vw' }">
+
+  <ng-template pTemplate="header">
+    <div class="dialog-header-custom">
+      <div class="dialog-header-custom__icon">
+        <i class="pi pi-chart-line" aria-hidden="true"></i>
       </div>
+      <div>
+        <div class="dialog-header-custom__tag">Control Antropométrico</div>
+        <h2 class="dialog-header-custom__title">Mediciones del usuario</h2>
+      </div>
+    </div>
+  </ng-template>
 
-      <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate" [style]="{ height: '6px' }"> </p-progressBar>
+  <ng-template pTemplate="content">
+    <div *ngIf="selectedTrainer" class="mediciones-dialog-body">
 
-      <div *ngIf="!cargandoPdialog">
-        <div class="medicion">
-          <button pButton icon="pi pi-plus" label="Agregar medición" class="btn-agregar"
-            (click)="abrirMedicion()"></button>
+      <!-- Ficha de identidad del deportista / usuario -->
+      <section class="athlete-identity-card" aria-label="Información del deportista">
+        <div class="athlete-identity-card__profile">
+          <div class="athlete-identity-card__avatar">
+            <p-avatar *ngIf="selectedTrainer.avatar_url" [image]="selectedTrainer.avatar_url" shape="circle"
+              size="xlarge"></p-avatar>
+            <p-avatar *ngIf="!selectedTrainer.avatar_url" shape="circle" size="xlarge"
+              [label]="getInitials(selectedTrainer.first_name, selectedTrainer.last_name, selectedTrainer.username)"></p-avatar>
+          </div>
+          <div class="athlete-identity-card__info">
+            <div class="athlete-identity-card__role">Deportista a cargo</div>
+            <h3 class="athlete-identity-card__name">{{ nombreVisible(selectedTrainer) }}</h3>
+            <p class="athlete-identity-card__handle">@{{ selectedTrainer.username }}</p>
+
+            <div class="athlete-meta-row">
+              <span class="meta-pill" *ngIf="selectedTrainer.gender_name || genero">
+                <i class="pi pi-user" aria-hidden="true"></i> {{ selectedTrainer.gender_name || genero }}
+              </span>
+              <span class="meta-pill" *ngIf="ciudadVisible(selectedTrainer)">
+                <i class="pi pi-map-marker" aria-hidden="true"></i> {{ ciudadVisible(selectedTrainer) }}
+              </span>
+              <span class="meta-pill" *ngIf="edadVisible(selectedTrainer)">
+                <i class="pi pi-id-card" aria-hidden="true"></i> {{ edadVisible(selectedTrainer) }}
+              </span>
+              <span class="meta-pill" *ngIf="selectedTrainer.email">
+                <i class="pi pi-envelope" aria-hidden="true"></i> {{ selectedTrainer.email }}
+              </span>
+            </div>
+          </div>
         </div>
 
-        <br>
+        <div class="athlete-identity-card__badges">
+          <span class="ag-badge ag-badge--accent">
+            <i class="pi pi-check-circle" aria-hidden="true"></i> Activo
+          </span>
+          <span class="ag-badge ag-badge--neutral">
+            <i class="pi pi-database" aria-hidden="true"></i> {{ medicionesUsuario.length }} {{
+            (medicionesUsuario.length === 1) ? 'medición' : 'mediciones' }}
+          </span>
+        </div>
+      </section>
 
-        <div class="card">
-          <div *ngIf="estado" class="imc-message">
-            <strong>{{ estado }}</strong>
+      <!-- Barra de progreso durante carga -->
+      <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate"
+        [style]="{ height: '4px', 'border-radius': '2px' }"></p-progressBar>
+
+      <div *ngIf="!cargandoPdialog" class="mediciones-content">
+
+        <!-- Fichas KPI de la última medición -->
+        <section *ngIf="ultimaMedicion" class="mediciones-kpis" aria-label="Resumen de última medición">
+          <article class="medicion-kpi-card medicion-kpi-card--imc">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">IMC (Índice Masa)</span>
+              <span class="ag-badge" [ngClass]="'badge--' + getIMCClass(ultimaMedicion.imc)">
+                {{ getIMCLabel(ultimaMedicion.imc) }}
+              </span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val">{{ ultimaMedicion.imc }}</span>
+            </div>
+            <p class="medicion-kpi-card__footer">Registrado el {{ ultimaMedicion.fecha }}</p>
+          </article>
+
+          <article class="medicion-kpi-card medicion-kpi-card--icc">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">ICC (Cintura/Cadera)</span>
+              <span class="ag-badge" [ngClass]="'badge--' + getICCClass(ultimaMedicion.icc)" *ngIf="ultimaMedicion.icc">
+                Riesgo {{ getICCLabel(ultimaMedicion.icc) }}
+              </span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val">{{ ultimaMedicion.icc || '—' }}</span>
+            </div>
+            <p class="medicion-kpi-card__footer">Proporción cintura / cadera</p>
+          </article>
+
+          <article class="medicion-kpi-card medicion-kpi-card--grasa">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">Grasa Corporal</span>
+              <span class="ag-badge" [ngClass]="'badge--' + getGrasaClass(ultimaMedicion.grasa_corporal)"
+                *ngIf="hasGrasa(ultimaMedicion.grasa_corporal)">
+                {{ getGrasaLabel(ultimaMedicion.grasa_corporal) }}
+              </span>
+              <span class="ag-badge ag-badge--neutral" *ngIf="!hasGrasa(ultimaMedicion.grasa_corporal)">
+                Sin dato
+              </span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val">
+                {{ hasGrasa(ultimaMedicion.grasa_corporal) ? ultimaMedicion.grasa_corporal : '—' }}<span
+                  *ngIf="hasGrasa(ultimaMedicion.grasa_corporal)" class="medicion-kpi-card__unit">%</span>
+              </span>
+            </div>
+            <p class="medicion-kpi-card__footer">Porcentaje corporal</p>
+          </article>
+
+          <article class="medicion-kpi-card medicion-kpi-card--peso">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">Peso & Altura</span>
+              <span class="ag-badge ag-badge--neutral">
+                {{ ultimaMedicion.talla }} m
+              </span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val">{{ ultimaMedicion.peso }}<span
+                  class="medicion-kpi-card__unit">kg</span></span>
+            </div>
+            <p class="medicion-kpi-card__footer">Estatura: {{ ultimaMedicion.talla }} metros</p>
+          </article>
+        </section>
+
+        <!-- Barra de herramientas de la sección -->
+        <div class="mediciones-toolbar">
+          <div class="mediciones-toolbar__title">
+            <h4>Historial de mediciones</h4>
+            <span class="ag-badge ag-badge--neutral" *ngIf="medicionesUsuario?.length">
+              {{ medicionesUsuario.length }} {{ medicionesUsuario.length === 1 ? 'registro' : 'registros' }}
+            </span>
           </div>
-          <table class="mediciones-table">
+
+          <button pButton pRipple type="button"
+            class="ag-accent btn-add-medicion" (click)="abrirMedicion()">
+            <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+            <span pButtonLabel>Agregar medición</span>
+          </button>
+        </div>
+
+        <!-- Mensaje de estado / diagnóstico dinámico -->
+        <div *ngIf="estado" class="imc-message-banner" role="status">
+          <i class="pi pi-info-circle" aria-hidden="true"></i>
+          <div class="imc-message-banner__text">
+            <strong>Diagnóstico clínico:</strong> {{ estado }}
+          </div>
+          <button type="button" class="imc-message-banner__close" (click)="estado = ''" aria-label="Cerrar diagnóstico">
+            <i class="pi pi-times" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <!-- Tabla moderna de mediciones -->
+        <div class="ag-table-wrap" *ngIf="medicionesUsuario?.length; else sinMediciones">
+          <table class="ag-table mediciones-table-modern">
+            <caption class="ag-visually-hidden">Historial antropométrico del usuario</caption>
             <thead>
               <tr>
-                <th>Fecha</th>
-                <th>Altura (m)</th>
-                <th>Peso (Kg)</th>
-                <th>IMC</th>
-                <th>ICC</th>
-                <th>Grasa corporal</th>
-                <th>Acciones</th>
+                <th scope="col"><i class="pi pi-calendar" aria-hidden="true"></i> Fecha</th>
+                <th scope="col" class="ag-num">Altura (m)</th>
+                <th scope="col" class="ag-num">Peso (kg)</th>
+                <th scope="col">IMC</th>
+                <th scope="col">ICC</th>
+                <th scope="col">Grasa corporal</th>
+                <th scope="col" class="ag-center">Acciones</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let medicion of medicionesUsuario">
-                <td>{{ medicion.fecha }}</td>
-                <td>{{ medicion.talla }}</td>
-                <td>{{ medicion.peso }} kg</td>
-                <td [ngClass]="getIMCClass(medicion.imc)" class="imc-cell" (click)="mostrarEstadoIMC(medicion.imc)">
-                  {{ medicion.imc }}
+                <td data-label="Fecha" class="cell-fecha">
+                  <span class="fecha-pill">
+                    <i class="pi pi-calendar" aria-hidden="true"></i>
+                    {{ medicion.fecha }}
+                  </span>
                 </td>
-                <td [ngClass]="getICCClass(medicion.icc)" class="imc-cell" (click)="mostrarEstadoICC(medicion.icc)">
-                  {{ medicion.icc }}
+                <td data-label="Altura" class="ag-num cell-numeric">
+                  {{ medicion.talla }}
                 </td>
-                <td [ngClass]="getGrasaClass(medicion.grasa_corporal)" class="imc-cell"
-                  (click)="mostrarEstadoGrasa(medicion.grasa_corporal)">
-                  {{ medicion.grasa_corporal }}
+                <td data-label="Peso" class="ag-num cell-numeric">
+                  <strong>{{ medicion.peso }}</strong> <span class="unit-text">kg</span>
                 </td>
-                <td>
-                  <button pButton icon="pi pi-eye" class="btn-ver" (click)="verMedicion(medicion)"></button>
-                  <button pButton icon="pi pi-pencil" class="btn-editar" (click)="editarMedicion(medicion)"></button>
+                <td data-label="IMC">
+                  <button type="button" class="valor-pill" (click)="mostrarEstadoIMC(medicion.imc)"
+                    [attr.aria-label]="'IMC ' + medicion.imc + ', ' + getIMCLabel(medicion.imc) + '. Clic para ver explicación'"
+                    pTooltip="Clic para ver explicación de IMC" tooltipPosition="top">
+                    <span class="valor-pill__num">{{ medicion.imc }}</span>
+                    <span class="ag-badge" [ngClass]="'badge--' + getIMCClass(medicion.imc)">
+                      {{ getIMCLabel(medicion.imc) }}
+                    </span>
+                  </button>
+                </td>
+                <td data-label="ICC">
+                  <button *ngIf="medicion.icc" type="button" class="valor-pill" (click)="mostrarEstadoICC(medicion.icc)"
+                    [attr.aria-label]="'ICC ' + medicion.icc + ', riesgo ' + getICCLabel(medicion.icc) + '. Clic para ver explicación'"
+                    pTooltip="Clic para ver explicación de ICC" tooltipPosition="top">
+                    <span class="valor-pill__num">{{ medicion.icc }}</span>
+                    <span class="ag-badge" [ngClass]="'badge--' + getICCClass(medicion.icc)">
+                      Riesgo {{ getICCLabel(medicion.icc) }}
+                    </span>
+                  </button>
+                  <span *ngIf="!medicion.icc" class="ag-muted">—</span>
+                </td>
+                <td data-label="Grasa corporal">
+                  <button *ngIf="hasGrasa(medicion.grasa_corporal)" type="button" class="valor-pill"
+                    (click)="mostrarEstadoGrasa(medicion.grasa_corporal)"
+                    [attr.aria-label]="'Grasa corporal ' + medicion.grasa_corporal + '%, ' + getGrasaLabel(medicion.grasa_corporal) + '. Clic para ver explicación'"
+                    pTooltip="Clic para ver explicación de Grasa Corporal" tooltipPosition="top">
+                    <span class="valor-pill__num">{{ medicion.grasa_corporal }}%</span>
+                    <span class="ag-badge" [ngClass]="'badge--' + getGrasaClass(medicion.grasa_corporal)">
+                      {{ getGrasaLabel(medicion.grasa_corporal) }}
+                    </span>
+                  </button>
+                  <span *ngIf="!hasGrasa(medicion.grasa_corporal)" class="ag-muted">—</span>
+                </td>
+                <td data-label="Acciones" class="ag-center">
+                  <div class="ag-row-actions ag-row-actions--center">
+                    <button pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-view"
+                      aria-label="Ver detalle de medición" pTooltip="Ver detalle completo" tooltipPosition="top"
+                      (click)="verMedicion(medicion)">
+                      <i class="pi pi-eye" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                    <button pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-edit" aria-label="Editar medición"
+                      pTooltip="Editar medición" tooltipPosition="top" (click)="editarMedicion(medicion)">
+                      <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p *ngIf="medicionesUsuario.length === 0">No hay mediciones disponibles.</p>
-
-        <ng-template #noMediciones>
-          <p>No hay mediciones registradas.</p>
+        <!-- Estado vacío -->
+        <ng-template #sinMediciones>
+          <div class="ag-empty mediciones-empty">
+            <span class="ag-empty__icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
+            <h3 class="ag-empty__title">Sin mediciones registradas</h3>
+            <p class="ag-empty__text">Este usuario aún no cuenta con registros antropométricos. Presiona el botón para
+              registrar su primera medición.</p>
+            <button pButton pRipple type="button" class="ag-accent"
+              (click)="abrirMedicion()">
+              <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Registrar medición inicial</span>
+            </button>
+          </div>
         </ng-template>
+
       </div>
     </div>
-    <div class="p-grid p-nogutter p-align-center header-container"></div>
-    <div class="button-container">
-      <button class="btn" (click)="cerrarDialogo()">
-        <i class="pi pi-times"></i> Cerrar</button>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer-actions">
+      <button pButton pRipple type="button"
+        class="p-button-outlined p-button-secondary" (click)="cerrarDialogo()">
+        <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Cerrar</span>
+      </button>
     </div>
   </ng-template>
 </p-dialog>
 
-<!--EDITAR MEDICIONES -->
-<p-dialog [(visible)]="dialogMedicion" [style]="{'width': '80vw'}" [resizable]="false" zindex="1000"
-  [showHeader]="false" [closeOnEscape]="false" [closable]="false" [modal]="true">
+<!--EDITAR / REGISTRAR MEDICION -->
+<p-dialog [(visible)]="dialogMedicion" [modal]="true" [resizable]="false" [draggable]="false"
+  [style]="{ width: '68rem', maxWidth: '96vw' }" styleClass="ag-dialog ag-dialog--trainer dialog-medicion"
+  [breakpoints]="{ '1024px': '95vw', '640px': '98vw' }">
 
-  <div class="p-grid p-nogutter p-align-center header-container">
-    <h3>{{ esEdicion ? 'Editar Medición' : 'Detalles de la Medición' }}</h3>
-  </div>
-  <div class="p-grid p-fluid">
-    <div class="form-container">
-      <div class="form-group">
-        <label for="talla">Altura (m)</label>
-        <input type="number" id="talla" placeholder="Talla" pInputText [(ngModel)]="formData.talla">
+  <ng-template pTemplate="header">
+    <div class="dialog-header-custom">
+      <div class="dialog-header-custom__icon dialog-header-custom__icon--nutrition">
+        <i class="pi pi-sliders-h" aria-hidden="true"></i>
       </div>
-
-      <div class="form-group">
-        <label for="peso">Peso (Kg)</label>
-        <input type="number" id="peso" placeholder="Peso" pInputText [(ngModel)]="formData.peso">
-      </div>
-
-      <div class="form-group">
-        <label for="perimetro_cintura">Perímetro Cintura</label>
-        <input type="number" id="perimetro_cintura" placeholder="Perímetro Cintura" pInputText
-          [(ngModel)]="formData.perimetro_cintura">
-      </div>
-
-      <div class="form-group">
-        <label for="perimetro_cadera">Perímetro Cadera</label>
-        <input type="number" id="perimetro_cadera" placeholder="Perímetro Cadera" pInputText
-          [(ngModel)]="formData.perimetro_cadera">
-      </div>
-
-      <div class="form-group">
-        <label for="pliegue_pectoral">Pliegue Pectoral (hombres)</label>
-        <input type="number" id="pliegue_pectoral" placeholder="Pliegue Pectoral" pInputText
-          [(ngModel)]="formData.pliegue_pectoral">
-      </div>
-
-      <div class="form-group">
-        <label for="pliegue_abdominal">Pliegue Abdominal (hombres)</label>
-        <input type="number" id="pliegue_abdominal" placeholder="Pliegue Abdominal" pInputText
-          [(ngModel)]="formData.pliegue_abdominal">
-      </div>
-
-      <div class="form-group">
-        <label for="pliegue_antemuslo">Pliegue Antemuslo</label>
-        <input type="number" id="pliegue_antemuslo" placeholder="Pliegue Antemuslo" pInputText
-          [(ngModel)]="formData.pliegue_antemuslo">
-      </div>
-
-      <div class="form-group">
-        <label for="pliegue_tricipal">Pliegue Tricipal (mujeres)</label>
-        <input type="number" id="pliegue_tricipal" placeholder="Pliegue Tricipal" pInputText
-          [(ngModel)]="formData.pliegue_tricipal">
-      </div>
-
-      <div class="form-group">
-        <label for="pliegue_iliocrestal">Pliegue Iliocrestal (mujeres)</label>
-        <input type="number" id="pliegue_iliocrestal" placeholder="Pliegue Iliocrestal" pInputText
-          [(ngModel)]="formData.pliegue_iliocrestal">
-      </div>
-
-      <div class="form-group">
-        <label for="fuerza_manoderecha">Fuerza Mano Derecha</label>
-        <input type="number" id="fuerza_manoderecha" placeholder="Fuerza Mano Derecha" pInputText
-          [(ngModel)]="formData.fuerza_manoderecha">
-      </div>
-
-      <div class="form-group">
-        <label for="fuerza_manoizquierda">Fuerza Mano Izquierda</label>
-        <input type="number" id="fuerza_manoizquierda" placeholder="Fuerza Mano Izquierda" pInputText
-          [(ngModel)]="formData.fuerza_manoizquierda">
-      </div>
-
-      <div class="form-group">
-        <label for="equilibrio">Equilibrio</label>
-        <input type="number" id="equilibrio" placeholder="Equilibrio" pInputText [(ngModel)]="formData.equilibrio">
-      </div>
-
-      <div class="form-group">
-        <label for="resistencia_abdominal">Resistencia Abdominal</label>
-        <input type="number" id="resistencia_abdominal" placeholder="Resistencia Abdominal" pInputText
-          [(ngModel)]="formData.resistencia_abdominal">
-      </div>
-
-      <div class="form-group">
-        <label for="fuerza_explosiva_i">Fuerza Explosiva Inicial</label>
-        <input type="number" id="fuerza_explosiva_i" placeholder="Fuerza Explosiva Inicial" pInputText
-          [(ngModel)]="formData.fuerza_explosiva_i">
-      </div>
-
-      <div class="form-group">
-        <label for="fuerza_explosiva_f">Fuerza Explosiva Final</label>
-        <input type="number" id="fuerza_explosiva_f" placeholder="Fuerza Explosiva Final" pInputText
-          [(ngModel)]="formData.fuerza_explosiva_f">
-      </div>
-
-      <div class="form-group">
-        <label for="resistencia_cardiorespiratoria">Resistencia Cardiorespiratoria</label>
-        <input type="number" id="resistencia_cardiorespiratoria" placeholder="Resistencia Cardiorespiratoria" pInputText
-          [(ngModel)]="formData.resistencia_cardiorespiratoria">
-      </div>
-
-      <div class="form-group">
-        <label for="tiempo_resistencia_cardiorespiratoria">Tiempo Resistencia Cardiorespiratoria</label>
-        <input type="number" id="tiempo_resistencia_cardiorespiratoria"
-          placeholder="Tiempo Resistencia Cardiorespiratoria" pInputText
-          [(ngModel)]="formData.tiempo_resistencia_cardiorespiratoria">
-      </div>
-
-      <div class="form-group">
-        <label for="frecuencia_cardiaca">Frecuencia Cardiaca</label>
-        <input type="number" id="frecuencia_cardiaca" placeholder="Frecuencia Cardiaca" pInputText
-          [(ngModel)]="formData.frecuencia_cardiaca">
-      </div>
-
-      <div class="form-group">
-        <label for="volumen_max_oxigeno">Volumen Máximo de Oxígeno</label>
-        <input type="number" id="volumen_max_oxigeno" placeholder="Volumen Máximo de Oxígeno" pInputText
-          [(ngModel)]="formData.volumen_max_oxigeno">
-      </div>
-
-      <div class="form-group">
-        <label for="flexibilidad">Flexibilidad</label>
-        <input type="number" id="flexibilidad" placeholder="Flexibilidad" pInputText
-          [(ngModel)]="formData.flexibilidad">
-      </div>
-
-      <div class="form-group">
-        <label for="caff">CAFF</label>
-        <input type="number" id="caff" placeholder="CAFF" pInputText [(ngModel)]="formData.caff">
-      </div>
-
-      <div class="p-grid p-nogutter p-align-center header-container"></div>
-      <div class="button-container">
-        <button class="btn" (click)="guardarMedicion()" [disabled]="botonesDesactivados">
-          <i *ngIf="!isGuardando" class="pi pi-check"></i>
-          <i *ngIf="isGuardando" class="pi pi-spin pi-spinner"></i>Guardar Cambios
-        </button>
-        <button class="btn" (click)="cerrarMedicion()" [disabled]="botonesDesactivados">
-          <i class="pi pi-times"></i> Cancelar
-        </button>
+      <div class="dialog-header-custom__titles">
+        <span class="dialog-header-custom__tag">Valoración Antropométrica</span>
+        <h2 class="dialog-header-custom__title">{{ tituloModalMedicion }}</h2>
       </div>
     </div>
-  </div>
+  </ng-template>
+
+  <p class="dialog__lede" *ngIf="!soloLectura">
+    Los indicadores se calculan en tiempo real mientras digitas. Solo <strong>altura</strong> y
+    <strong>peso</strong> son indispensables para iniciar el cálculo.
+  </p>
+
+  <!-- Contexto del deportista seleccionado -->
+  <aside class="athlete-identity-ribbon" *ngIf="selectedTrainer" aria-label="Deportista evaluado">
+    <img [src]="getProfileImage(selectedTrainer)" alt="Foto del deportista" class="athlete-identity-ribbon__avatar"
+      (error)="$any($event.target).src='assets/avatars/user.png'">
+    <div class="athlete-identity-ribbon__info">
+      <div class="athlete-identity-ribbon__top">
+        <span class="athlete-identity-ribbon__label">Deportista evaluado</span>
+        <span class="athlete-identity-ribbon__gender-badge" *ngIf="generoConocido">
+          <i class="pi" [ngClass]="generoDeportista === 'Masculino' ? 'pi-user' : 'pi-heart'"></i>
+          {{ generoDeportista }}
+        </span>
+      </div>
+      <h4 class="athlete-identity-ribbon__name">{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h4>
+      <div class="athlete-identity-ribbon__meta">
+        <span class="athlete-identity-ribbon__meta-item" *ngIf="selectedTrainer.username">
+          <i class="pi pi-at"></i>{{ selectedTrainer.username }}
+        </span>
+        <span class="athlete-identity-ribbon__meta-item" *ngIf="edadDeportista">
+          <i class="pi pi-calendar"></i>{{ edadDeportista }} años
+        </span>
+        <span class="athlete-identity-ribbon__meta-item" *ngIf="selectedTrainer.email">
+          <i class="pi pi-envelope"></i>{{ selectedTrainer.email }}
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ---------- Panel de resultados en vivo ---------- -->
+  <section class="tablero" aria-label="Indicadores calculados en tiempo real">
+    <div class="tablero__entrada">
+      <div class="campo">
+        <label for="talla">Altura</label>
+        <div class="campo__control">
+          <input type="number" id="talla" step="0.01" min="0.5" max="2.5" placeholder="1.72" pInputText
+            [readonly]="soloLectura" [(ngModel)]="formData.talla">
+          <span class="campo__sufijo">m</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="peso">Peso</label>
+        <div class="campo__control">
+          <input type="number" id="peso" step="0.1" min="1" max="300" placeholder="68.5" pInputText
+            [readonly]="soloLectura" [(ngModel)]="formData.peso">
+          <span class="campo__sufijo">kg</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tablero__panel" role="status" aria-live="polite">
+      <!-- IMC -->
+      <article class="ind ind--destacado" [class.ind--activo]="imcPrevisto">
+        <p class="ind__label">IMC</p>
+        <p class="ind__valor">{{ imcPrevisto ?? '--' }}</p>
+        <span class="ag-badge" *ngIf="imcPrevisto" [ngClass]="'badge--' + getIMCClass(imcPrevisto)">{{
+          getIMCLabel(imcPrevisto) }}</span>
+        <p class="ind__pista" *ngIf="!imcPrevisto">Altura y peso</p>
+      </article>
+
+      <!-- Grasa corporal -->
+      <article class="ind" [class.ind--activo]="grasaPrevista">
+        <p class="ind__label">Grasa corporal</p>
+        <p class="ind__valor">{{ grasaPrevista ?? '--' }}<small *ngIf="grasaPrevista">%</small></p>
+        <span class="ag-badge" *ngIf="grasaPrevista" [ngClass]="'badge--' + getGrasaClass(grasaPrevista)">{{
+          getGrasaLabel(grasaPrevista) }}</span>
+        <p class="ind__pista" *ngIf="!grasaPrevista">
+          {{ faltaParaGrasa ? 'Falta ' + faltaParaGrasa : 'Altura y peso' }}
+        </p>
+      </article>
+
+      <!-- ICC -->
+      <article class="ind" [class.ind--activo]="iccPrevisto">
+        <p class="ind__label">Cintura-cadera</p>
+        <p class="ind__valor">{{ iccPrevisto ?? '--' }}</p>
+        <span class="ag-badge" *ngIf="iccPrevisto" [ngClass]="'badge--' + getICCClass(iccPrevisto)">Riesgo {{
+          getICCLabel(iccPrevisto) }}</span>
+        <p class="ind__pista" *ngIf="!iccPrevisto">Perímetros</p>
+      </article>
+
+      <!-- Peso saludable -->
+      <article class="ind" [class.ind--activo]="pesoSaludable">
+        <p class="ind__label">Peso saludable</p>
+        <p class="ind__valor ind__valor--rango">{{ pesoSaludable ?? '--' }}</p>
+        <p class="ind__pista">{{ pesoSaludable ? 'kg para su estatura' : 'Requiere altura' }}</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ---------- Perímetros ---------- -->
+  <section class="med-seccion">
+    <header class="med-seccion__head">
+      <i class="pi pi-arrows-h" aria-hidden="true"></i>
+      <h3 class="med-seccion__titulo">Perímetros</h3>
+      <span class="med-chip" *ngIf="indiceCinturaAltura" [class.med-chip--alerta]="icaEnRiesgo">
+        Cintura-altura <strong>{{ indiceCinturaAltura }}</strong>
+        <span *ngIf="icaEnRiesgo">· riesgo elevado</span>
+      </span>
+    </header>
+    <div class="med-grid">
+      <div class="campo">
+        <label for="perimetro_cintura">Cintura</label>
+        <div class="campo__control">
+          <input type="number" id="perimetro_cintura" placeholder="80" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.perimetro_cintura">
+          <span class="campo__sufijo">cm</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="perimetro_cadera">Cadera</label>
+        <div class="campo__control">
+          <input type="number" id="perimetro_cadera" placeholder="95" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.perimetro_cadera">
+          <span class="campo__sufijo">cm</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- Pliegues cutáneos ---------- -->
+  <section class="med-seccion">
+    <header class="med-seccion__head">
+      <i class="pi pi-chart-bar" aria-hidden="true"></i>
+      <h3 class="med-seccion__titulo">Pliegues cutáneos</h3>
+    </header>
+
+    <p class="med-aviso" *ngIf="!generoConocido">
+      <i class="pi pi-info-circle" aria-hidden="true"></i>
+      <span>El deportista no tiene género registrado en su perfil. Se muestran todos los campos.</span>
+    </p>
+
+    <div class="med-grid">
+      <ng-container *ngIf="generoDeportista === 'Masculino' || !generoConocido">
+        <div class="campo">
+          <label for="pliegue_pectoral">Pectoral</label>
+          <div class="campo__control">
+            <input type="number" id="pliegue_pectoral" placeholder="12" pInputText [readonly]="soloLectura"
+              [(ngModel)]="formData.pliegue_pectoral">
+            <span class="campo__sufijo">mm</span>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="pliegue_abdominal">Abdominal</label>
+          <div class="campo__control">
+            <input type="number" id="pliegue_abdominal" placeholder="18" pInputText [readonly]="soloLectura"
+              [(ngModel)]="formData.pliegue_abdominal">
+            <span class="campo__sufijo">mm</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="generoDeportista === 'Femenino' || !generoConocido">
+        <div class="campo">
+          <label for="pliegue_tricipal">Tricipal</label>
+          <div class="campo__control">
+            <input type="number" id="pliegue_tricipal" placeholder="16" pInputText [readonly]="soloLectura"
+              [(ngModel)]="formData.pliegue_tricipal">
+            <span class="campo__sufijo">mm</span>
+          </div>
+        </div>
+        <div class="campo">
+          <label for="pliegue_iliocrestal">Iliocrestal</label>
+          <div class="campo__control">
+            <input type="number" id="pliegue_iliocrestal" placeholder="14" pInputText [readonly]="soloLectura"
+              [(ngModel)]="formData.pliegue_iliocrestal">
+            <span class="campo__sufijo">mm</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="campo">
+        <label for="pliegue_antemuslo">Antemuslo</label>
+        <div class="campo__control">
+          <input type="number" id="pliegue_antemuslo" placeholder="20" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.pliegue_antemuslo">
+          <span class="campo__sufijo">mm</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- Fuerza ---------- -->
+  <section class="med-seccion">
+    <header class="med-seccion__head">
+      <i class="pi pi-bolt" aria-hidden="true"></i>
+      <h3 class="med-seccion__titulo">Fuerza y Dinamometría</h3>
+
+      <span class="med-chip" *ngIf="fuerzaMaximaPrevista">
+        Prensión media <strong>{{ fuerzaMaximaPrevista }} kg</strong>
+      </span>
+      <span class="med-chip" *ngIf="fuerzaRelativa">
+        Relativa <strong>{{ fuerzaRelativa }}</strong>
+      </span>
+      <span class="med-chip" *ngIf="asimetriaFuerza !== null" [class.med-chip--alerta]="asimetriaRelevante">
+        Asimetría <strong>{{ asimetriaFuerza }}%</strong>
+      </span>
+    </header>
+
+    <div class="med-grid">
+      <div class="campo">
+        <label for="fuerza_manoderecha">Mano derecha</label>
+        <div class="campo__control">
+          <input type="number" id="fuerza_manoderecha" placeholder="42" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.fuerza_manoderecha">
+          <span class="campo__sufijo">kg</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="fuerza_manoizquierda">Mano izquierda</label>
+        <div class="campo__control">
+          <input type="number" id="fuerza_manoizquierda" placeholder="40" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.fuerza_manoizquierda">
+          <span class="campo__sufijo">kg</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="resistencia_abdominal">Resistencia abdominal</label>
+        <div class="campo__control">
+          <input type="number" id="resistencia_abdominal" placeholder="35" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.resistencia_abdominal">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="fuerza_explosiva_i">Explosiva inicial</label>
+        <div class="campo__control">
+          <input type="number" id="fuerza_explosiva_i" placeholder="30" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.fuerza_explosiva_i">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="fuerza_explosiva_f">Explosiva final</label>
+        <div class="campo__control">
+          <input type="number" id="fuerza_explosiva_f" placeholder="35" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.fuerza_explosiva_f">
+        </div>
+      </div>
+    </div>
+
+    <p class="med-nota" *ngIf="progresoExplosivo !== null">
+      <i class="pi pi-arrow-up-right" aria-hidden="true" *ngIf="progresoExplosivo > 0"></i>
+      <i class="pi pi-arrow-down-right" aria-hidden="true" *ngIf="progresoExplosivo < 0"></i>
+      <i class="pi pi-minus" aria-hidden="true" *ngIf="progresoExplosivo === 0"></i>
+      Diferencia explosiva: <strong>{{ progresoExplosivo }}</strong>
+    </p>
+  </section>
+
+  <!-- ---------- Capacidad funcional ---------- -->
+  <section class="med-seccion">
+    <header class="med-seccion__head">
+      <i class="pi pi-heart" aria-hidden="true"></i>
+      <h3 class="med-seccion__titulo">Capacidad Funcional</h3>
+    </header>
+    <div class="med-grid">
+      <div class="campo">
+        <label for="frecuencia_cardiaca">Frecuencia cardíaca</label>
+        <div class="campo__control">
+          <input type="number" id="frecuencia_cardiaca" placeholder="68" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.frecuencia_cardiaca">
+          <span class="campo__sufijo">ppm</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="volumen_max_oxigeno">Volumen máx. oxígeno</label>
+        <div class="campo__control">
+          <input type="number" id="volumen_max_oxigeno" placeholder="45" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.volumen_max_oxigeno">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="resistencia_cardiorespiratoria">Resistencia cardio.</label>
+        <div class="campo__control">
+          <input type="number" id="resistencia_cardiorespiratoria" placeholder="Puntuación" pInputText
+            [readonly]="soloLectura" [(ngModel)]="formData.resistencia_cardiorespiratoria">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="tiempo_resistencia_cardiorespiratoria">Tiempo resistencia</label>
+        <div class="campo__control">
+          <input type="number" id="tiempo_resistencia_cardiorespiratoria" placeholder="12" pInputText
+            [readonly]="soloLectura" [(ngModel)]="formData.tiempo_resistencia_cardiorespiratoria">
+          <span class="campo__sufijo">min</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="flexibilidad">Flexibilidad</label>
+        <div class="campo__control">
+          <input type="number" id="flexibilidad" placeholder="15" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.flexibilidad">
+          <span class="campo__sufijo">cm</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label for="equilibrio">Equilibrio</label>
+        <div class="campo__control">
+          <input type="number" id="equilibrio" placeholder="Puntuación" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.equilibrio">
+        </div>
+      </div>
+      <div class="campo">
+        <label for="caff">CAFF</label>
+        <div class="campo__control">
+          <input type="number" id="caff" placeholder="Índice" pInputText [readonly]="soloLectura"
+            [(ngModel)]="formData.caff">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-actions-custom">
+      <button pButton pRipple type="button"
+        class="p-button-outlined p-button-secondary" (click)="cerrarMedicion()"
+        [disabled]="botonesDesactivados">
+        <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>{{ soloLectura ? 'Cerrar' : 'Cancelar' }}</span>
+      </button>
+      <button *ngIf="!soloLectura" pButton pRipple type="button" (click)="guardarMedicion()"
+        [disabled]="botonesDesactivados || !imcPrevisto" class="p-button-primary">
+        <i [class]="isGuardando ? 'pi pi-spin pi-spinner' : 'pi pi-check'" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>{{ esNuevaMedicion ? 'Guardar medición' : 'Guardar cambios' }}</span>
+      </button>
+    </div>
+  </ng-template>
 </p-dialog>
 
 <!-- ALIMENTACIONES -->
-<p-dialog [(visible)]="dialogAlimentacion" [style]="{'width': '80vw'}" [resizable]="false" zindex="1000" [modal]="true"
-  [closable]="true" [showHeader]="false">
-  <ng-template pTemplate="content">
-    <div *ngIf="selectedTrainer">
-      <div class="profile-header">
-        <h2>{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h2>
+<p-dialog [(visible)]="dialogAlimentacion" [modal]="true" [resizable]="false" [draggable]="false"
+  [style]="{ width: '74rem', maxWidth: '96vw' }" styleClass="ag-dialog ag-dialog--trainer ag-dialog--nutrition-list"
+  [breakpoints]="{ '1024px': '95vw', '640px': '98vw' }">
+
+  <ng-template pTemplate="header">
+    <div class="dialog-header-custom">
+      <div class="dialog-header-custom__icon dialog-header-custom__icon--nutrition">
+        <i class="pi pi-heart-fill" aria-hidden="true"></i>
       </div>
-      <div class="alimentacion">
-        <button class="btn-agregar" (click)="abrirFormularioAlimentacion()">
-          <i class="pi pi-plus-circle"></i> Nuevo plan</button>
+      <div>
+        <div class="dialog-header-custom__tag">Prescripción Nutricional</div>
+        <h2 class="dialog-header-custom__title">Planes de alimentación</h2>
       </div>
-
-      <br>
-      <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate" [style]="{ height: '6px' }"> </p-progressBar>
-
-      <table class="styled-table" *ngIf="alimentaciones?.length; else noData">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Calorías Diarias</th>
-            <th>Entrenador</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let alimentacion of alimentaciones">
-            <td>{{ alimentacion.nombre }}</td>
-            <td>{{ alimentacion.calorias_diarias }}</td>
-            <td>{{ alimentacion.entrenador }}</td>
-            <td>
-              <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUnaAlimentacion(alimentacion)"></button>
-              <button pButton icon="pi pi-pencil" class="btn-editar"
-                (click)="abrirFormularioAlimentacion(alimentacion)"></button>
-              <button pButton icon="pi pi-trash" class="btn-eliminar"
-                (click)="eliminarAlimentacion(alimentacion.id)"></button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <!-- Mensaje cuando no hay datos -->
-      <ng-template #noData>
-        <p class="no-data">No hay planes de alimentación disponibles.</p>
-      </ng-template>
-
     </div>
-    <div class="p-grid p-nogutter p-align-center header-container"></div>
-    <div class="button-container">
-      <button class="btn" (click)="cerrarAliemtancion()">
-        <i class="pi pi-times"></i> Cerrar</button>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <div *ngIf="selectedTrainer" class="mediciones-dialog-body">
+
+      <!-- Ficha de identidad del deportista / usuario -->
+      <section class="athlete-identity-card" aria-label="Información del deportista">
+        <div class="athlete-identity-card__profile">
+          <div class="athlete-identity-card__avatar">
+            <p-avatar *ngIf="selectedTrainer.avatar_url" [image]="selectedTrainer.avatar_url" shape="circle"
+              size="xlarge"></p-avatar>
+            <p-avatar *ngIf="!selectedTrainer.avatar_url" shape="circle" size="xlarge"
+              [label]="getInitials(selectedTrainer.first_name, selectedTrainer.last_name, selectedTrainer.username)"></p-avatar>
+          </div>
+          <div class="athlete-identity-card__info">
+            <div class="athlete-identity-card__role">Deportista a cargo</div>
+            <h3 class="athlete-identity-card__name">{{ nombreVisible(selectedTrainer) }}</h3>
+            <p class="athlete-identity-card__handle">@{{ selectedTrainer.username }}</p>
+
+            <div class="athlete-meta-row">
+              <span class="meta-pill" *ngIf="selectedTrainer.gender_name || genero">
+                <i class="pi pi-user" aria-hidden="true"></i> {{ selectedTrainer.gender_name || genero }}
+              </span>
+              <span class="meta-pill" *ngIf="ciudadVisible(selectedTrainer)">
+                <i class="pi pi-map-marker" aria-hidden="true"></i> {{ ciudadVisible(selectedTrainer) }}
+              </span>
+              <span class="meta-pill" *ngIf="edadVisible(selectedTrainer)">
+                <i class="pi pi-id-card" aria-hidden="true"></i> {{ edadVisible(selectedTrainer) }}
+              </span>
+              <span class="meta-pill" *ngIf="selectedTrainer.email">
+                <i class="pi pi-envelope" aria-hidden="true"></i> {{ selectedTrainer.email }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="athlete-identity-card__badges">
+          <span class="ag-badge ag-badge--accent">
+            <i class="pi pi-apple" aria-hidden="true"></i> Nutrición
+          </span>
+          <span class="ag-badge ag-badge--neutral">
+            <i class="pi pi-database" aria-hidden="true"></i> {{ alimentaciones.length }} {{ (alimentaciones.length ===
+            1) ? 'plan' : 'planes' }}
+          </span>
+        </div>
+      </section>
+
+      <!-- Barra de progreso durante carga -->
+      <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate"
+        [style]="{ height: '4px', 'border-radius': '2px' }"></p-progressBar>
+
+      <div *ngIf="!cargandoPdialog" class="mediciones-content">
+
+        <!-- Fichas KPI de los planes nutricionales -->
+        <section *ngIf="alimentaciones?.length" class="mediciones-kpis" aria-label="Resumen de planes nutricionales">
+          <article class="medicion-kpi-card medicion-kpi-card--imc" [class.medicion-kpi-card--active-plan]="planAlimentacionActivo">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">Plan Nutricional Activo</span>
+              <span class="badge-status-pill badge-status-pill--active" *ngIf="planAlimentacionActivo">
+                <i class="pi pi-check-circle"></i> ACTIVO
+              </span>
+              <span class="badge-status-pill badge-status-pill--inactive" *ngIf="!planAlimentacionActivo">
+                Sin Activo
+              </span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val font-truncate" [title]="planAlimentacionActivo?.nombre || 'Ninguno'">
+                {{ planAlimentacionActivo ? planAlimentacionActivo.nombre : 'Ninguno' }}
+              </span>
+            </div>
+            <p class="medicion-kpi-card__footer" *ngIf="planAlimentacionActivo">
+              Objetivo: {{ planAlimentacionActivo.calorias_diarias }} kcal/día
+            </p>
+            <p class="medicion-kpi-card__footer" *ngIf="!planAlimentacionActivo">
+              Activa un plan desde la tabla inferior
+            </p>
+          </article>
+
+          <article class="medicion-kpi-card medicion-kpi-card--icc">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">Calorías Promedio</span>
+              <span class="ag-badge ag-badge--neutral">kcal / día</span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val">{{ promedioCalorias }}<span
+                  class="medicion-kpi-card__unit">kcal</span></span>
+            </div>
+            <p class="medicion-kpi-card__footer">Media de planes prescritos</p>
+          </article>
+
+          <article class="medicion-kpi-card medicion-kpi-card--peso">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">Historial Total</span>
+              <span class="ag-badge ag-badge--neutral">{{ alimentaciones.length }} {{ alimentaciones.length === 1 ? 'plan' : 'planes' }}</span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val">{{ alimentaciones.length }}</span>
+            </div>
+            <p class="medicion-kpi-card__footer">1 activo · {{ alimentaciones.length - (planAlimentacionActivo ? 1 : 0) }} históricos</p>
+          </article>
+        </section>
+
+        <!-- Barra de herramientas de la sección -->
+        <div class="mediciones-toolbar">
+          <div class="mediciones-toolbar__title">
+            <h4>Planes asignados</h4>
+            <span class="ag-badge ag-badge--neutral" *ngIf="alimentaciones?.length">
+              {{ alimentaciones.length }} {{ alimentaciones.length === 1 ? 'plan' : 'planes' }}
+            </span>
+          </div>
+
+          <button pButton pRipple type="button" class="ag-accent btn-add-medicion"
+            (click)="abrirFormularioAlimentacion()">
+            <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+            <span pButtonLabel>Nuevo plan</span>
+          </button>
+        </div>
+
+        <!-- Tabla moderna de planes de alimentación -->
+        <div class="ag-table-wrap" *ngIf="alimentaciones?.length; else noDataAlimentacion">
+          <table class="ag-table mediciones-table-modern">
+            <caption class="ag-visually-hidden">Listado de planes de alimentación</caption>
+            <thead>
+              <tr>
+                <th scope="col"><i class="pi pi-book" aria-hidden="true"></i> Nombre del Plan</th>
+                <th scope="col" class="ag-num"><i class="pi pi-bolt" aria-hidden="true"></i> Calorías Diarias</th>
+                <th scope="col"><i class="pi pi-user" aria-hidden="true"></i> Prescrito por</th>
+                <th scope="col" class="ag-center"><i class="pi pi-info-circle" aria-hidden="true"></i> Estado</th>
+                <th scope="col" class="ag-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let alimentacion of alimentaciones" [class.row-plan-active]="alimentacion.activo">
+                <td data-label="Nombre del Plan">
+                  <div class="plan-name-cell">
+                    <span class="plan-icon plan-icon--nutrition" [class.plan-icon--active]="alimentacion.activo">
+                      <i class="pi pi-apple" aria-hidden="true"></i>
+                    </span>
+                    <div>
+                      <div class="plan-title-row">
+                        <strong>{{ alimentacion.nombre }}</strong>
+                        <span class="badge-active-mini" *ngIf="alimentacion.activo">En vigor</span>
+                      </div>
+                      <p class="plan-desc-preview" *ngIf="alimentacion.descripcion">{{ alimentacion.descripcion }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td data-label="Calorías Diarias" class="ag-num cell-numeric">
+                  <span class="ag-badge ag-badge--calories">
+                    <i class="pi pi-fire" aria-hidden="true"></i> {{ alimentacion.calorias_diarias }} kcal
+                  </span>
+                </td>
+                <td data-label="Prescrito por">
+                  <span class="coach-tag">
+                    <i class="pi pi-check-circle" aria-hidden="true"></i>
+                    {{ alimentacion.entrenador_nombre || nombreUsuarioPorId(alimentacion.entrenador) }}
+                  </span>
+                </td>
+                <td data-label="Estado" class="ag-center">
+                  <span class="badge-status-pill badge-status-pill--active" *ngIf="alimentacion.activo">
+                    <i class="pi pi-check-circle" aria-hidden="true"></i> ACTIVO
+                  </span>
+                  <span class="badge-status-pill badge-status-pill--inactive" *ngIf="!alimentacion.activo">
+                    <i class="pi pi-history" aria-hidden="true"></i> Histórico
+                  </span>
+                </td>
+                <td data-label="Acciones" class="ag-center">
+                  <div class="ag-row-actions ag-row-actions--center">
+                    <button *ngIf="!alimentacion.activo" pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-activate"
+                      aria-label="Activar este plan" pTooltip="Activar este plan (desactivará los demás)" tooltipPosition="top"
+                      (click)="activarPlanAlimentacion(alimentacion)">
+                      <i class="pi pi-power-off" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                    <span *ngIf="alimentacion.activo" class="active-verified-icon" pTooltip="Plan actualmente activo" tooltipPosition="top">
+                      <i class="pi pi-verified"></i>
+                    </span>
+
+                    <button pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-view"
+                      aria-label="Ver detalle del plan" pTooltip="Ver detalle" tooltipPosition="top"
+                      (click)="verUnaAlimentacion(alimentacion)">
+                      <i class="pi pi-eye" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                    <button pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-edit"
+                      aria-label="Editar plan de alimentación" pTooltip="Editar plan" tooltipPosition="top"
+                      (click)="abrirFormularioAlimentacion(alimentacion)">
+                      <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                    <button pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-delete"
+                      aria-label="Eliminar plan de alimentación" pTooltip="Eliminar plan" tooltipPosition="top"
+                      (click)="eliminarAlimentacion(alimentacion.id)">
+                      <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Estado vacío -->
+        <ng-template #noDataAlimentacion>
+          <div class="ag-empty mediciones-empty">
+            <span class="ag-empty__icon"><i class="pi pi-apple" aria-hidden="true"></i></span>
+            <h3 class="ag-empty__title">Sin planes de alimentación</h3>
+            <p class="ag-empty__text">Este usuario aún no tiene ningún plan nutricional registrado. Prescribe uno ahora
+              con el botón superior.</p>
+            <button pButton pRipple type="button" class="ag-accent"
+              (click)="abrirFormularioAlimentacion()">
+              <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Crear primer plan</span>
+            </button>
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer-actions">
+      <button pButton pRipple type="button"
+        class="p-button-outlined p-button-secondary" (click)="cerrarAliemtancion()">
+        <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Cerrar</span>
+      </button>
     </div>
   </ng-template>
 </p-dialog>
 
 <!-- VER UNA ALIMENTACION -->
-<p-dialog [(visible)]="dialogVerAlimentacion" [style]="{'width': '80vw'}" [resizable]="false" zindex="10000"
-  [modal]="true" [closable]="true" [showHeader]="false" class="custom-dialog">
+<p-dialog [(visible)]="dialogVerAlimentacion" [modal]="true" [resizable]="false" [draggable]="false"
+  [style]="{ width: '56rem', maxWidth: '94vw' }" styleClass="ag-dialog ag-dialog--detail"
+  [breakpoints]="{ '1024px': '94vw', '640px': '98vw' }">
 
-  <ng-template pTemplate="content">
-    <div *ngIf="selectedAlimentacion">
-      <div class="profile-header">
-        <div class="header-bg"></div>
-        <h2>{{ selectedAlimentacion.nombre }}</h2>
+  <ng-template pTemplate="header">
+    <div class="dialog-header-custom">
+      <div class="dialog-header-custom__icon dialog-header-custom__icon--nutrition">
+        <i class="pi pi-heart-fill" aria-hidden="true"></i>
       </div>
-
-      <div class="content">
-        <div class="info-item">
-          <span class="label">Calorías Diarias:</span>
-          <span class="value">{{ selectedAlimentacion.calorias_diarias }}</span>
-        </div>
-
-        <div class="info-item">
-          <span class="label">Entrenador:</span>
-          <span class="value">{{ selectedAlimentacion.entrenador }}</span>
-        </div>
-
-        <div class="info-item">
-          <span class="label">Usuario:</span>
-          <span class="value">{{ selectedAlimentacion.usuario }}</span>
-        </div>
-
-        <div class="info-item descripcion">
-          <span class="label">Descripción:</span>
-          <div class="value descripcion-text">
-            {{ selectedAlimentacion.descripcion }}
-          </div>
-        </div>
+      <div>
+        <div class="dialog-header-custom__tag">Detalle del Plan Nutricional</div>
+        <h2 class="dialog-header-custom__title">{{ selectedAlimentacion?.nombre }}</h2>
       </div>
-    </div>
-
-    <div class="button-container">
-      <button class="btn" (click)="cerrarVerAliemtancion()">
-        <i class="pi pi-times"></i> Cerrar
-      </button>
     </div>
   </ng-template>
 
+  <ng-template pTemplate="content">
+    <div *ngIf="selectedAlimentacion" class="plan-detail-container">
+      <div class="plan-detail-grid">
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-fire" aria-hidden="true"></i> Calorías Diarias</span>
+          <span class="plan-detail-card__value">{{ selectedAlimentacion.calorias_diarias }} <small>kcal</small></span>
+        </div>
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-user" aria-hidden="true"></i> Entrenador</span>
+          <span class="plan-detail-card__value">{{ selectedAlimentacion.entrenador }}</span>
+        </div>
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-id-card" aria-hidden="true"></i> Deportista</span>
+          <span class="plan-detail-card__value">{{ selectedAlimentacion.usuario }}</span>
+        </div>
+      </div>
+
+      <div class="plan-detail-description" *ngIf="selectedAlimentacion.descripcion">
+        <h4><i class="pi pi-align-left" aria-hidden="true"></i> Descripción e instrucciones</h4>
+        <div class="plan-detail-description__body">
+          {{ selectedAlimentacion.descripcion }}
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer-actions">
+      <button pButton pRipple type="button"
+        class="p-button-outlined p-button-secondary" (click)="cerrarVerAliemtancion()">
+        <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Cerrar</span>
+      </button>
+    </div>
+  </ng-template>
 </p-dialog>
 
 <!-- EDITAR Y CREAR ALIMENTACION -->
-<p-dialog [(visible)]="dialogFormularioAlimentacion" [style]="{'width': '80vw'}" [modal]="true" [closable]="true"
-  [showHeader]="false">
+<p-dialog [(visible)]="dialogFormularioAlimentacion" header="Plan de alimentacion" [modal]="true" [resizable]="false"
+  [draggable]="false" [style]="{ width: '64rem' }" styleClass="ag-dialog ag-dialog--form ag-dialog--nutrition"
+  [breakpoints]="{ '1024px': '94vw' }">
   <div class="p-grid p-fluid">
     <div class="form-container">
       <div class="form-group">
@@ -401,16 +1140,16 @@
 
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
+        <p-select id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
           placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
-        </p-dropdown>
+        </p-select>
       </div>
 
       <br>
 
       <div class="form-group">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
+        <textarea id="descripcion" placeholder="Ingrese la descripción" pTextarea
           [(ngModel)]="formAlimentacion.descripcion" rows="4" class="descripcion-textarea"></textarea>
       </div>
     </div>
@@ -432,149 +1171,449 @@
 </p-dialog>
 
 <!-- ENTRENAMIENTOS -->
-<p-dialog [(visible)]="dialogEntrenamiento" [style]="{'width': '100%', 'max-width': '80%'}" [modal]="true"
-  [closable]="true" [showHeader]="false" [resizable]="false" zindex="10000">
-  <ng-template pTemplate="content">
-    <div *ngIf="selectedTrainer">
-      <div class="profile-header">
-        <h2>{{ selectedTrainer.first_name }} {{ selectedTrainer.last_name }}</h2>
+<p-dialog [(visible)]="dialogEntrenamiento" [modal]="true" [resizable]="false" [draggable]="false"
+  [style]="{ width: '74rem', maxWidth: '96vw' }" styleClass="ag-dialog ag-dialog--trainer ag-dialog--workout-list"
+  [breakpoints]="{ '1024px': '95vw', '640px': '98vw' }">
+
+  <ng-template pTemplate="header">
+    <div class="dialog-header-custom">
+      <div class="dialog-header-custom__icon dialog-header-custom__icon--workout">
+        <i class="pi pi-bolt" aria-hidden="true"></i>
       </div>
+      <div>
+        <div class="dialog-header-custom__tag">Prescripción Física</div>
+        <h2 class="dialog-header-custom__title">Planes de entrenamiento</h2>
+      </div>
+    </div>
+  </ng-template>
 
-      <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate" [style]="{ height: '6px' }"> </p-progressBar>
+  <ng-template pTemplate="content">
+    <div *ngIf="selectedTrainer" class="mediciones-dialog-body">
 
-      <div *ngIf="!cargandoPdialog">
-        <div class="alimentacion">
-          <button class="btn-agregar" (click)="abrirFormularioEntrenamiento()">
-            <i class="pi pi-plus-circle"></i> Nuevo plan
+      <!-- Ficha de identidad del deportista / usuario -->
+      <section class="athlete-identity-card" aria-label="Información del deportista">
+        <div class="athlete-identity-card__profile">
+          <div class="athlete-identity-card__avatar">
+            <p-avatar *ngIf="selectedTrainer.avatar_url" [image]="selectedTrainer.avatar_url" shape="circle"
+              size="xlarge"></p-avatar>
+            <p-avatar *ngIf="!selectedTrainer.avatar_url" shape="circle" size="xlarge"
+              [label]="getInitials(selectedTrainer.first_name, selectedTrainer.last_name, selectedTrainer.username)"></p-avatar>
+          </div>
+          <div class="athlete-identity-card__info">
+            <div class="athlete-identity-card__role">Deportista a cargo</div>
+            <h3 class="athlete-identity-card__name">{{ nombreVisible(selectedTrainer) }}</h3>
+            <p class="athlete-identity-card__handle">@{{ selectedTrainer.username }}</p>
+
+            <div class="athlete-meta-row">
+              <span class="meta-pill" *ngIf="selectedTrainer.gender_name || genero">
+                <i class="pi pi-user" aria-hidden="true"></i> {{ selectedTrainer.gender_name || genero }}
+              </span>
+              <span class="meta-pill" *ngIf="ciudadVisible(selectedTrainer)">
+                <i class="pi pi-map-marker" aria-hidden="true"></i> {{ ciudadVisible(selectedTrainer) }}
+              </span>
+              <span class="meta-pill" *ngIf="edadVisible(selectedTrainer)">
+                <i class="pi pi-id-card" aria-hidden="true"></i> {{ edadVisible(selectedTrainer) }}
+              </span>
+              <span class="meta-pill" *ngIf="selectedTrainer.email">
+                <i class="pi pi-envelope" aria-hidden="true"></i> {{ selectedTrainer.email }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="athlete-identity-card__badges">
+          <span class="ag-badge ag-badge--accent">
+            <i class="pi pi-bolt" aria-hidden="true"></i> Rutinas
+          </span>
+          <span class="ag-badge ag-badge--neutral">
+            <i class="pi pi-database" aria-hidden="true"></i> {{ entrenamientos.length }} {{ (entrenamientos.length ===
+            1) ? 'plan' : 'planes' }}
+          </span>
+        </div>
+      </section>
+
+      <!-- Barra de progreso durante carga -->
+      <p-progressBar *ngIf="cargandoPdialog" mode="indeterminate"
+        [style]="{ height: '4px', 'border-radius': '2px' }"></p-progressBar>
+
+      <div *ngIf="!cargandoPdialog" class="mediciones-content">
+
+        <!-- Fichas KPI de los planes de entrenamiento -->
+        <section *ngIf="entrenamientos?.length" class="mediciones-kpis" aria-label="Resumen de planes de entrenamiento">
+          <article class="medicion-kpi-card medicion-kpi-card--imc" [class.medicion-kpi-card--active-plan]="planEntrenamientoActivo">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">Plan de Entrenamiento Activo</span>
+              <span class="badge-status-pill badge-status-pill--active" *ngIf="planEntrenamientoActivo">
+                <i class="pi pi-check-circle"></i> ACTIVO
+              </span>
+              <span class="badge-status-pill badge-status-pill--inactive" *ngIf="!planEntrenamientoActivo">
+                Sin Activo
+              </span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val font-truncate" [title]="planEntrenamientoActivo?.nombre || 'Ninguno'">
+                {{ planEntrenamientoActivo ? planEntrenamientoActivo.nombre : 'Ninguno' }}
+              </span>
+            </div>
+            <p class="medicion-kpi-card__footer" *ngIf="planEntrenamientoActivo">
+              {{ planEntrenamientoActivo.duracion_semanas }} sem · {{ planEntrenamientoActivo.entrenador_nombre || nombreUsuarioPorId(planEntrenamientoActivo.entrenador) }}
+            </p>
+            <p class="medicion-kpi-card__footer" *ngIf="!planEntrenamientoActivo">
+              Activa un plan desde la tabla inferior
+            </p>
+          </article>
+
+          <article class="medicion-kpi-card medicion-kpi-card--icc">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">Volumen Total</span>
+              <span class="ag-badge ag-badge--neutral">Semanas</span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val">{{ totalSemanasEntrenamiento }}<span
+                  class="medicion-kpi-card__unit">sem</span></span>
+            </div>
+            <p class="medicion-kpi-card__footer">Duración acumulada de programas</p>
+          </article>
+
+          <article class="medicion-kpi-card medicion-kpi-card--peso">
+            <div class="medicion-kpi-card__header">
+              <span class="medicion-kpi-card__label">Historial Total</span>
+              <span class="ag-badge ag-badge--neutral">{{ entrenamientos.length }} {{ entrenamientos.length === 1 ? 'plan' : 'planes' }}</span>
+            </div>
+            <div class="medicion-kpi-card__main">
+              <span class="medicion-kpi-card__val">{{ entrenamientos.length }}</span>
+            </div>
+            <p class="medicion-kpi-card__footer">1 activo · {{ entrenamientos.length - (planEntrenamientoActivo ? 1 : 0) }} históricos</p>
+          </article>
+        </section>
+
+        <!-- Barra de herramientas de la sección -->
+        <div class="mediciones-toolbar">
+          <div class="mediciones-toolbar__title">
+            <h4>Rutinas asignadas</h4>
+            <span class="ag-badge ag-badge--neutral" *ngIf="entrenamientos?.length">
+              {{ entrenamientos.length }} {{ entrenamientos.length === 1 ? 'plan' : 'planes' }}
+            </span>
+          </div>
+
+          <button pButton pRipple type="button" class="ag-accent btn-add-medicion"
+            (click)="abrirFormularioEntrenamiento()">
+            <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+            <span pButtonLabel>Nuevo plan</span>
           </button>
         </div>
 
-        <br>
-
-        <div class="table-responsive">
-          <table class="styled-table" *ngIf="entrenamientos?.length; else noData">
+        <!-- Tabla moderna de planes de entrenamiento -->
+        <div class="ag-table-wrap" *ngIf="entrenamientos?.length; else noDataEntrenamiento">
+          <table class="ag-table mediciones-table-modern">
+            <caption class="ag-visually-hidden">Listado de planes de entrenamiento</caption>
             <thead>
               <tr>
-                <th>Nombre</th>
-                <th>Duración</th>
-                <th>Entrenador</th>
-                <th>Acciones</th>
+                <th scope="col"><i class="pi pi-book" aria-hidden="true"></i> Nombre del Plan</th>
+                <th scope="col" class="ag-num"><i class="pi pi-clock" aria-hidden="true"></i> Duración</th>
+                <th scope="col"><i class="pi pi-user" aria-hidden="true"></i> Prescrito por</th>
+                <th scope="col" class="ag-center"><i class="pi pi-info-circle" aria-hidden="true"></i> Estado</th>
+                <th scope="col" class="ag-center">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let entrenamiento of entrenamientos">
-                <td>{{ entrenamiento.nombre }}</td>
-                <td>{{ entrenamiento.duracion_semanas }} semanas</td>
-                <td>{{ entrenamiento.entrenador }}</td>
-                <td class="action-btns">
-                  <button pButton icon="pi pi-eye" class="btn-ver" (click)="verUnEntrenamiento(entrenamiento)"></button>
-                  <button pButton icon="pi pi-pencil" class="btn-editar"
-                    (click)="abrirFormularioEntrenamiento(entrenamiento)"></button>
-                  <button pButton icon="pi pi-trash" class="btn-eliminar"
-                    (click)="eliminarEntrenamiento(entrenamiento.id)"></button>
+              <tr *ngFor="let entrenamiento of entrenamientos" [class.row-plan-active]="entrenamiento.activo">
+                <td data-label="Nombre del Plan">
+                  <div class="plan-name-cell">
+                    <span class="plan-icon plan-icon--workout" [class.plan-icon--active]="entrenamiento.activo">
+                      <i class="pi pi-bolt" aria-hidden="true"></i>
+                    </span>
+                    <div>
+                      <div class="plan-title-row">
+                        <strong>{{ entrenamiento.nombre }}</strong>
+                        <span class="badge-active-mini" *ngIf="entrenamiento.activo">En vigor</span>
+                      </div>
+                      <p class="plan-desc-preview" *ngIf="entrenamiento.descripcion">{{ entrenamiento.descripcion }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td data-label="Duración" class="ag-num cell-numeric">
+                  <span class="ag-badge ag-badge--duration">
+                    <i class="pi pi-calendar" aria-hidden="true"></i> {{ entrenamiento.duracion_semanas }} semanas
+                  </span>
+                </td>
+                <td data-label="Prescrito por">
+                  <span class="coach-tag">
+                    <i class="pi pi-check-circle" aria-hidden="true"></i>
+                    {{ entrenamiento.entrenador_nombre || nombreUsuarioPorId(entrenamiento.entrenador) }}
+                  </span>
+                </td>
+                <td data-label="Estado" class="ag-center">
+                  <span class="badge-status-pill badge-status-pill--active" *ngIf="entrenamiento.activo">
+                    <i class="pi pi-check-circle" aria-hidden="true"></i> ACTIVO
+                  </span>
+                  <span class="badge-status-pill badge-status-pill--inactive" *ngIf="!entrenamiento.activo">
+                    <i class="pi pi-history" aria-hidden="true"></i> Histórico
+                  </span>
+                </td>
+                <td data-label="Acciones" class="ag-center">
+                  <div class="ag-row-actions ag-row-actions--center">
+                    <button *ngIf="!entrenamiento.activo" pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-activate"
+                      aria-label="Activar este plan" pTooltip="Activar este plan (desactivará los demás)" tooltipPosition="top"
+                      (click)="activarPlanEntrenamiento(entrenamiento)">
+                      <i class="pi pi-power-off" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                    <span *ngIf="entrenamiento.activo" class="active-verified-icon" pTooltip="Plan actualmente activo" tooltipPosition="top">
+                      <i class="pi pi-verified"></i>
+                    </span>
+
+                    <button pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-view"
+                      aria-label="Ver detalle de rutina" pTooltip="Ver detalle" tooltipPosition="top"
+                      (click)="verUnEntrenamiento(entrenamiento)">
+                      <i class="pi pi-eye" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                    <button pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-edit"
+                      aria-label="Editar plan de entrenamiento" pTooltip="Editar plan" tooltipPosition="top"
+                      (click)="abrirFormularioEntrenamiento(entrenamiento)">
+                      <i class="pi pi-pencil" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                    <button pButton pRipple type="button"
+                      class="p-button-text p-button-rounded p-button-sm btn-action-delete"
+                      aria-label="Eliminar plan de entrenamiento" pTooltip="Eliminar plan" tooltipPosition="top"
+                      (click)="eliminarEntrenamiento(entrenamiento.id)">
+                      <i class="pi pi-trash" pButtonIcon aria-hidden="true"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <ng-template #noData>
-          <p class="no-data">No hay planes de entrenamiento disponibles.</p>
+        <!-- Estado vacío -->
+        <ng-template #noDataEntrenamiento>
+          <div class="ag-empty mediciones-empty">
+            <span class="ag-empty__icon"><i class="pi pi-bolt" aria-hidden="true"></i></span>
+            <h3 class="ag-empty__title">Sin planes de entrenamiento</h3>
+            <p class="ag-empty__text">Este usuario aún no tiene ninguna rutina de entrenamiento asignada. Diseña una
+              ahora con el botón superior.</p>
+            <button pButton pRipple type="button" class="ag-accent"
+              (click)="abrirFormularioEntrenamiento()">
+              <i class="pi pi-plus" pButtonIcon aria-hidden="true"></i>
+              <span pButtonLabel>Crear primera rutina</span>
+            </button>
+          </div>
         </ng-template>
 
-        <div class="button-container mt-4 text-right">
-          <button class="btn" (click)="cerrarEntrenamiento()">
-            <i class="pi pi-times"></i> Cerrar
-          </button>
-        </div>
       </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer-actions">
+      <button pButton pRipple type="button"
+        class="p-button-outlined p-button-secondary" (click)="cerrarEntrenamiento()">
+        <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Cerrar</span>
+      </button>
     </div>
   </ng-template>
 </p-dialog>
 
 <!-- VER UN ENTRENAMIENTO -->
-<p-dialog [(visible)]="dialogVerEntrenamiento" [style]="{ 'width': '90vw' }" [resizable]="false" zindex="10000"
-  [modal]="true" [closable]="true" [showHeader]="false" class="custom-dialog">
+<p-dialog [(visible)]="dialogVerEntrenamiento" [modal]="true" [resizable]="false" [draggable]="false"
+  [style]="{ width: '76rem', maxWidth: '96vw' }" styleClass="ag-dialog ag-dialog--detail ag-dialog--workout-detail"
+  [breakpoints]="{ '1024px': '95vw', '640px': '98vw' }">
+
+  <ng-template pTemplate="header">
+    <div class="dialog-header-custom">
+      <div class="dialog-header-custom__icon dialog-header-custom__icon--workout">
+        <i class="pi pi-bolt" aria-hidden="true"></i>
+      </div>
+      <div class="dialog-header-custom__title-wrap">
+        <div class="dialog-header-custom__tag">Prescripción Física · Plan de Entrenamiento</div>
+        <div class="dialog-header-custom__heading">
+          <h2 class="dialog-header-custom__title">{{ selectedEntrenamiento?.nombre }}</h2>
+          <span class="badge-status-pill badge-status-pill--active" *ngIf="selectedEntrenamiento?.activo">
+            <i class="pi pi-check-circle"></i> PLAN ACTIVO
+          </span>
+          <span class="badge-status-pill badge-status-pill--inactive" *ngIf="selectedEntrenamiento && !selectedEntrenamiento?.activo">
+            <i class="pi pi-history"></i> Histórico
+          </span>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
   <ng-template pTemplate="content">
-    <div *ngIf="selectedEntrenamiento">
-      <div class="profile-header">
-        <div class="header-bg"></div>
-        <h2>{{ selectedEntrenamiento.nombre }}</h2>
-      </div>
-
-      <div class="content">
-        <div class="info-item">
-          <span class="label">Duración (semanas):</span>
-          <span class="value">{{ selectedEntrenamiento.duracion_semanas }}</span>
+    <div *ngIf="selectedEntrenamiento" class="plan-detail-container">
+      
+      <!-- Fichas de metadata del plan -->
+      <div class="plan-detail-grid">
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-calendar" aria-hidden="true"></i> Duración</span>
+          <span class="plan-detail-card__value">{{ selectedEntrenamiento.duracion_semanas }} <small>semanas</small></span>
         </div>
-
-        <div class="info-item">
-          <span class="label">Entrenador:</span>
-          <span class="value">{{ selectedEntrenamiento.entrenador }}</span>
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-info-circle" aria-hidden="true"></i> Estado del Plan</span>
+          <span class="plan-detail-card__value plan-detail-card__value--status" [class.plan-detail-card__value--active]="selectedEntrenamiento.activo">
+            <i [class]="selectedEntrenamiento.activo ? 'pi pi-check-circle' : 'pi pi-history'"></i>
+            {{ selectedEntrenamiento.activo ? 'Vigente / Activo' : 'Histórico' }}
+          </span>
         </div>
-
-        <div class="info-item">
-          <span class="label">Usuario:</span>
-          <span class="value">{{ selectedEntrenamiento.usuario }}</span>
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-user" aria-hidden="true"></i> Entrenador</span>
+          <span class="plan-detail-card__value">{{ selectedEntrenamiento.entrenador }}</span>
         </div>
-
-        <div class="info-item descripcion">
-          <span class="label">Descripción:</span>
-          <div class="value descripcion-text">
-            {{ selectedEntrenamiento.descripcion }}
-          </div>
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-id-card" aria-hidden="true"></i> Deportista</span>
+          <span class="plan-detail-card__value">{{ selectedEntrenamiento.usuario }}</span>
         </div>
       </div>
 
-      <!-- Resumen por día -->
-      <div class="resumen-dias" *ngIf="selectedEntrenamiento?.semanas?.length">
-        <div class="dia-resumen" *ngFor="let dia of diasSemana">
-          <h3>{{ dia }}</h3>
-
-          <ng-container *ngFor="let semana of selectedEntrenamiento.semanas">
-            <div class="semana-dia" *ngFor="let ejercicio of semana.ejercicios">
-              <ng-container *ngIf="ejercicio.dias[diasSemana.indexOf(dia)]">
-                <div class="ejercicio-dia-card">
-                  <h4>{{ ejercicio.tipo }}</h4>
-
-                  <ul *ngIf="ejercicio.sugerencias?.[dia] && ejercicio.sugerencias[dia].length">
-                    <li *ngFor="let sug of ejercicio.sugerencias[dia]">
-                      <ng-container *ngIf="sug.nombre && sug.descripcion">
-                        <strong>{{ sug.nombre }}:</strong> {{ sug.descripcion }}
-                      </ng-container>
-                      <ng-container *ngIf="!sug.nombre">
-                        {{ sug }}
-                      </ng-container>
-                    </li>
-                  </ul>
-
-                  <p *ngIf="!ejercicio.sugerencias?.[dia]?.length" class="no-sugerencias">
-                    Sin sugerencias disponibles
-                  </p>
-                </div>
-              </ng-container>
-            </div>
-          </ng-container>
-
-          <p *ngIf="!hasEjerciciosParaDia(dia)" class="no-ejercicios">
-            No hay ejercicios asignados para este día.
-          </p>
+      <!-- Descripción si existe -->
+      <div class="plan-detail-description" *ngIf="selectedEntrenamiento.descripcion">
+        <h4><i class="pi pi-align-left" aria-hidden="true"></i> Indicaciones del programa</h4>
+        <div class="plan-detail-description__body">
+          {{ selectedEntrenamiento.descripcion }}
         </div>
       </div>
 
-      <div class="button-container mt-4 text-right">
-        <button class="btn" (click)="cerrarVerEntrenamiento()">
-          <i class="pi pi-times"></i> Cerrar
+      <!-- Selector de Semana (si dura más de 1 semana) -->
+      <div class="workout-week-nav" *ngIf="getSemanasDetalle().length > 1">
+        <span class="workout-week-nav__label"><i class="pi pi-sliders-h"></i> Semana:</span>
+        <div class="workout-week-nav__tabs">
+          <button *ngFor="let sem of getSemanasDetalle(); let idx = index"
+            type="button" class="week-tab-btn"
+            [class.week-tab-btn--active]="selectedSemanaIndex === idx"
+            (click)="seleccionarSemana(idx)">
+            Semana {{ sem.numero || (idx + 1) }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Navegación de días estilo Athletic Chips -->
+      <div class="workout-days-nav" *ngIf="selectedEntrenamiento?.semanas?.length">
+        <button type="button" class="day-tab-btn"
+          [class.day-tab-btn--active]="selectedDiaDetalle === 'TODOS'"
+          (click)="seleccionarDia('TODOS')">
+          <i class="pi pi-th-large" aria-hidden="true"></i> Toda la semana
+        </button>
+        <button *ngFor="let dia of diasSemana" type="button" class="day-tab-btn"
+          [class.day-tab-btn--active]="selectedDiaDetalle === dia"
+          [class.day-tab-btn--has-workout]="hasEjerciciosParaDia(dia)"
+          (click)="seleccionarDia(dia)">
+          <span class="day-tab-btn__name">{{ dia }}</span>
+          <span class="day-tab-btn__badge" *ngIf="hasEjerciciosParaDia(dia)">{{ getTotalEjerciciosDia(dia) }}</span>
+          <span class="day-tab-btn__rest" *ngIf="!hasEjerciciosParaDia(dia)">Descanso</span>
         </button>
       </div>
+
+      <!-- Rutinas programadas por día (sin cajas vacías) -->
+      <div class="workout-routine-schedule" *ngIf="selectedEntrenamiento?.semanas?.length; else noSemanasTpl">
+        <ng-container *ngFor="let dia of diasSemana">
+          <section *ngIf="selectedDiaDetalle === 'TODOS' || selectedDiaDetalle === dia"
+            class="day-routine-block" [class.day-routine-block--active-day]="hasEjerciciosParaDia(dia)">
+
+            <!-- Cabecera del día -->
+            <header class="day-routine-block__header">
+              <div class="day-routine-block__title-wrap">
+                <span class="day-routine-block__icon" [class.day-routine-block__icon--rest]="!hasEjerciciosParaDia(dia)">
+                  <i [class]="hasEjerciciosParaDia(dia) ? 'pi pi-bolt' : 'pi pi-sun'"></i>
+                </span>
+                <div>
+                  <h3 class="day-routine-block__title">{{ dia }}</h3>
+                  <p class="day-routine-block__subtitle" *ngIf="hasEjerciciosParaDia(dia)">
+                    Sesión de entrenamiento programada
+                  </p>
+                  <p class="day-routine-block__subtitle" *ngIf="!hasEjerciciosParaDia(dia)">
+                    Día de recuperación muscular
+                  </p>
+                </div>
+              </div>
+
+              <div class="day-routine-block__badge-wrap">
+                <span class="ag-badge ag-badge--accent" *ngIf="hasEjerciciosParaDia(dia)">
+                  {{ getTotalEjerciciosDia(dia) }} {{ getTotalEjerciciosDia(dia) === 1 ? 'categoría' : 'categorías' }}
+                </span>
+                <span class="ag-badge ag-badge--neutral" *ngIf="!hasEjerciciosParaDia(dia)">
+                  Descanso
+                </span>
+              </div>
+            </header>
+
+            <!-- Contenido si tiene ejercicios -->
+            <div class="day-routine-block__content" *ngIf="hasEjerciciosParaDia(dia)">
+              <div class="exercise-categories-list">
+                <article class="exercise-category-card" *ngFor="let ejercicio of getEjerciciosParaDia(dia)">
+                  <header class="exercise-category-card__header">
+                    <span class="exercise-category-badge" [ngClass]="getTipoEjercicioBadgeClass(ejercicio.tipo)">
+                      <i [ngClass]="getTipoEjercicioIcon(ejercicio.tipo)"></i>
+                      {{ ejercicio.tipo }}
+                    </span>
+                  </header>
+
+                  <div class="exercise-items-grid" *ngIf="getSugerenciasList(ejercicio, dia).length; else sinSugerenciasTpl">
+                    <div class="exercise-item-card" *ngFor="let sug of getSugerenciasList(ejercicio, dia); let i = index">
+                      <div class="exercise-item-card__index">{{ i + 1 }}</div>
+                      <div class="exercise-item-card__body">
+                        <h4 class="exercise-item-card__title" *ngIf="sug.nombre">{{ sug.nombre }}</h4>
+                        <p class="exercise-item-card__desc">{{ sug.descripcion }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ng-template #sinSugerenciasTpl>
+                    <div class="exercise-item-card exercise-item-card--empty">
+                      <p class="exercise-item-card__desc">Sesión prescrita para {{ ejercicio.tipo }}.</p>
+                    </div>
+                  </ng-template>
+                </article>
+              </div>
+            </div>
+
+            <!-- Contenido si es día de descanso -->
+            <div class="day-routine-block__rest" *ngIf="!hasEjerciciosParaDia(dia)">
+              <div class="rest-card">
+                <div class="rest-card__illustration">
+                  <i class="pi pi-heart-fill"></i>
+                </div>
+                <div class="rest-card__info">
+                  <h4>Día libre de entrenamiento</h4>
+                  <p>No se han asignado rutinas para este día. El descanso es parte fundamental de la progresión y recuperación física del deportista.</p>
+                </div>
+              </div>
+            </div>
+
+          </section>
+        </ng-container>
+      </div>
+
+      <ng-template #noSemanasTpl>
+        <div class="ag-empty mediciones-empty">
+          <span class="ag-empty__icon"><i class="pi pi-calendar-times"></i></span>
+          <h3 class="ag-empty__title">Sin ejercicios configurados</h3>
+          <p class="ag-empty__text">Este plan aún no cuenta con ejercicios o días configurados en sus semanas.</p>
+        </div>
+      </ng-template>
+
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer-actions">
+      <button pButton pRipple type="button"
+        class="p-button-outlined p-button-secondary" (click)="cerrarVerEntrenamiento()">
+        <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Cerrar</span>
+      </button>
     </div>
   </ng-template>
 </p-dialog>
 
 
 <!-- EDITAR Y CREAR ENTRENAMIENTO -->
-<p-dialog [(visible)]="dialogFormularioEntrenamiento" [style]="{'width': '90vw'}" [modal]="true" [closable]="true"
-  [showHeader]="false">
+<p-dialog [(visible)]="dialogFormularioEntrenamiento" header="Plan de entrenamiento" [modal]="true" [resizable]="false"
+  [draggable]="false" [style]="{ width: '76rem' }" styleClass="ag-dialog ag-dialog--form ag-dialog--workout"
+  [breakpoints]="{ '1024px': '94vw' }">
   <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
     <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
     <p class="loading-text">Guardando entrenamiento...</p>
@@ -594,16 +1633,16 @@
 
       <div class="form-group">
         <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
+        <p-select id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
           placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
-        </p-dropdown>
+        </p-select>
       </div>
 
       <br>
 
       <div class="form-group">
         <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
+        <textarea id="descripcion" placeholder="Ingrese la descripción" pTextarea
           [(ngModel)]="formEntrenamiento.descripcion" rows="4" class="descripcion-textarea"></textarea>
       </div>
     </div>
@@ -613,17 +1652,17 @@
       <div class="semana-container" *ngFor="let semana of formEntrenamiento.semanas">
         <h4>SEMANA {{ semana.numero }}</h4>
         <div class="table-responsive">
-          <table class="p-datatable p-component" style="width: 100%; border-collapse: collapse;">
+          <table class="matriz-ejercicios">
             <thead>
               <tr>
-                <th style="padding: 8px; background: #f4f4f4;">TIPO DE EJERCICIO</th>
-                <th *ngFor="let dia of diasSemana" style="padding: 8px; background: #f4f4f4;">{{ dia }}</th>
+                <th scope="col">Tipo de ejercicio</th>
+                <th *ngFor="let dia of diasSemana" scope="col">{{ dia }}</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let ejercicio of semana.ejercicios; let i = index">
-                <td style="padding: 6px;">{{ ejercicio.tipo }}</td>
-                <td *ngFor="let dia of diasSemana; let j = index" style="text-align: center;">
+                <th scope="row">{{ ejercicio.tipo }}</th>
+                <td *ngFor="let dia of diasSemana; let j = index" class="matriz-ejercicios__celda">
                   <input type="checkbox" [(ngModel)]="semana.ejercicios[i].dias[j]"
                     (change)="onCheckboxChange(semana.ejercicios[i], dia, semana.ejercicios[i].dias[j])"
                     [name]="'checkbox-' + i + '-' + j" />
@@ -637,220 +1676,564 @@
   </div>
 
   <div class="p-dialog-footer">
-    <button pButton label="Cancelar" icon="pi pi-times" class="p-button-text"
-      (click)="cerrarDialogoEntrenamiento()"></button>
-    <button pButton label="Guardar" icon="pi pi-check" class="p-button-primary"
-      (click)="guardarEntrenamiento()"></button>
+    <button pButton class="p-button-text"
+      (click)="cerrarDialogoEntrenamiento()">
+      <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+      <span pButtonLabel>Cancelar</span>
+    </button>
+    <button pButton class="p-button-primary"
+      (click)="guardarEntrenamiento()">
+      <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+      <span pButtonLabel>Guardar</span>
+    </button>
   </div>
 </p-dialog>
 
 
-<!-- CREAR ENTRENAMIENTO POR REGION -->
-<p-dialog [(visible)]="dialogEntrenamientoRegion" [style]="{'width': '95vw'}" [resizable]="false" zindex="1000"
-  [modal]="true" [closable]="true" [showHeader]="false">
+<!-- ==========================================================================
+     MODAL: ENTRENAMIENTO POR REGION
+     ========================================================================== -->
+<p-dialog [(visible)]="dialogEntrenamientoRegion" [modal]="true" [resizable]="false"
+  [draggable]="false" [style]="{ width: '80rem', maxWidth: '96vw' }"
+  styleClass="ag-dialog ag-dialog--regional"
+  [breakpoints]="{ '1024px': '95vw', '640px': '98vw' }"
+  [closable]="!guardandoMasivo">
 
-  <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
-    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
-    <p class="loading-text">Guardando entrenamiento...</p>
-  </div>
-
-  <div class="contenedor">
-    <div class="filtro-compacto">
-      <p-progressBar *ngIf="cargandoCiudades" mode="indeterminate">
-      </p-progressBar>
-      <label for="ciudad">Filtrar por ciudad:</label>
-      <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
-        placeholder="Seleccionar una ciudad" class="custom-dropdown" [filter]="true"
-        (onChange)="filtrarPorCiudad($event.value)">
-      </p-dropdown>
-    </div>
-
-    <div *ngIf="personasFiltradas.length > 0" class="tabla-contenedor">
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>
-              <input type="checkbox" (change)="seleccionarTodos($event)" checked />
-            </th>
-            <th>Nombres</th>
-            <th>Apellidos</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let persona of personasFiltradas; let i = index">
-            <td>
-              <input type="checkbox" [(ngModel)]="personasFiltradas[i].seleccionado" checked />
-            </td>
-            <td>{{ persona.nombres }}</td>
-            <td>{{ persona.apellidos }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div *ngIf="personasFiltradas.length === 0" class="mensaje">
-      <p>No hay personas registradas en esta ciudad.</p>
-    </div>
-  </div>
-
-
-  <div class="p-grid p-fluid">
-    <div class="form-container">
-      <div class="form-group">
-        <label for="nombre">Nombre del Plan</label>
-        <input type="text" id="nombre" placeholder="Nombre" pInputText [(ngModel)]="formEntrenamiento.nombre">
+  <ng-template pTemplate="header">
+    <div class="regional-dialog-header">
+      <div class="regional-dialog-header__icon regional-dialog-header__icon--training">
+        <i class="pi pi-compass" aria-hidden="true"></i>
       </div>
-
-      <div class="form-group">
-        <label for="semanas">Duración (semanas)</label>
-        <input type="number" id="semanas" placeholder="Duración (semanas)" pInputText
-          [(ngModel)]="formEntrenamiento.duracion_semanas" (ngModelChange)="generarSemanas()" min="1" />
-
-      </div>
-
-      <div class="form-group">
-        <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formEntrenamiento.entrenador"
-          placeholder="Seleccione un entrenador" optionLabel="fullName" optionValue="id" [filter]="true">
-        </p-dropdown>
-      </div>
-
-      <br>
-
-      <div class="form-group">
-        <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
-          [(ngModel)]="formEntrenamiento.descripcion" rows="4" class="descripcion-textarea"></textarea>
+      <div class="regional-dialog-header__text">
+        <div class="regional-dialog-header__tag">Prescripción Masiva • Alto Rendimiento</div>
+        <h2 class="regional-dialog-header__title">Entrenamiento por Región</h2>
+        <p class="regional-dialog-header__sub">Diseña y asigna un plan de acondicionamiento físico a múltiples deportistas de una región o ciudad simultáneamente.</p>
       </div>
     </div>
-  </div>
+  </ng-template>
 
-  <!-- Secciones dinámicas por semana para entrenamiento por región -->
-  <div class="p-col-12 mt-4" *ngIf="formEntrenamiento.semanas.length > 0">
-    <div class="semana-container" *ngFor="let semana of formEntrenamiento.semanas">
-      <h4>SEMANA {{ semana.numero }}</h4>
-      <div class="table-responsive">
-        <table class="p-datatable p-component" style="width: 100%; border-collapse: collapse;">
-          <thead>
-            <tr>
-              <th style="padding: 8px; background: #f4f4f4;">TIPO DE EJERCICIO</th>
-              <th *ngFor="let dia of diasSemana" style="padding: 8px; background: #f4f4f4;">{{ dia }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let ejercicio of semana.ejercicios; let i = index">
-              <td style="padding: 6px;">{{ ejercicio.tipo }}</td>
-              <td *ngFor="let dia of diasSemana; let j = index" style="text-align: center;">
-                <div>
-                  <input type="checkbox" [(ngModel)]="semana.ejercicios[i].dias[j]"
-                    (change)="onCheckboxChange(semana.ejercicios[i], dia, semana.ejercicios[i].dias[j])"
-                    [name]="'checkbox-region-' + i + '-' + j" />
+  <ng-template pTemplate="content">
+    <!-- Overlay de progreso durante guardado masivo -->
+    <div class="regional-progress-overlay" *ngIf="guardandoMasivo">
+      <div class="regional-progress-card">
+        <p-progressSpinner strokeWidth="4" animationDuration=".8s" styleClass="regional-spinner"></p-progressSpinner>
+        <h3 class="regional-progress-card__title">Asignando Entrenamiento Masivo</h3>
+        <p class="regional-progress-card__status">{{ textoProgresoGuardado }}</p>
+        <div class="regional-progress-card__bar-wrap">
+          <p-progressBar [value]="progresoGuardado" [showValue]="false"></p-progressBar>
+          <span class="regional-progress-card__percent">{{ progresoGuardado }}%</span>
+        </div>
+        <p class="regional-progress-card__hint">Por favor, espera mientras se registran las asignaciones para cada deportista.</p>
+      </div>
+    </div>
+
+    <div class="regional-dialog-body">
+      <!-- Cuadrícula de 2 Columnas -->
+      <div class="regional-grid">
+
+        <!-- COLUMNA 1: Panel de Selección de Atletas -->
+        <div class="regional-panel regional-panel--athletes">
+          <div class="regional-panel__header">
+            <div class="regional-panel__title-group">
+              <i class="pi pi-users regional-panel__icon"></i>
+              <h3 class="regional-panel__title">1. Deportistas Destinatarios</h3>
+            </div>
+            <span class="selection-pill" [class.selection-pill--active]="atletasSeleccionadosCount > 0">
+              <i class="pi pi-check-circle"></i>
+              {{ atletasSeleccionadosCount }} de {{ totalAtletasRegion }} seleccionados
+            </span>
+          </div>
+
+          <!-- Filtros de búsqueda de atletas -->
+          <div class="regional-filters-bar">
+            <div class="regional-filter-field">
+              <label class="regional-filter-label">
+                <i class="pi pi-map-marker"></i> Filtrar por Ciudad
+              </label>
+              <p-select [options]="ciudadesRegionOpciones" [(ngModel)]="regionSelectedCiudad"
+                optionLabel="nombre" optionValue="id" placeholder="Todas las regiones"
+                class="regional-select-ciudad" [filter]="true">
+              </p-select>
+            </div>
+
+            <div class="regional-search-field">
+              <label class="regional-filter-label">
+                <i class="pi pi-search"></i> Buscar Atleta
+              </label>
+              <div class="regional-search-box">
+                <i class="pi pi-search regional-search-box__icon"></i>
+                <input type="text" pInputText placeholder="Nombre, apellido o usuario..."
+                  [(ngModel)]="busquedaAtletaRegion" class="regional-search-box__input">
+                <button *ngIf="busquedaAtletaRegion" type="button" (click)="busquedaAtletaRegion = ''"
+                  class="regional-search-box__clear" title="Limpiar">
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones masivas de selección -->
+          <div class="regional-bulk-bar">
+            <div class="regional-bulk-bar__checkbox">
+              <label class="bulk-check-label">
+                <input type="checkbox" [checked]="todosAtletasRegionSeleccionados"
+                  (change)="seleccionarTodosRegion($event)">
+                <span>Marcar todos ({{ totalAtletasRegion }})</span>
+              </label>
+            </div>
+            <div class="regional-bulk-bar__actions">
+              <button type="button" class="bulk-btn" (click)="toggleSeleccionarTodosRegion(true)">
+                <i class="pi pi-check-square"></i> Todos
+              </button>
+              <button type="button" class="bulk-btn" (click)="toggleSeleccionarTodosRegion(false)">
+                <i class="pi pi-stop"></i> Ninguno
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista scrollable de deportistas -->
+          <div class="regional-athletes-container">
+            <div *ngIf="personasRegionFiltradas.length === 0" class="regional-athletes-empty">
+              <i class="pi pi-users regional-athletes-empty__icon"></i>
+              <h4>No hay deportistas disponibles</h4>
+              <p>No se encontraron deportistas que coincidan con la región o búsqueda actual.</p>
+            </div>
+
+            <div *ngIf="personasRegionFiltradas.length > 0" class="regional-athletes-list">
+              <div *ngFor="let persona of personasRegionFiltradas" class="regional-athlete-row"
+                [class.regional-athlete-row--selected]="persona.seleccionado"
+                (click)="toggleAtletaSeleccion(persona)">
+                <div class="regional-athlete-row__check" (click)="$event.stopPropagation()">
+                  <input type="checkbox" [(ngModel)]="persona.seleccionado">
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                <div class="regional-athlete-row__avatar">
+                  <p-avatar *ngIf="persona.avatar_url" [image]="persona.avatar_url" shape="circle"></p-avatar>
+                  <p-avatar *ngIf="!persona.avatar_url" shape="circle"
+                    [label]="getInitials(persona.nombres || persona.first_name, persona.apellidos || persona.last_name, persona.username)"></p-avatar>
+                </div>
+                <div class="regional-athlete-row__info">
+                  <div class="regional-athlete-row__name">
+                    {{ persona.nombres || persona.first_name }} {{ persona.apellidos || persona.last_name }}
+                  </div>
+                  <div class="regional-athlete-row__meta">
+                    <span class="meta-tag">@{{ persona.username }}</span>
+                    <span class="meta-tag meta-tag--city">
+                      <i class="pi pi-map-marker"></i> {{ ciudadNombrePersona(persona) }}
+                    </span>
+                    <span class="meta-tag meta-tag--age" *ngIf="persona.edad">
+                      {{ persona.edad }} años
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA 2: Parámetros del Plan de Entrenamiento -->
+        <div class="regional-panel regional-panel--params">
+          <div class="regional-panel__header">
+            <div class="regional-panel__title-group">
+              <i class="pi pi-sliders-h regional-panel__icon"></i>
+              <h3 class="regional-panel__title">2. Parámetros del Plan</h3>
+            </div>
+          </div>
+
+          <div class="regional-form">
+            <!-- Nombre del Plan -->
+            <div class="ag-form-field">
+              <label class="ag-form-label" for="regPlanNombre">
+                Nombre del Plan de Entrenamiento <span class="required">*</span>
+              </label>
+              <input type="text" id="regPlanNombre" pInputText [(ngModel)]="formEntrenamiento.nombre"
+                placeholder="Ej: Acondicionamiento Físico Regional Norte" class="ag-form-input">
+            </div>
+
+            <!-- Duración en semanas con presets -->
+            <div class="ag-form-field">
+              <label class="ag-form-label">
+                Duración del Programa <span class="required">*</span>
+              </label>
+              <div class="preset-pills-row">
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formEntrenamiento.duracion_semanas === 1"
+                  (click)="setDuracionSemanasPreset(1)">1 sem</button>
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formEntrenamiento.duracion_semanas === 2"
+                  (click)="setDuracionSemanasPreset(2)">2 sem</button>
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formEntrenamiento.duracion_semanas === 4"
+                  (click)="setDuracionSemanasPreset(4)">4 sem</button>
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formEntrenamiento.duracion_semanas === 8"
+                  (click)="setDuracionSemanasPreset(8)">8 sem</button>
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formEntrenamiento.duracion_semanas === 12"
+                  (click)="setDuracionSemanasPreset(12)">12 sem</button>
+              </div>
+              <div class="input-with-addon mt-2">
+                <input type="number" pInputText [(ngModel)]="formEntrenamiento.duracion_semanas"
+                  (ngModelChange)="onDuracionSemanasChange()" min="1" max="52"
+                  class="ag-form-input ag-form-input--compact" placeholder="Número de semanas">
+                <span class="input-addon">semanas</span>
+              </div>
+            </div>
+
+            <!-- Entrenador Asignado -->
+            <div class="ag-form-field">
+              <label class="ag-form-label" for="regEntrenador">
+                Entrenador Responsable <span class="required">*</span>
+              </label>
+              <p-select id="regEntrenador" [options]="filteredTrainers2"
+                [(ngModel)]="formEntrenamiento.entrenador" placeholder="Seleccione un entrenador"
+                optionLabel="fullName" optionValue="id" [filter]="true" class="ag-form-select">
+              </p-select>
+            </div>
+
+            <!-- Descripción / Instrucciones -->
+            <div class="ag-form-field">
+              <label class="ag-form-label" for="regDescripcion">
+                Instrucciones y Pautas Generales
+              </label>
+              <textarea id="regDescripcion" pTextarea [(ngModel)]="formEntrenamiento.descripcion"
+                rows="3" placeholder="Recomendaciones de calentamiento, hidratación, intensidad y consideraciones climáticas para la región..."
+                class="ag-form-textarea"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SECCIÓN COMPLETA INFERIOR: Matriz de Ejercicios por Semana -->
+      <div class="regional-panel regional-panel--matrix mt-4" *ngIf="formEntrenamiento.semanas.length > 0">
+        <div class="regional-panel__header regional-panel__header--split">
+          <div class="regional-panel__title-group">
+            <i class="pi pi-calendar-plus regional-panel__icon"></i>
+            <div>
+              <h3 class="regional-panel__title">3. Matriz de Ejercicios por Semana</h3>
+              <p class="regional-panel__subtitle">Distribuye las sesiones físicas para cada día de la semana seleccionada.</p>
+            </div>
+          </div>
+
+          <button type="button" class="btn-sync-weeks" (click)="copiarSemanaATodas(selectedSemanaRegionIndex)"
+            pTooltip="Copia la programación de esta semana a todas las semanas restantes del plan" tooltipPosition="left">
+            <i class="pi pi-clone"></i>
+            <span>Copiar Semana {{ selectedSemanaRegionIndex + 1 }} a todas</span>
+          </button>
+        </div>
+
+        <!-- Pestañas navegadoras de semanas -->
+        <div class="regional-week-tabs">
+          <button type="button" *ngFor="let sem of formEntrenamiento.semanas; let idx = index"
+            class="week-tab-btn" [class.week-tab-btn--active]="selectedSemanaRegionIndex === idx"
+            (click)="seleccionarSemanaRegion(idx)">
+            <span class="week-tab-btn__number">Semana {{ sem.numero }}</span>
+          </button>
+        </div>
+
+        <!-- Tabla interactiva de la semana activa -->
+        <div class="regional-matrix-wrap" *ngIf="formEntrenamiento.semanas[selectedSemanaRegionIndex]">
+          <table class="regional-matrix-table">
+            <thead>
+              <tr>
+                <th class="col-category">Tipo de Ejercicio</th>
+                <th *ngFor="let dia of diasSemana" class="col-day">
+                  <span class="day-short">{{ dia.substring(0, 3) }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ejercicio of formEntrenamiento.semanas[selectedSemanaRegionIndex].ejercicios; let i = index">
+                <td class="cell-category">
+                  <span class="exercise-category-badge" [ngClass]="getTipoEjercicioBadgeClass(ejercicio.tipo)">
+                    <i [class]="getTipoEjercicioIcon(ejercicio.tipo)"></i>
+                    {{ ejercicio.tipo }}
+                  </span>
+                </td>
+                <td *ngFor="let dia of diasSemana; let j = index" class="cell-day">
+                  <label class="matrix-cell-toggle" [title]="ejercicio.tipo + ' el ' + dia">
+                    <input type="checkbox" [(ngModel)]="ejercicio.dias[j]"
+                      (change)="onCheckboxChange(ejercicio, dia, ejercicio.dias[j])"
+                      [name]="'reg-check-' + selectedSemanaRegionIndex + '-' + i + '-' + j">
+                    <span class="matrix-cell-box">
+                      <i class="pi pi-check"></i>
+                    </span>
+                  </label>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="regional-dialog-footer">
+      <div class="regional-dialog-footer__summary">
+        <i class="pi pi-info-circle"></i>
+        <span>
+          Se asignará el plan a <strong>{{ atletasSeleccionadosCount }}</strong> deportista(s) seleccionado(s).
+        </span>
+      </div>
+      <div class="regional-dialog-footer__actions">
+        <button pButton pRipple type="button"
+          class="p-button-text p-button-secondary" (click)="cerrarEntrenamientosMasivos()"
+          [disabled]="guardandoMasivo">
+          <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Cancelar</span>
+        </button>
+        <button pButton pRipple type="button"
+          class="p-button-primary ag-btn-submit" (click)="guardarEntrenamientoRegion()"
+          [disabled]="botonesDesactivados || guardandoMasivo || atletasSeleccionadosCount === 0 || !formEntrenamiento.nombre.trim()">
+          <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Guardar y Asignar Plan</span>
+        </button>
       </div>
     </div>
-  </div>
-
-  <div class="p-grid p-nogutter p-align-center header-container"></div>
-  <div class="button-container">
-    <button class="btn" (click)="guardarEntrenamientoRegion()" [disabled]="botonesDesactivados">
-      <i *ngIf="!isGuardando" class="pi pi-check"></i>
-      <i *ngIf="isGuardando" class="pi pi-spin pi-spinner"></i>Guardar Cambios
-    </button>
-    <button class="btn" (click)="cerrarEntrenamientosMasivos()" [disabled]="botonesDesactivados">
-      <i class="pi pi-times"></i> Cancelar
-    </button>
-  </div>
+  </ng-template>
 </p-dialog>
 
-<!-- CREAR ALIMENTACION POR REGION -->
-<p-dialog [(visible)]="dialogAlimentacionRegion" [style]="{ 'width': '95vw' }" [resizable]="false" zindex="1000"
-  [modal]="true" [closable]="true" [showHeader]="false">
 
-  <div class="overlay-spinner" *ngIf="cargandoEntrenamiento">
-    <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
-    <p class="loading-text">Guardando alimentaciòn...</p>
-  </div>
+<!-- ==========================================================================
+     MODAL: ALIMENTACION POR REGION
+     ========================================================================== -->
+<p-dialog [(visible)]="dialogAlimentacionRegion" [modal]="true" [resizable]="false"
+  [draggable]="false" [style]="{ width: '80rem', maxWidth: '96vw' }"
+  styleClass="ag-dialog ag-dialog--regional ag-dialog--nutrition"
+  [breakpoints]="{ '1024px': '95vw', '640px': '98vw' }"
+  [closable]="!guardandoMasivo">
 
-  <div class="contenedor">
-    <div class="filtro-compacto">
-      <label for="ciudad">Filtrar por ciudad:</label>
-      <p-dropdown id="ciudad" [options]="ciudad" optionLabel="nombre" optionValue="id"
-        placeholder="Seleccionar una ciudad" class="custom-dropdown" [filter]="true"
-        (onChange)="filtrarPorCiudad($event.value)">
-      </p-dropdown>
-    </div>
-
-    <div *ngIf="personasFiltradas.length > 0" class="tabla-contenedor">
-      <table class="tabla">
-        <thead>
-          <tr>
-            <th>
-              <input type="checkbox" (change)="seleccionarTodos($event)" checked />
-            </th>
-            <th>Nombres</th>
-            <th>Apellidos</th>
-            <th>Edad</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let persona of personasFiltradas; let i = index">
-            <td>
-              <input type="checkbox" [(ngModel)]="personasFiltradas[i].seleccionado" checked />
-            </td>
-            <td>{{ persona.nombres }}</td>
-            <td>{{ persona.apellidos }}</td>
-            <td>{{ persona.edad }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div *ngIf="personasFiltradas.length === 0" class="mensaje">
-      <p>No hay personas registradas en esta ciudad.</p>
-    </div>
-
-  </div>
-  <div class="p-grid p-fluid">
-    <div class="form-container">
-      <div class="form-group">
-        <label for="nombre">Nombre del Plan</label>
-        <input type="text" id="nombre" placeholder="Nombre" pInputText [(ngModel)]="formAlimentacion.nombre">
+  <ng-template pTemplate="header">
+    <div class="regional-dialog-header">
+      <div class="regional-dialog-header__icon regional-dialog-header__icon--nutrition">
+        <i class="pi pi-apple" aria-hidden="true"></i>
       </div>
-      <div class="form-group">
-        <label for="calorias">Calorías Diarias</label>
-        <input type="number" id="calorias" placeholder="Calorías" pInputText
-          [(ngModel)]="formAlimentacion.calorias_diarias">
-      </div>
-
-      <div class="form-group">
-        <label for="entrenador">Entrenador</label>
-        <p-dropdown id="entrenador" [options]="filteredTrainers2" [(ngModel)]="formAlimentacion.entrenador"
-          placeholder="Seleccione un entrenador" optionLabel="first_name" optionValue="id" [filter]="true">
-        </p-dropdown>
-      </div>
-
-      <br>
-
-      <div class="form-group">
-        <label for="descripcion">Descripción</label>
-        <textarea id="descripcion" placeholder="Ingrese la descripción" pInputTextarea
-          [(ngModel)]="formAlimentacion.descripcion" rows="4" class="descripcion-textarea"></textarea>
+      <div class="regional-dialog-header__text">
+        <div class="regional-dialog-header__tag">Nutrición Integral • Plan Masivo</div>
+        <h2 class="regional-dialog-header__title">Alimentación por Región</h2>
+        <p class="regional-dialog-header__sub">Prescribe planes nutricionales y requerimientos calóricos a todos los deportistas de una región o ciudad.</p>
       </div>
     </div>
-  </div>
-  <div class="p-grid p-nogutter p-align-center header-container"></div>
-  <div class="button-container">
-    <button class="btn" (click)="guardarAlimentacionRegion()">
-      <i class="pi pi-check"></i>
-      Guardar Cambios
-    </button>
-    <button class="btn" (click)="cerrarAlimentacionesMasivas()">
-      <i class="pi pi-times"></i>
-      Cancelar
-    </button>
-  </div>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <!-- Overlay de progreso durante guardado masivo -->
+    <div class="regional-progress-overlay" *ngIf="guardandoMasivo">
+      <div class="regional-progress-card">
+        <p-progressSpinner strokeWidth="4" animationDuration=".8s" styleClass="regional-spinner"></p-progressSpinner>
+        <h3 class="regional-progress-card__title">Asignando Plan Nutricional Masivo</h3>
+        <p class="regional-progress-card__status">{{ textoProgresoGuardado }}</p>
+        <div class="regional-progress-card__bar-wrap">
+          <p-progressBar [value]="progresoGuardado" [showValue]="false"></p-progressBar>
+          <span class="regional-progress-card__percent">{{ progresoGuardado }}%</span>
+        </div>
+        <p class="regional-progress-card__hint">Por favor, espera mientras se registran las pautas nutricionales para cada deportista.</p>
+      </div>
+    </div>
+
+    <div class="regional-dialog-body">
+      <!-- Cuadrícula de 2 Columnas -->
+      <div class="regional-grid">
+
+        <!-- COLUMNA 1: Panel de Selección de Atletas -->
+        <div class="regional-panel regional-panel--athletes">
+          <div class="regional-panel__header">
+            <div class="regional-panel__title-group">
+              <i class="pi pi-users regional-panel__icon"></i>
+              <h3 class="regional-panel__title">1. Deportistas Destinatarios</h3>
+            </div>
+            <span class="selection-pill" [class.selection-pill--active]="atletasSeleccionadosCount > 0">
+              <i class="pi pi-check-circle"></i>
+              {{ atletasSeleccionadosCount }} de {{ totalAtletasRegion }} seleccionados
+            </span>
+          </div>
+
+          <!-- Filtros de búsqueda de atletas -->
+          <div class="regional-filters-bar">
+            <div class="regional-filter-field">
+              <label class="regional-filter-label">
+                <i class="pi pi-map-marker"></i> Filtrar por Ciudad
+              </label>
+              <p-select [options]="ciudadesRegionOpciones" [(ngModel)]="regionSelectedCiudad"
+                optionLabel="nombre" optionValue="id" placeholder="Todas las regiones"
+                class="regional-select-ciudad" [filter]="true">
+              </p-select>
+            </div>
+
+            <div class="regional-search-field">
+              <label class="regional-filter-label">
+                <i class="pi pi-search"></i> Buscar Atleta
+              </label>
+              <div class="regional-search-box">
+                <i class="pi pi-search regional-search-box__icon"></i>
+                <input type="text" pInputText placeholder="Nombre, apellido o usuario..."
+                  [(ngModel)]="busquedaAtletaRegion" class="regional-search-box__input">
+                <button *ngIf="busquedaAtletaRegion" type="button" (click)="busquedaAtletaRegion = ''"
+                  class="regional-search-box__clear" title="Limpiar">
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Acciones masivas de selección -->
+          <div class="regional-bulk-bar">
+            <div class="regional-bulk-bar__checkbox">
+              <label class="bulk-check-label">
+                <input type="checkbox" [checked]="todosAtletasRegionSeleccionados"
+                  (change)="seleccionarTodosRegion($event)">
+                <span>Marcar todos ({{ totalAtletasRegion }})</span>
+              </label>
+            </div>
+            <div class="regional-bulk-bar__actions">
+              <button type="button" class="bulk-btn" (click)="toggleSeleccionarTodosRegion(true)">
+                <i class="pi pi-check-square"></i> Todos
+              </button>
+              <button type="button" class="bulk-btn" (click)="toggleSeleccionarTodosRegion(false)">
+                <i class="pi pi-stop"></i> Ninguno
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista scrollable de deportistas -->
+          <div class="regional-athletes-container">
+            <div *ngIf="personasRegionFiltradas.length === 0" class="regional-athletes-empty">
+              <i class="pi pi-users regional-athletes-empty__icon"></i>
+              <h4>No hay deportistas disponibles</h4>
+              <p>No se encontraron deportistas que coincidan con la región o búsqueda actual.</p>
+            </div>
+
+            <div *ngIf="personasRegionFiltradas.length > 0" class="regional-athletes-list">
+              <div *ngFor="let persona of personasRegionFiltradas" class="regional-athlete-row"
+                [class.regional-athlete-row--selected]="persona.seleccionado"
+                (click)="toggleAtletaSeleccion(persona)">
+                <div class="regional-athlete-row__check" (click)="$event.stopPropagation()">
+                  <input type="checkbox" [(ngModel)]="persona.seleccionado">
+                </div>
+                <div class="regional-athlete-row__avatar">
+                  <p-avatar *ngIf="persona.avatar_url" [image]="persona.avatar_url" shape="circle"></p-avatar>
+                  <p-avatar *ngIf="!persona.avatar_url" shape="circle"
+                    [label]="getInitials(persona.nombres || persona.first_name, persona.apellidos || persona.last_name, persona.username)"></p-avatar>
+                </div>
+                <div class="regional-athlete-row__info">
+                  <div class="regional-athlete-row__name">
+                    {{ persona.nombres || persona.first_name }} {{ persona.apellidos || persona.last_name }}
+                  </div>
+                  <div class="regional-athlete-row__meta">
+                    <span class="meta-tag">@{{ persona.username }}</span>
+                    <span class="meta-tag meta-tag--city">
+                      <i class="pi pi-map-marker"></i> {{ ciudadNombrePersona(persona) }}
+                    </span>
+                    <span class="meta-tag meta-tag--age" *ngIf="persona.edad">
+                      {{ persona.edad }} años
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLUMNA 2: Parámetros del Plan Nutricional -->
+        <div class="regional-panel regional-panel--params">
+          <div class="regional-panel__header">
+            <div class="regional-panel__title-group">
+              <i class="pi pi-apple regional-panel__icon"></i>
+              <h3 class="regional-panel__title">2. Pautas Nutricionales</h3>
+            </div>
+          </div>
+
+          <div class="regional-form">
+            <!-- Nombre del Plan -->
+            <div class="ag-form-field">
+              <label class="ag-form-label" for="regNutNombre">
+                Nombre del Plan Alimentario <span class="required">*</span>
+              </label>
+              <input type="text" id="regNutNombre" pInputText [(ngModel)]="formAlimentacion.nombre"
+                placeholder="Ej: Plan Nutricional Hiperproteico - Zona Norte" class="ag-form-input">
+            </div>
+
+            <!-- Calorías Diarias con Presets -->
+            <div class="ag-form-field">
+              <label class="ag-form-label">
+                Meta Calórica Diaria (kcal) <span class="required">*</span>
+              </label>
+              <div class="preset-pills-row">
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formAlimentacion.calorias_diarias === 1800"
+                  (click)="setCaloriasPreset(1800)">1800 kcal</button>
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formAlimentacion.calorias_diarias === 2000"
+                  (click)="setCaloriasPreset(2000)">2000 kcal</button>
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formAlimentacion.calorias_diarias === 2200"
+                  (click)="setCaloriasPreset(2200)">2200 kcal</button>
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formAlimentacion.calorias_diarias === 2500"
+                  (click)="setCaloriasPreset(2500)">2500 kcal</button>
+                <button type="button" class="preset-pill"
+                  [class.preset-pill--active]="formAlimentacion.calorias_diarias === 3000"
+                  (click)="setCaloriasPreset(3000)">3000 kcal</button>
+              </div>
+              <div class="input-with-addon mt-2">
+                <input type="number" pInputText [(ngModel)]="formAlimentacion.calorias_diarias"
+                  min="500" max="6000" step="50" class="ag-form-input ag-form-input--compact"
+                  placeholder="Calorías diarias">
+                <span class="input-addon">kcal / día</span>
+              </div>
+            </div>
+
+            <!-- Entrenador Asignado -->
+            <div class="ag-form-field">
+              <label class="ag-form-label" for="regNutEntrenador">
+                Especialista / Entrenador Responsable <span class="required">*</span>
+              </label>
+              <p-select id="regNutEntrenador" [options]="filteredTrainers2"
+                [(ngModel)]="formAlimentacion.entrenador" placeholder="Seleccione un entrenador"
+                optionLabel="fullName" optionValue="id" [filter]="true" class="ag-form-select">
+              </p-select>
+            </div>
+
+            <!-- Descripción / Indicaciones Nutricionales -->
+            <div class="ag-form-field">
+              <label class="ag-form-label" for="regNutDescripcion">
+                Pautas Dietéticas y Recomendaciones
+              </label>
+              <textarea id="regNutDescripcion" pTextarea [(ngModel)]="formAlimentacion.descripcion"
+                rows="4" placeholder="Horarios de comidas, distribución de macronutrientes, alimentos autóctonos recomendados y pautas de hidratación..."
+                class="ag-form-textarea"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="regional-dialog-footer">
+      <div class="regional-dialog-footer__summary">
+        <i class="pi pi-info-circle"></i>
+        <span>
+          Se asignará la alimentación a <strong>{{ atletasSeleccionadosCount }}</strong> deportista(s) seleccionado(s).
+        </span>
+      </div>
+      <div class="regional-dialog-footer__actions">
+        <button pButton pRipple type="button"
+          class="p-button-text p-button-secondary" (click)="cerrarAlimentacionesMasivas()"
+          [disabled]="guardandoMasivo">
+          <i class="pi pi-times" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Cancelar</span>
+        </button>
+        <button pButton pRipple type="button"
+          class="p-button-primary ag-btn-submit" (click)="guardarAlimentacionRegion()"
+          [disabled]="botonesDesactivados || guardandoMasivo || atletasSeleccionadosCount === 0 || !formAlimentacion.nombre.trim() || !formAlimentacion.calorias_diarias">
+          <i class="pi pi-check" pButtonIcon aria-hidden="true"></i>
+          <span pButtonLabel>Guardar y Asignar Alimentación</span>
+        </button>
+      </div>
+    </div>
+  </ng-template>
 </p-dialog>

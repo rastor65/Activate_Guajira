@@ -1,225 +1,218 @@
-/* =============================================== */
-/*      🎨 VERSIÓN ELEGANTE Y RESPONSIVE           */
-/* =============================================== */
+/* Matriz de permisos: que recursos ve cada rol. */
 
-.recursos-title {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #1a1a1a;
-  margin-bottom: 1rem;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.matriz {
+  min-width: 40rem;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.role-resource-container {
-  max-width: 1000px;
-  margin: auto;
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
+/* --------------------------------------------------------------------------
+   Primera columna: los recursos, fija al desplazar en horizontal
+   --------------------------------------------------------------------------
+   OJO: el th debe seguir siendo celda de tabla. Ponerle display:flex lo saca
+   del algoritmo de la tabla y descuadra el ancho de las columnas, que era lo
+   que dejaba un hueco enorme antes de la primera casilla. El flex va dentro.
+   -------------------------------------------------------------------------- */
+.matriz__recurso {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  width: 18rem;
+  padding: var(--ag-space-2) var(--ag-space-4);
+  text-align: left;
+  font-weight: 500;
+  background: var(--ag-bg-surface);
+  border-right: 1px solid var(--ag-border-subtle);
 }
 
-.role-resource-container:hover {
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+.matriz thead .matriz__recurso {
+  background: var(--ag-bg-sunken);
+  z-index: 3;
 }
 
-fieldset {
-  border: none;
-  padding: 1rem 0;
-}
+.matriz tbody tr:hover .matriz__recurso { background: var(--ag-bg-tinted); }
 
-legend {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #007ad9;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.input-group {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.input-container {
-  flex: 1 1 300px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.input-container label {
-  font-weight: 600;
-  color: #333;
-}
-
-::ng-deep .p-dropdown {
-  border-radius: 12px !important;
-  padding: 0.5rem !important;
-  border: 1px solid #ccc !important;
-  background-color: #fdfdfd !important;
-  transition: border-color 0.3s ease;
-}
-
-::ng-deep .p-dropdown:hover {
-  border-color: #007ad9 !important;
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 2rem;
-}
-
-.button-container button {
-  padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #007ad9, #004b93);
-  border: none;
-  color: white;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
+.recurso {
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease-in-out;
+  gap: var(--ag-space-3);
+  min-width: 0;
 }
 
-.button-container button:hover {
-  background: linear-gradient(135deg, #004b93, #003974);
-  transform: translateY(-2px);
-}
-
-/* Tabla responsive moderna */
-
-.table-container {
-  margin-top: 2rem;
-  overflow-x: auto;
-  padding: 1rem;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-}
-
-.resource-role-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: center;
-  font-size: 0.95rem;
-}
-
-.resource-role-table th,
-.resource-role-table td {
-  padding: 0.75rem;
-  border: 1px solid #e0e0e0;
-}
-
-.resource-role-table thead th {
-  background-color: #007ad9;
-  color: white;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.resource-role-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.resource-role-table tr:hover {
-  background-color: #eef6ff;
-  transition: 0.2s ease;
-}
-
-.row {
-  background-color: #eaf4ff;
-  font-weight: 600;
-}
-
-.child-row {
-  background-color: #f3f9ff;
-}
-
-.grandchild-row {
-  background-color: #f9fcff;
-}
-
-/* Checkboxes personalizados */
-
-.custom-checkbox {
-  display: flex;
-  justify-content: center;
+.recurso__icono {
+  display: inline-flex;
   align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-bg-tinted);
+  color: var(--ag-navy-500);
+  font-size: 0.8rem;
 }
 
-.custom-checkbox input[type="checkbox"] {
-  display: none;
+.recurso__titulo {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.custom-checkbox .custom-label {
-  width: 18px;
-  height: 18px;
-  display: inline-block;
-  border: 2px solid #007ad9;
-  border-radius: 4px;
-  position: relative;
-  background: #fff;
+/* --- Jerarquia: sangria, tamano y un filete que marca la dependencia --- */
+.matriz__recurso[data-nivel='0'] .recurso__titulo {
+  font-weight: 600;
+  color: var(--ag-text-brand);
 }
 
-.custom-checkbox input[type="checkbox"]:checked + .custom-label {
-  background-color: #007ad9;
+.matriz__recurso[data-nivel='0'] .recurso__icono {
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
 }
 
-.custom-checkbox input[type="checkbox"]:checked + .custom-label::after {
-  content: '✔';
-  color: white;
-  font-size: 12px;
+.matriz__recurso[data-nivel='1'] { padding-left: var(--ag-space-8); }
+.matriz__recurso[data-nivel='2'] { padding-left: var(--ag-space-12); }
+
+.matriz__recurso[data-nivel='1'] .recurso,
+.matriz__recurso[data-nivel='2'] .recurso { position: relative; }
+
+.matriz__recurso[data-nivel='1'] .recurso::before,
+.matriz__recurso[data-nivel='2'] .recurso::before {
+  content: '';
   position: absolute;
-  top: 1px;
-  left: 3px;
+  left: calc(var(--ag-space-4) * -1);
+  top: 50%;
+  width: var(--ag-space-3);
+  height: 1px;
+  background: var(--ag-border-default);
 }
 
-/* Responsive optimizado */
+.matriz__recurso[data-nivel='1'] .recurso__titulo,
+.matriz__recurso[data-nivel='2'] .recurso__titulo {
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-secondary);
+}
 
+.matriz__recurso[data-nivel='1'] .recurso__icono,
+.matriz__recurso[data-nivel='2'] .recurso__icono {
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: 1px solid var(--ag-border-subtle);
+  color: var(--ag-neutral-400);
+  font-size: 0.65rem;
+}
+
+/* --------------------------------------------------------------------------
+   Cabecera de roles
+   -------------------------------------------------------------------------- */
+.matriz thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.matriz__rol {
+  width: auto;
+  padding: var(--ag-space-3) var(--ag-space-2);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.matriz__rol-nombre {
+  display: block;
+  font-size: var(--ag-text-xs);
+  letter-spacing: 0.08em;
+}
+
+.matriz__rol-cuenta {
+  display: inline-block;
+  margin-top: var(--ag-space-1);
+  min-width: 22px;
+  padding: 1px var(--ag-space-2);
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+  font-family: var(--ag-font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   Filas y casillas
+   -------------------------------------------------------------------------- */
+.matriz tbody td,
+.matriz tbody th { padding: var(--ag-space-2) var(--ag-space-4); }
+
+.matriz tbody tr:nth-child(even) td { background: var(--ag-bg-canvas); }
+
+.matriz tbody tr:hover td { background: var(--ag-bg-tinted); }
+
+.matriz__celda { text-align: center; }
+
+.permiso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-bg-surface);
+  color: transparent;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
+              border-color var(--ag-dur-fast) var(--ag-ease-standard),
+              color var(--ag-dur-fast) var(--ag-ease-standard),
+              transform var(--ag-dur-fast) var(--ag-ease-standard);
+}
+
+/* Sin acceso: casilla vacia. El icono aparece al pasar por encima, como
+   anticipo de lo que va a ocurrir al pulsar. */
+.permiso:hover:not(:disabled) {
+  border-color: var(--ag-navy-500);
+  background: var(--ag-bg-tinted);
+  color: var(--ag-navy-400);
+  transform: scale(1.1);
+}
+
+/* Concedido: relleno solido mas icono, nunca solo color */
+.permiso.is-activo {
+  background: var(--ag-action-primary);
+  border-color: var(--ag-action-primary);
+  color: var(--ag-action-accent);
+}
+
+/* Al pasar sobre uno concedido se avisa en rojo: el clic lo va a retirar */
+.permiso.is-activo:hover:not(:disabled) {
+  background: var(--ag-danger);
+  border-color: var(--ag-danger);
+  color: var(--ag-text-inverse);
+}
+
+.permiso:disabled {
+  cursor: progress;
+  color: var(--ag-navy-400);
+  transform: none;
+}
+
+.permiso:focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Adaptativo
+   -------------------------------------------------------------------------- */
 @media (max-width: 768px) {
-  .recursos-title {
-    font-size: 1.5rem;
-  }
+  .matriz { min-width: 32rem; }
 
-  .role-resource-container {
-    padding: 1rem;
-  }
+  .matriz__recurso { width: 12rem; padding-inline: var(--ag-space-3); }
 
-  .input-group {
-    flex-direction: column;
-    gap: 1rem;
-  }
+  .matriz__recurso[data-nivel='1'] { padding-left: var(--ag-space-6); }
+  .matriz__recurso[data-nivel='2'] { padding-left: var(--ag-space-8); }
 
-  .input-container {
-    min-width: 100%;
-  }
-
-  .button-container button {
-    width: 100%;
-    font-size: 0.95rem;
-  }
-
-  .resource-role-table {
-    font-size: 0.85rem;
-  }
-
-  .resource-role-table th,
-  .resource-role-table td {
-    padding: 0.5rem;
-  }
-
-  .table-container {
-    padding: 0.5rem;
-  }
+  .recurso__icono { display: none; }
 }

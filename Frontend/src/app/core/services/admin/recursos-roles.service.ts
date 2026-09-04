@@ -36,10 +36,15 @@ export class RecursosRolesService {
     return this.http.post(this.base_recursos_rol, body);
   }
 
+  /**
+   * Retira un recurso de un rol.
+   *
+   * La URL estaba mal formada: repetia el segmento y quedaba en
+   * /resourcesr//resourcesr/{id}, ademas de faltarle la barra final que exige
+   * Django. Nunca pudo borrar nada.
+   */
   deleteResourceFromRole(resourcesRoleId: number): Observable<any> {
-    const url = `${this.base_recursos_rol}/resourcesr/${resourcesRoleId}`; // Utiliza la ID del registro para eliminar la relación
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.delete(url, { headers });
+    return this.http.delete(`${this.base_recursos_rol}${resourcesRoleId}/`);
   }
 
   getAssignedRolesToResources(): Observable<any[]> {

@@ -408,6 +408,14 @@ export class UserService {
     return this.http.post(this.base_tabla_categoria, tipo);
   }
 
+  /**
+   * Menu vigente del usuario. El menu se guardaba en localStorage al iniciar
+   * sesion, asi que un cambio de permisos no se veia hasta volver a entrar.
+   */
+  obtenerMenuActual(): Observable<any> {
+    return this.http.get<any>(`${this.API_URI}/api/user/menu/`);
+  }
+
   obtenerTipoCategoria(): Observable<any> {
     return this.http.get<any[]>(this.base_tabla_categoria);
   }

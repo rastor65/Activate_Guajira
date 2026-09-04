@@ -252,6 +252,35 @@ class AuthLogin(APIView):
                                                   'menu': menu.data})
         return Response(response, status=code)
     
+class MenuActualView(APIView):
+    """Menu vigente del usuario autenticado.
+
+    El frontend guardaba el menu en localStorage al iniciar sesion, asi que un
+    cambio de permisos no se veia hasta volver a entrar. Con esto puede
+    refrescarlo en cada carga.
+    """
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            # create_response falla con data vacia en respuestas de error,
+            # asi que aqui se responde directamente.
+            return Response(
+                {'ok': False, 'message': 'No autenticado', 'errors': {'error': 'No autenticado'}},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        # Misma construccion que en el login, para que no puedan divergir
+        resources = flatList([
+            e.resources.prefetch_related('resources')
+            for e in request.user.roles.all()
+        ])
+        menu = ResourcesSerializers(set(resources), many=True)
+
+        response, code = create_response(
+            status.HTTP_200_OK, 'Menu', {'menu': menu.data})
+        return Response(response, status=code)
+
+
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     http_method_names = ['get', 'patch']
@@ -266,8 +295,17 @@ class RegistroView(APIView):
         try:
             serializer = RegistroSerializzer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
-                return Response({"message": "Registro exitoso"}, status=status.HTTP_201_CREATED)
+                user = serializer.save()
+                # Se devuelve el usuario generado: es la credencial con la que
+                # entrara, y no la eligio el.
+                return Response(
+                    {
+                        "message": "Registro exitoso",
+                        "username": user.username,
+                        "id": user.id,
+                    },
+                    status=status.HTTP_201_CREATED,
+                )
 
             # Retornar los errores con codificación correcta
             return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

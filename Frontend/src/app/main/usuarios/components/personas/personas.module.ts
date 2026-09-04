@@ -16,7 +16,9 @@ import { ToastModule } from 'primeng/toast';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
+import { RippleModule } from 'primeng/ripple';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 @NgModule({
@@ -28,6 +30,8 @@ import { DropdownModule } from 'primeng/dropdown';
     EliminarComponent
   ],
   imports: [
+    TooltipModule,
+    RippleModule,
     CommonModule,
     PersonasRoutingModule,
     FormsModule,
@@ -39,7 +43,7 @@ import { DropdownModule } from 'primeng/dropdown';
     ToastModule,
     DialogModule,
     ConfirmPopupModule,
-    DropdownModule,
+    SelectModule,
   ]
 })
 export class PersonasModule { }

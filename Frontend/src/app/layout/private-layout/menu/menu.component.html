@@ -1,19 +1,45 @@
-<div *ngFor="let item of menu; let i = index" class="padre grid align-items-center justify-content-center pl-2"
-  (mouseenter)="openSubmenu($event, item)" (mouseleave)="closeSubmenu(item)" (click)="clickHandler($event, item)">
+<ul class="nav" [class.nav--expandido]="expandido">
+  <li *ngFor="let item of menu; trackBy: trackPorId" class="nav__item"
+    (mouseenter)="openSubmenu(item)" (mouseleave)="closeSubmenu(item)">
 
-  <span [routerLink]="item.link" (click)="clickHandler($event, item)" class="text-600 cursor-pointer centered-span"
-    style="padding-left: 10px; padding-bottom: 10px; padding-top: 10px;">
-    <i [ngClass]="item.icono" style="font-size: 1.5rem; margin-top: 5px;"></i>
-  </span>
+    <!-- Item con hijos: es un boton que abre el grupo, no un enlace -->
+    <button *ngIf="item.menu; else enlaceSimple" type="button" class="nav__link"
+      [class.is-open]="expandido && !item.collapsed" [attr.aria-expanded]="expandido ? !item.collapsed : null"
+      [attr.title]="expandido ? null : item.titulo" (click)="clickHandler($event, item)">
+      <i class="nav__icon" [ngClass]="item.icono" aria-hidden="true"></i>
+      <span class="nav__texto">{{ item.titulo }}</span>
+      <i class="nav__caret pi pi-chevron-down" aria-hidden="true"></i>
+    </button>
 
-  <!-- Submenú flotante -->
-  <div *ngIf="!item.collapsed" class="submenu"
-    [ngStyle]="{'top.px': item.submenuPosition?.top, 'left.px': item.submenuPosition?.left}">
-    <div *ngFor="let subitem of item.menu" class="hijo">
-      <span [routerLink]="subitem.link" (click)="clickHandler($event, subitem)">
-        <i class="ml-2 pi pi-chevron-right" style="font-size: 1.5rem; margin-top: 5px;"></i>
-        <span class="ml-2" style="font-size: 18px;">{{ subitem.titulo }}</span>
-      </span>
+    <!-- Item sin hijos: enlace normal -->
+    <ng-template #enlaceSimple>
+      <a class="nav__link" [routerLink]="item.link" routerLinkActive="is-active"
+        [attr.title]="expandido ? null : item.titulo" (click)="clickHandler($event, item)">
+        <i class="nav__icon" [ngClass]="item.icono" aria-hidden="true"></i>
+        <span class="nav__texto">{{ item.titulo }}</span>
+      </a>
+    </ng-template>
+
+    <!-- Submenu: acordeon si la barra esta expandida -->
+    <ul *ngIf="item.menu && expandido && !item.collapsed" class="nav__sub">
+      <li *ngFor="let subitem of item.menu; trackBy: trackPorId">
+        <a class="nav__sub-link" [routerLink]="subitem.link" routerLinkActive="is-active"
+          (click)="clickHandler($event, subitem)">
+          <span class="nav__sub-punto" aria-hidden="true"></span>
+          <span>{{ subitem.titulo }}</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Submenu: flotante si la barra esta contraida -->
+    <div *ngIf="item.menu && !expandido && !item.collapsed" class="nav__flyout" role="menu"
+      [attr.aria-label]="item.titulo">
+      <p class="nav__flyout-title">{{ item.titulo }}</p>
+      <a *ngFor="let subitem of item.menu; trackBy: trackPorId" class="nav__flyout-link" role="menuitem"
+        [routerLink]="subitem.link" routerLinkActive="is-active" (click)="clickHandler($event, subitem)">
+        <i class="pi pi-chevron-right" aria-hidden="true"></i>
+        <span>{{ subitem.titulo }}</span>
+      </a>
     </div>
-  </div>
-</div>
+  </li>
+</ul>

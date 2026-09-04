@@ -21,44 +21,77 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a#xmneb=v#5y@$2c*sxhl3s2q58i1x8r*7(l8#!(4-4wp37^g&'
+# La clave sale del entorno. El valor de reserva solo sirve para desarrollo
+# local: en Railway hay que definir SECRET_KEY o las sesiones y los tokens de
+# todos los despliegues compartirian firma.
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY',
+    'django-insecure-solo-para-desarrollo-local-no-usar-en-produccion',
+)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Apagado salvo que se pida explicitamente: en produccion DEBUG=True filtra
+# rutas, consultas y variables de entorno en cada pagina de error.
+DEBUG = os.environ.get('DEBUG', 'False').strip().lower() in ('1', 'true', 'yes', 'on')
 
-#IA
+# Detras de un proxy que termina TLS (Railway) la peticion llega por http.
+# Con esto request.is_secure() y build_absolute_uri devuelven https cuando
+# corresponde, sin tener que parchear las URLs a mano en los serializers.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+# IA (Google Gemini API)
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 import os
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'activate-guajira.up.railway.app',
-    'activateguajira.up.railway.app'
-]
+def _lista(nombre, por_defecto=''):
+    """Lee una variable separada por comas y devuelve una lista limpia."""
+    crudo = os.environ.get(nombre, por_defecto)
+    return [x.strip() for x in crudo.split(',') if x.strip()]
 
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+ALLOWED_HOSTS = _lista('ALLOWED_HOSTS', 'localhost,127.0.0.1')
+
+# Railway publica el dominio del servicio aqui; se anade solo para no tener que
+# copiarlo a mano en cada entorno.
+_dominio_railway = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+if _dominio_railway and _dominio_railway not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_dominio_railway)
+
+if DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['*']
+
+# Django 4 exige el esquema en los origenes de confianza para CSRF
+CSRF_TRUSTED_ORIGINS = _lista('CSRF_TRUSTED_ORIGINS')
+if _dominio_railway:
+    CSRF_TRUSTED_ORIGINS.append('https://' + _dominio_railway)
+
+
+CELERY_BROKER_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 
 #### ORIGIN
 
-VAPID_PUBLIC_KEY = "BBhWfccyHHvU-DrbPbbMMOeaQ3_xMZGQhPR1FfwIfeShYsGnUO6J-iP6C-fkfbtIC1DCqOm6KBru77UkBjkmyvA="
-VAPID_PRIVATE_KEY = "7_3QKyXomqhksKU8YWOaYa1GtHuY_UFwh2UFGHM7rwk="
+# Estas claves estaban escritas en el codigo y por tanto en el historial de
+# git. Conviene generar unas nuevas y dejar estas solo como reserva local.
+VAPID_PUBLIC_KEY = os.environ.get(
+    'VAPID_PUBLIC_KEY',
+    "BBhWfccyHHvU-DrbPbbMMOeaQ3_xMZGQhPR1FfwIfeShYsGnUO6J-iP6C-fkfbtIC1DCqOm6KBru77UkBjkmyvA=",
+)
+VAPID_PRIVATE_KEY = os.environ.get(
+    'VAPID_PRIVATE_KEY',
+    "7_3QKyXomqhksKU8YWOaYa1GtHuY_UFwh2UFGHM7rwk=",
+)
 VAPID_CLAIMS = {
-    "sub": "mailto:rdamianquintero@uniguajira.edu.co"
+    "sub": "mailto:" + os.environ.get('VAPID_EMAIL', 'rdamianquintero@uniguajira.edu.co')
 }
 
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "https://activateguajira.up.railway.app",
-    "https://activate-guajira.up.railway.app",
-    "http://localhost:4200"
-]
+# El frontend vive en otro servicio y su dominio cambia con el entorno.
+CORS_ALLOWED_ORIGINS = _lista('CORS_ALLOWED_ORIGINS', 'http://localhost:4200')
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -143,18 +176,27 @@ SESSION_COOKIE_SAMESITE = 'Strict'
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_HTTPONLY = True
 
-SESSION_COOKIE_SECURE = False
+# Con TLS terminado en el proxy de Railway las cookies deben ir marcadas como
+# seguras; en local (DEBUG) no, porque no hay https.
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
 SESSION_COOKIE_DOMAIN = None
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 ##  ENVIAR EMAILS ##
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587  
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend'
+)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'rdamianquintero@uniguajira.edu.co'
-EMAIL_HOST_PASSWORD = 'squk idys ttag dbck'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+# ATENCION: aqui habia una contrasena de aplicacion de Gmail escrita en el
+# codigo, y sigue en el historial de git. Revocala en la cuenta de Google y
+# define EMAIL_HOST_PASSWORD como variable del servicio.
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
 
 TEMPLATES = [
     {
@@ -182,29 +224,30 @@ PASSWORD_HASHERS = [
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'railway',
-         'USER': 'root',
-         'PASSWORD': 'zrNXNxBvYreBZCIByPDQiXCxQijcYkwh',
-         'HOST': 'caboose.proxy.rlwy.net',
-         'PORT': '13216', 
-         'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES', 'charset': 'utf8mb4',},
-     }
- }
+# # Railway expone la base de datos como MYSQL_URL (o DATABASE_URL). Si esta,
+# manda; si no, se cae a variables sueltas para desarrollo local.
+_url_bd = os.environ.get('MYSQL_URL') or os.environ.get('DATABASE_URL')
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'peakfit',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': '127.0.0.1',
-#         'PORT': '3306', 
-#         'OPTIONS': {'sql_mode': 'STRICT_ALL_TABLES'},
-#     }
-# }
+if _url_bd:
+    _cfg = env.db_url_config(_url_bd)
+else:
+    _cfg = {
+        'ENGINE': 'django.db.backends.mysql',
+        # Railway llama a esta variable MYSQLDATABASE, sin guion bajo. No se
+        # lee MYSQL_DATABASE porque el .env local ya la usa para otra cosa.
+        'NAME': os.environ.get('MYSQLDATABASE', 'peakfit'),
+        'USER': os.environ.get('MYSQLUSER', 'root'),
+        'PASSWORD': os.environ.get('MYSQLPASSWORD', ''),
+        'HOST': os.environ.get('MYSQLHOST', '127.0.0.1'),
+        'PORT': os.environ.get('MYSQLPORT', '3306'),
+    }
+
+_cfg.setdefault('ENGINE', 'django.db.backends.mysql')
+_cfg['OPTIONS'] = {'sql_mode': 'STRICT_ALL_TABLES', 'charset': 'utf8mb4'}
+# Reutiliza la conexion entre peticiones en vez de abrir una nueva cada vez
+_cfg['CONN_MAX_AGE'] = int(os.environ.get('CONN_MAX_AGE', '60'))
+
+DATABASES = {'default': _cfg}
 
 
 # Password validation
@@ -270,12 +313,24 @@ SIMPLE_JWT = {
 
 ### CACHES
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': '127.0.0.1:11211',
+# Sin memcached a la vista se usa la memoria del proceso. Antes apuntaba a
+# 127.0.0.1:11211 fijo, que dentro de un contenedor no existe y hace fallar
+# cualquier vista que toque la cache.
+_memcached = os.environ.get('MEMCACHED_LOCATION')
+if _memcached:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+            'LOCATION': _memcached,
+        }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'activate-guajira',
+        }
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
@@ -304,4 +359,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'config', 'archivos')
+# En Railway el disco del contenedor se borra en cada despliegue: para que las
+# imagenes subidas sobrevivan hay que montar un volumen y apuntar MEDIA_ROOT
+# ahi con la variable MEDIA_ROOT.
+MEDIA_ROOT = os.environ.get('MEDIA_ROOT', os.path.join(BASE_DIR, 'config', 'archivos'))

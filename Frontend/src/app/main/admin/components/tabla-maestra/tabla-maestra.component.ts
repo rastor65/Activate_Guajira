@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { ConfirmationService } from 'primeng/api';
 
 @Component({
+  standalone: false,
   selector: 'app-tabla-maestra',
   templateUrl: './tabla-maestra.component.html',
   styleUrls: ['./tabla-maestra.component.css'],
@@ -18,7 +19,9 @@ export class TablaMaestraComponent implements OnInit {
   isEditMode: boolean = false;
   categorias: any[] = [];
   tablaMaestra: any[] = [];
-  selectedRegistro: any = null;
+  // Nunca null: la plantilla del dialogo se evalua aunque este cerrado, y un
+  // null aqui rompe el ciclo de render de toda la vista (tabla incluida).
+  selectedRegistro: any = { id: null, categoria: null, nombre: '', codigo: null };
   loading: boolean = false;
   selectedCategoria: any = { id: null, nombre: '' };
   datos: any[] = [];
@@ -175,7 +178,7 @@ export class TablaMaestraComponent implements OnInit {
 
   cerrarDialogMaestra() {
     this.dialogMaestra = false;
-    this.selectedRegistro = null;
+    this.selectedRegistro = { id: null, categoria: null, nombre: '', codigo: null };
   }
 
   // Guardar o actualizar un registro en la Tabla Maestra

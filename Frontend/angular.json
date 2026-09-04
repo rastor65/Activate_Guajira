@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "cli": {
-    "analytics": "2ed05b13-b9a3-4136-9ab8-a7b157aa25ea"
+    "analytics": false
   },
   "version": 1,
   "newProjectRoot": "projects",
@@ -18,42 +18,52 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/app-turistica",
+            "outputPath": {
+              "base": "dist/app-turistica"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "browser": "src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
-              "src/logo-uniguajira.ico",
-              "src/assets",
-              "src/favicon.ico",
-              "src/manifest.webmanifest"
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "favicon.ico",
+                "input": "src",
+                "output": "."
+              },
+              {
+                "glob": "manifest.webmanifest",
+                "input": "src",
+                "output": "."
+              }
             ],
             "styles": [
-              "src/styles.css",
               "node_modules/primeicons/primeicons.css",
-              "node_modules/primeng/resources/themes/nova-alt/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/primeflex/primeflex.css"
+              "src/styles.css"
             ],
-            "scripts": [
-              "node_modules/chart.js/dist/chart.js"
-            ]
+            "scripts": []
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "15mb",
-                  "maximumError": "55mb"
+                  "maximumWarning": "3mb",
+                  "maximumError": "8mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "15mb",
-                  "maximumError": "55mb"
+                  "maximumWarning": "20kb",
+                  "maximumError": "80kb"
                 }
               ],
               "fileReplacements": [
@@ -63,64 +73,58 @@
                 }
               ],
               "outputHashing": "all",
-              "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "AppTuristica:build:production"
+              "buildTarget": "AppTuristica:build:production"
             },
             "development": {
-              "browserTarget": "AppTuristica:build:development"
+              "buildTarget": "AppTuristica:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
-            "browserTarget": "AppTuristica:build"
+            "buildTarget": "AppTuristica:build"
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": [
-              "src/logo-uniguajira.ico",
-              "src/assets",
-              "src/service-worker.js"
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
+              }
             ],
             "styles": [
-              "src/styles.css",
               "node_modules/primeicons/primeicons.css",
-              "node_modules/primeng/resources/themes/nova-alt/theme.css",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/primeflex/primeflex.css"
+              "src/styles.css"
             ],
-            "scripts": [
-              "node_modules/chart.js/dist/Chart.js"
-            ]
+            "scripts": []
           }
         }
       }
     }
-  },
-  "defaultProject": "AppTuristica"
+  }
 }

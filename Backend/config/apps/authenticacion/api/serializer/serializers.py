@@ -29,7 +29,10 @@ class categoriaTipoSerializer(serializers.ModelSerializer):
 class tablaMaestraSerializer(serializers.ModelSerializer):
     class Meta:
         model = tablaMaestra
-        fields = ('id', 'nombre', 'categoria')
+        # El codigo se expone porque en Departamento y Ciudad guarda el codigo
+        # DANE: los 2 primeros digitos del municipio son los del departamento,
+        # y con eso el frontend filtra las ciudades sin consultar de nuevo.
+        fields = ('id', 'nombre', 'categoria', 'codigo')
 
 #PERSON
 class PersonsSerializers(serializers.ModelSerializer):
@@ -184,12 +187,18 @@ class RolesUserSerializers(serializers.ModelSerializer):
             raise ValidationError(response, code=code)
         
 class UserRolListSimpleSerializer(serializers.ModelSerializer):
-    userId = serializers.StringRelatedField()  # o usa userId.username si lo prefieres
-    rolesId = serializers.StringRelatedField()  # o rolesId.nombre si lo prefieres
+    # userId y rolesId salen como texto ("rastor - ", "Estudiante"), que es lo
+    # que ya consumen otras vistas. Se anaden los ids aparte: sin ellos el
+    # frontend no puede saber a que usuario o rol corresponde cada fila, y
+    # tenia que adivinarlo comparando cadenas.
+    userId = serializers.StringRelatedField()
+    rolesId = serializers.StringRelatedField()
+    usuario_id = serializers.IntegerField(source="userId_id", read_only=True)
+    rol_id = serializers.IntegerField(source="rolesId_id", read_only=True)
 
     class Meta:
         model = UserRol
-        fields = ['id', 'userId', 'rolesId', 'status']
+        fields = ["id", "userId", "rolesId", "status", "usuario_id", "rol_id"]
 
 class UserRolSerializer(serializers.ModelSerializer):
     userId = UserSerialSimple()
@@ -351,20 +360,35 @@ class ListUserSerializer(serializers.Serializer):
     first_name = serializers.CharField(source='person.nombres', default="")
     last_name = serializers.CharField(source='person.apellidos', default="")
     gender_name = serializers.SerializerMethodField()
+    edad = serializers.SerializerMethodField()
     ciudad_residencia = serializers.SerializerMethodField()
+
+    def get_edad(self, obj):
+        """Edad en anos. El frontend la necesita para previsualizar la grasa
+        corporal en vivo con la misma formula que aplica el backend."""
+        try:
+            person = getattr(obj, 'person', None)
+            nacimiento = getattr(person, 'fecha_nacimiento', None) if person else None
+            if not nacimiento:
+                return None
+            hoy = date.today()
+            return hoy.year - nacimiento.year - (
+                (hoy.month, hoy.day) < (nacimiento.month, nacimiento.day)
+            )
+        except Exception:
+            return None
 
     def get_avatar_url(self, obj):
         try:
-            if obj.avatar:
-                request = self.context.get('request')
-                if request is not None:
-                    url = request.build_absolute_uri(f'/api/user/{obj.id}/descargar/')
-                    # Corrige si el request ya viene en https
-                    if request.is_secure():
-                        return url
-                    else:
-                        return url.replace('http://', 'https://')
-            return None
+            if not obj.avatar:
+                return None
+            request = self.context.get('request')
+            if request is None:
+                return None
+            # build_absolute_uri ya resuelve el esquema correcto. Detras de un
+            # proxy que termina TLS lo hace gracias a SECURE_PROXY_SSL_HEADER
+            # (ver settings): forzar https aqui rompia el desarrollo local.
+            return request.build_absolute_uri(f'/api/user/{obj.id}/descargar/')
         except Exception:
             return None
 

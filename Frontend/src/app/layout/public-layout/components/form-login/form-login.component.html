@@ -1,70 +1,175 @@
-<p-progressBar mode="indeterminate" *ngIf="showProgressBar" class="p-progressbar"></p-progressBar>
+<p-progressBar *ngIf="showProgressBar" mode="indeterminate" class="auth-progress"
+  aria-label="Procesando"></p-progressBar>
 
-<div class="container" id="container">
-  <div class="form-container sign-up-container">
-    <form (ngSubmit)="onSubmitRegister()" [formGroup]="formRegister" novalidate>
-      <h1>Crear una cuenta</h1>
-      <input type="text" placeholder="Nombres" formControlName="first_name" />
-      <input type="text" placeholder="Apellidos" formControlName="last_name" />
-      <input type="email" placeholder="Correo electronico" formControlName="email1" />
-      <input type="number" placeholder="Identificación" formControlName="identificación"/>
-      <input type="password" placeholder="Contraseña" formControlName="password" />
-      <input type="password" formControlName="password2" placeholder="Confirmar contraseña" minlength="8"
-        maxlength="50">
-      <label class="checkbox-label">
-        <input type="checkbox" id="consentimiento" formControlName="consentimiento" required />
-        <span class="checkbox-text">
-          He leído y acepto el <a href="assets/Consentimiento_informado.pdf" target="_blank"
-            rel="noopener noreferrer">consentimiento informado</a>.
-        </span>
-      </label>
-      <br>
-      <button pButton pRipple type="submit" label="Crear una cuenta" [disabled]="!formRegister.valid"></button>
-    </form>
-  </div>
-  <div class="form-container sign-in-container">
-    <form (ngSubmit)="onSubmitLogin()" [formGroup]="formLogin" novalidate>
-      <h1>Iniciar sesión</h1>
-      <div class="social-container">
-        <a href="#" target="_blank" class="social"><i class="fab pi pi-instagram"></i></a>
-        <a href="#" target="_blank" class="social"><i class="fab pi pi-youtube"></i></a>
-        <a href="#" target="_blank" class="social"><i class="fab pi pi-facebook"></i></a>
-      </div>
-      <span>Utiliza tu cuenta</span>
-      <input type="email" placeholder="Email" formControlName="username" />
-      <div class="password-wrapper">
-        <input [type]="mostrarContrasena ? 'text' : 'password'" formControlName="password" placeholder="Contraseña" />
-        <i class="pi toggle-icon" [ngClass]="mostrarContrasena ? 'pi-eye-slash' : 'pi-eye'"
-          (click)="toggleMostrarContrasena()"></i>
-      </div>
-      <a href="#">Olvidaste tu contraseña?</a>
+<div class="auth">
 
-      <button pButton pRipple type="submit" label="Entrar" [disabled]="!formLogin.valid"></button>
-    </form>
-  </div>
-  <div class="overlay-container">
-    <div class="overlay">
-      <div class="overlay-panel overlay-left">
-        <h1>Bienvenido!</h1>
-        <p>Para conectarse con nosotros, inicie sesión con su información personal</p>
-        <button class="ghost" id="signIn">Entrar</button>
+  <!-- Panel de marca -->
+  <aside class="auth__brand">
+    <div class="auth__brand-inner">
+      <div class="auth__logo">
+        <img src="assets/peakfit.png" alt="Activate Guajira">
       </div>
-      <div class="overlay-panel overlay-right">
-        <h1>Hola!</h1>
-        <p>Introduce tus datos personales y comienza tu viaje saludable con nosotros.</p>
-        <button class="ghost" id="signUp">Crear una cuenta</button>
-      </div>
+
+      <p class="auth__eyebrow">Universidad de La Guajira</p>
+      <h1 class="auth__headline">Tu cuerpo<br>lleva la cuenta.</h1>
+      <p class="auth__lede">
+        Registra tus mediciones, sigue tu composicion corporal y entrena con
+        acompanamiento profesional.
+      </p>
+
+      <ul class="auth__features">
+        <li><i class="pi pi-chart-line" aria-hidden="true"></i> Progreso medido, no estimado</li>
+        <li><i class="pi pi-heart" aria-hidden="true"></i> IMC, ICC y grasa corporal</li>
+        <li><i class="pi pi-users" aria-hidden="true"></i> Planes de entrenamiento y nutricion</li>
+      </ul>
     </div>
-  </div>
-  <div class="mobile-toggle-buttons">
-    <button class="ghost btn-login" (click)="activarFormulario('login')">Inisiar sesión</button>
-    <button class="ghost btn-register" (click)="activarFormulario('register')">Crear una cuenta</button>
-  </div>
 
+    <div class="auth__glow" aria-hidden="true"></div>
+  </aside>
+
+  <!-- Panel de formularios -->
+  <main class="auth__panel">
+    <div class="auth__card">
+
+      <div class="auth__tabs" role="tablist" aria-label="Acceso a la plataforma">
+        <button type="button" role="tab" class="auth__tab" id="tab-login"
+          [class.is-active]="formularioActivo === 'login'"
+          [attr.aria-selected]="formularioActivo === 'login'" aria-controls="panel-login"
+          (click)="activarFormulario('login')">
+          Iniciar sesion
+        </button>
+        <button type="button" role="tab" class="auth__tab" id="tab-register"
+          [class.is-active]="formularioActivo === 'register'"
+          [attr.aria-selected]="formularioActivo === 'register'" aria-controls="panel-register"
+          (click)="activarFormulario('register')">
+          Crear cuenta
+        </button>
+        <span class="auth__tab-marker" [class.is-right]="formularioActivo === 'register'" aria-hidden="true"></span>
+      </div>
+
+      <!-- INICIAR SESION -->
+      <section *ngIf="formularioActivo === 'login'" id="panel-login" role="tabpanel" aria-labelledby="tab-login"
+        class="auth__pane">
+        <h2 class="auth__title">Bienvenido de vuelta</h2>
+        <p class="auth__subtitle">Entra con tu cuenta institucional para continuar.</p>
+
+        <form (ngSubmit)="onSubmitLogin()" [formGroup]="formLogin" novalidate class="auth__form">
+          <div class="field">
+            <label for="login-user">Usuario</label>
+            <input id="login-user" type="text" autocomplete="username" formControlName="username"
+              placeholder="Tu nombre de usuario" aria-describedby="login-user-hint">
+            <small id="login-user-hint" class="field__hint">
+              Tambien puedes entrar con tu correo.
+            </small>
+          </div>
+
+          <div class="field">
+            <label for="login-pass">Contrasena</label>
+            <div class="field__password">
+              <input id="login-pass" [type]="mostrarContrasena ? 'text' : 'password'" autocomplete="current-password"
+                formControlName="password" placeholder="Tu contrasena">
+              <button type="button" class="field__reveal" (click)="toggleMostrarContrasena()"
+                [attr.aria-label]="mostrarContrasena ? 'Ocultar contrasena' : 'Mostrar contrasena'">
+                <i class="pi" [ngClass]="mostrarContrasena ? 'pi-eye-slash' : 'pi-eye'" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="auth__row">
+            <a href="#" class="auth__link">Olvidaste tu contrasena?</a>
+          </div>
+
+          <button pButton pRipple type="submit"
+            class="ag-accent auth__submit" [disabled]="!formLogin.valid">
+            <span pButtonLabel>Entrar</span>
+            <i class="pi pi-arrow-right" pButtonIcon aria-hidden="true"></i>
+          </button>
+        </form>
+
+        <p class="auth__switch">
+          No tienes cuenta?
+          <button type="button" class="auth__link" (click)="activarFormulario('register')">Crea una aqui</button>
+        </p>
+      </section>
+
+      <!-- CREAR CUENTA -->
+      <section *ngIf="formularioActivo === 'register'" id="panel-register" role="tabpanel" aria-labelledby="tab-register"
+        class="auth__pane">
+        <h2 class="auth__title">Empieza tu proceso</h2>
+        <p class="auth__subtitle">Crea tu cuenta para registrar tu primera medicion.</p>
+
+        <form (ngSubmit)="onSubmitRegister()" [formGroup]="formRegister" novalidate class="auth__form">
+          <div class="auth__form-grid">
+            <div class="field">
+              <label for="reg-nombres">Nombres</label>
+              <input id="reg-nombres" type="text" autocomplete="given-name" formControlName="first_name"
+                placeholder="Tus nombres">
+            </div>
+            <div class="field">
+              <label for="reg-apellidos">Apellidos</label>
+              <input id="reg-apellidos" type="text" autocomplete="family-name" formControlName="last_name"
+                placeholder="Tus apellidos">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="reg-email">Correo electronico</label>
+            <input id="reg-email" type="email" autocomplete="email" formControlName="email1"
+              placeholder="tucorreo@uniguajira.edu.co" aria-describedby="reg-email-hint">
+            <small id="reg-email-hint" class="field__hint">
+              <ng-container *ngIf="usernamePrevisto; else sinPrevio">
+                Entraras con el usuario <strong class="field__hint-user">{{ usernamePrevisto }}</strong>
+              </ng-container>
+              <ng-template #sinPrevio>Tu usuario se creara a partir del correo.</ng-template>
+            </small>
+          </div>
+
+          <div class="field">
+            <label for="reg-id">Numero de identificacion</label>
+            <input id="reg-id" type="number" inputmode="numeric" formControlName="identificación"
+              placeholder="Sin puntos ni comas">
+          </div>
+
+          <div class="auth__form-grid">
+            <div class="field">
+              <label for="reg-pass">Contrasena</label>
+              <input id="reg-pass" type="password" autocomplete="new-password" formControlName="password"
+                placeholder="Minimo 8 caracteres">
+            </div>
+            <div class="field">
+              <label for="reg-pass2">Confirmar contrasena</label>
+              <input id="reg-pass2" type="password" autocomplete="new-password" formControlName="password2"
+                minlength="8" maxlength="50" placeholder="Repite la contrasena">
+            </div>
+          </div>
+
+          <label class="consent" for="consentimiento">
+            <input type="checkbox" id="consentimiento" formControlName="consentimiento" required>
+            <span>
+              He leido y acepto el
+              <a href="assets/Consentimiento_informado.pdf" target="_blank" rel="noopener noreferrer">
+                consentimiento informado</a>.
+            </span>
+          </label>
+
+          <button pButton pRipple type="submit"
+            class="ag-accent auth__submit" [disabled]="!formRegister.valid">
+            <span pButtonLabel>Crear cuenta</span>
+            <i class="pi pi-arrow-right" pButtonIcon aria-hidden="true"></i>
+          </button>
+        </form>
+
+        <p class="auth__switch">
+          Ya tienes cuenta?
+          <button type="button" class="auth__link" (click)="activarFormulario('login')">Inicia sesion</button>
+        </p>
+      </section>
+
+      <footer class="auth__footer">
+        <span>Activate Guajira</span>
+        <span aria-hidden="true">·</span>
+        <span>RASTOR.SOFT</span>
+      </footer>
+    </div>
+  </main>
 </div>
-
-<footer>
-  <p>
-    Created by <a>RASTOR.SOFT</a>
-  </p>
-</footer>

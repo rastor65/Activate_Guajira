@@ -196,6 +196,7 @@ class Entrenamiento(BaseModel):
     descripcion = models.TextField(blank=True, null=True)
     duracion_semanas = models.IntegerField()
     semanas = models.JSONField(default=list)  # Aquí va el JSON con semanas, ejercicios y días
+    activo = models.BooleanField(default=True, db_index=True)
 
     def __str__(self):
         return f"{self.nombre} - {self.usuario.username} (Entrenador: {self.entrenador.username})"
@@ -210,6 +211,7 @@ class Alimentacion(BaseModel):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     calorias_diarias = models.IntegerField()
+    activo = models.BooleanField(default=True, db_index=True)
     
     def __str__(self):
         return f"{self.nombre} - {self.usuario.username} (Entrenador: {self.entrenador.username})"

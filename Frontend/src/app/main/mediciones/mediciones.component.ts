@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
+  standalone: false,
   selector: 'app-mediciones',
   templateUrl: './mediciones.component.html',
   styleUrls: ['./mediciones.component.css']

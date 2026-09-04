@@ -4,6 +4,8 @@ import { VerComponent } from './components/ver/ver.component';
 
 import { UserRolesRoutingModule } from './user-roles-routing.module';
 import {TableModule} from 'primeng/table';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TooltipModule } from 'primeng/tooltip';
 import {ButtonModule} from 'primeng/button';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {PanelModule} from 'primeng/panel';
@@ -14,9 +16,9 @@ import {KeyFilterModule} from 'primeng/keyfilter';
 import {AutoCompleteModule} from 'primeng/autocomplete';
 import {ToastModule} from 'primeng/toast';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { MessagesModule } from 'primeng/messages';
-import { DropdownModule } from 'primeng/dropdown';
+import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
+import { RippleModule } from 'primeng/ripple';
 
 
 
@@ -24,12 +26,15 @@ import { CheckboxModule } from 'primeng/checkbox';
   declarations: [
     VerComponent,
   ],
+  exports: [VerComponent],
   imports: [
+    RippleModule,
+    ProgressSpinnerModule,
+    TooltipModule,
     CommonModule,
     UserRolesRoutingModule,
     
     CheckboxModule,
-    MessagesModule,
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
@@ -42,7 +47,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     AutoCompleteModule,
     ToastModule,
     MultiSelectModule,
-    DropdownModule,
+    SelectModule,
   ]
 })
 export class UserRolesModule { }

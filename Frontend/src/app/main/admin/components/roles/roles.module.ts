@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RolesRoutingModule } from './roles-routing.module';
 import { VerComponent } from './components/ver/ver.component';
@@ -13,6 +14,7 @@ import { DialogModule } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { CardModule } from 'primeng/card';
+import { RippleModule } from 'primeng/ripple';
 
 
 @NgModule({
@@ -20,10 +22,13 @@ import { CardModule } from 'primeng/card';
     VerComponent,
     RolesComponent,
   ],
+  exports: [VerComponent],
   providers: [
     // ConfirmationService
   ],
   imports: [
+    RippleModule,
+    TooltipModule,
     CommonModule,
     RolesRoutingModule,
 

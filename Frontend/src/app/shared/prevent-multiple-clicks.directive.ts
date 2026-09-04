@@ -1,6 +1,7 @@
 import { Directive, ElementRef, HostListener, Input, Renderer2 } from '@angular/core';
 
 @Directive({
+  standalone: false,
   selector: '[appPreventMultipleClicks]'
 })
 export class PreventMultipleClicksDirective {

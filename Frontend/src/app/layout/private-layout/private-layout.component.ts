@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
 import { DialogService } from 'primeng/dynamicdialog';
 import { createMenu } from 'src/app/consts/menu';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MenuItem, MessageService, PrimeNGConfig } from 'primeng/api';
+import { MenuItem, MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { UserService } from 'src/app/core/services/usuarios/user.service';
 import { Person, categoriaTablaMaestra, tablaMaestra, User } from 'src/app/models/user/person';
@@ -20,6 +20,7 @@ interface menu {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-private-layout',
   templateUrl: './private-layout.component.html',
   styleUrls: ['./private-layout.component.css'],
@@ -116,7 +117,6 @@ export class PrivateLayoutComponent implements OnInit {
     private userService: UserService,
     private formBuilder: FormBuilder,
     public dialogService: DialogService,
-    private primengConfig: PrimeNGConfig,
     private messageService: MessageService,
   ) {
     this.formCambioContrasena = this.formBuilder.group({
@@ -141,14 +141,33 @@ export class PrivateLayoutComponent implements OnInit {
 
     this.obtenerTipos();
     this.verificar();
-    this.primengConfig.ripple = true;
+    // Menu de cuenta, colgado del avatar de la barra superior.
+    //
+    // OJO: p-menu solo admite un modelo de un tipo. En cuanto hay una entrada
+    // con `items` (un grupo), las entradas sueltas del primer nivel dejan de
+    // dibujarse. "Cerrar sesion" estaba suelta y por eso no aparecia en el
+    // menu: no es que el clic fallara, es que la opcion no existia. Va dentro
+    // de su propio grupo, sin titulo.
     this.items = [
-      { label: 'Imagen', icon: 'pi pi-user', command: () => { this.abrirEditarImagen(); } },
-      { separator: true },
-      { label: 'Editar perfil', icon: 'pi pi-cog', command: () => { this.abrirEditarPerfil(); } },
-      { separator: true },
-      { label: 'Cambiar contraseña', icon: 'pi pi-key', command: () => { this.abrirEditarContra(); } },
-      { separator: true },
+      {
+        label: 'Mi cuenta',
+        items: [
+          { label: 'Editar perfil', icon: 'pi pi-user-edit', command: () => { this.abrirEditarPerfil(); } },
+          { label: 'Cambiar imagen', icon: 'pi pi-image', command: () => { this.abrirEditarImagen(); } },
+          { label: 'Cambiar contraseña', icon: 'pi pi-key', command: () => { this.abrirEditarContra(); } },
+        ]
+      },
+      {
+        separator: true,
+        items: [
+          {
+            label: 'Cerrar sesión',
+            icon: 'pi pi-sign-out',
+            styleClass: 'menu-cuenta__salir',
+            command: () => { this.showConfirm(); }
+          },
+        ]
+      },
     ];
   }
 
@@ -185,8 +204,173 @@ export class PrivateLayoutComponent implements OnInit {
     );
   }
 
+  // ==========================================================================
+  // Departamento y ciudad
+  //
+  // Son 1.121 municipios: un desplegable plano seria inservible. El codigo
+  // DANE del municipio empieza por el de su departamento (44001 -> La Guajira
+  // 44), asi que se filtra por ese prefijo sin necesitar otra consulta.
+  // ==========================================================================
+
+  private ciudadesDe(codigoDepartamento: any): tablaMaestra[] {
+    const depto = this.departamento.find(d => d.id === codigoDepartamento);
+    const prefijo = (depto as any)?.codigo;
+    if (!prefijo) {
+      return this.ciudad;
+    }
+    return this.ciudad.filter(c => String((c as any).codigo ?? '').startsWith(prefijo));
+  }
+
+  /** Ciudades del departamento de residencia elegido. */
+  get ciudadesResidencia(): tablaMaestra[] {
+    return this.ciudadesDe(this.usuario.departamento);
+  }
+
+  /** Al cambiar de departamento, una ciudad de otro deja de tener sentido. */
+  onDepartamentoChange(): void {
+    const validas = this.ciudadesResidencia;
+    if (this.usuario.ciudad_residencia &&
+        !validas.some(c => c.id === this.usuario.ciudad_residencia)) {
+      this.usuario.ciudad_residencia = null as any;
+    }
+    // El barrio cuelga de la ciudad: si esta cambia, hay que revisarlo
+    this.onCiudadChange();
+  }
+
+  /** Cuantas ciudades quedan tras el filtro, para orientar al usuario. */
+  get hayDepartamentoElegido(): boolean {
+    return !!this.usuario.departamento;
+  }
+
+  /**
+   * Barrios de la ciudad de residencia elegida. Su codigo es
+   * "<codigo del municipio>-<consecutivo>", asi que basta el prefijo.
+   */
+  get barriosCiudad(): tablaMaestra[] {
+    const ciudad = this.ciudad.find(c => c.id === this.usuario.ciudad_residencia);
+    const codigo = (ciudad as any)?.codigo;
+    if (!codigo) {
+      return [];
+    }
+    return this.barrio.filter(b => String((b as any).codigo ?? '').startsWith(codigo + '-'));
+  }
+
+  get hayCiudadElegida(): boolean {
+    return !!this.usuario.ciudad_residencia;
+  }
+
+  /** Al cambiar de ciudad, un barrio de otra deja de tener sentido. */
+  onCiudadChange(): void {
+    const validos = this.barriosCiudad;
+    if (this.usuario.barrio && !validos.some(b => b.id === this.usuario.barrio)) {
+      this.usuario.barrio = null as any;
+    }
+  }
+
+  // ==========================================================================
+  // Completitud del perfil
+  //
+  // Varias funciones dependen de datos del perfil: sin genero ni fecha de
+  // nacimiento no se puede calcular la grasa corporal. Mostrar que falta
+  // evita que el usuario lo descubra por una seccion vacia.
+  // ==========================================================================
+
+  private static readonly CAMPOS_POR_SECCION: { [seccion: string]: string[] } = {
+    identificacion: ['document_type', 'identificacion', 'fecha_nacimiento'],
+    socioeconomico: ['nivelFormacion', 'estrato', 'situacion_laboral'],
+    residencia: ['departamento', 'ciudad_residencia', 'barrio', 'telefono'],
+    demograficos: ['ciudad_nacimiento', 'estado_civil', 'grupoEtnico', 'genero'],
+  };
+
+  private tieneValor(campo: string): boolean {
+    const valor = (this.usuario as any)?.[campo];
+    return valor !== null && valor !== undefined && valor !== '';
+  }
+
+  /** Cuantos campos faltan en una seccion. */
+  faltantesEn(seccion: string): number {
+    const campos = PrivateLayoutComponent.CAMPOS_POR_SECCION[seccion] ?? [];
+    return campos.filter(c => !this.tieneValor(c)).length;
+  }
+
+  /** Porcentaje completado del perfil, sobre todos los campos. */
+  get completitud(): number {
+    const campos = Object.values(PrivateLayoutComponent.CAMPOS_POR_SECCION).flat();
+    if (!campos.length) {
+      return 0;
+    }
+    const llenos = campos.filter(c => this.tieneValor(c)).length;
+    return Math.round((llenos / campos.length) * 100);
+  }
+
+  get perfilCompleto(): boolean {
+    return this.completitud === 100;
+  }
+
+  /**
+   * Genero y fecha de nacimiento son los dos que habilitan el calculo de
+   * grasa corporal, asi que se senalan aparte.
+   */
+  get faltaParaComposicion(): string[] {
+    const faltan: string[] = [];
+    if (!this.tieneValor('genero')) {
+      faltan.push('genero');
+    }
+    if (!this.tieneValor('fecha_nacimiento')) {
+      faltan.push('fecha de nacimiento');
+    }
+    return faltan;
+  }
+
+  /**
+   * Seccion activa del dialogo de perfil. Se gestiona aqui en vez de con
+   * p-tabs: la navegacion es vertical y necesita control propio del marcado.
+   */
+  seccionPerfil: 'identificacion' | 'socioeconomico' | 'residencia' | 'demograficos' = 'identificacion';
+
+  seccionesPerfil = [
+    { id: 'identificacion', titulo: 'Identificacion', icono: 'pi pi-id-card' },
+    { id: 'socioeconomico', titulo: 'Socioeconomico', icono: 'pi pi-briefcase' },
+    { id: 'residencia', titulo: 'Residencia', icono: 'pi pi-map-marker' },
+    { id: 'demograficos', titulo: 'Demograficos', icono: 'pi pi-users' },
+  ];
+
+  irASeccion(id: any) { this.seccionPerfil = id; }
+
+  /** Cajon de navegacion en movil. En escritorio la barra lateral es fija. */
+  public menuAbierto = false;
+
+  /** Barra lateral expandida (con rotulos) o contraida (riel de iconos). */
+  public sidebarExpandido = this.leerPreferenciaSidebar();
+
+  private static readonly CLAVE_SIDEBAR = 'ag_sidebar_expandido';
+
+  alternarMenu() { this.menuAbierto = !this.menuAbierto; }
+  cerrarMenu() { this.menuAbierto = false; }
+
+  alternarSidebar() {
+    this.sidebarExpandido = !this.sidebarExpandido;
+    try {
+      localStorage.setItem(
+        PrivateLayoutComponent.CLAVE_SIDEBAR,
+        this.sidebarExpandido ? '1' : '0'
+      );
+    } catch {
+      // Modo privado o almacenamiento bloqueado: la preferencia no persiste,
+      // pero la barra sigue funcionando.
+    }
+  }
+
+  private leerPreferenciaSidebar(): boolean {
+    try {
+      return localStorage.getItem(PrivateLayoutComponent.CLAVE_SIDEBAR) === '1';
+    } catch {
+      return false;
+    }
+  }
+
   save(id: string) { }
-  ocultarMenu(boolean: boolean) { }
+  ocultarMenu(boolean: boolean) { this.cerrarMenu(); }
   showConfirm() { this.Dialog = true; }
   hideDialog() { this.Dialog = false; }
   openDialog() { this.displayDialog = true; }
@@ -206,16 +390,46 @@ export class PrivateLayoutComponent implements OnInit {
   }
 
   cerrarSesion() {
-    this.setLogin(false)
-    this.authService.logout()
-    this.ngOnInit()
-    this.router.navigateByUrl('/login')
+    // Cerrar el dialogo primero: si se navega con el abierto, el velo modal se
+    // queda encima del login y la pantalla parece congelada.
+    this.hideDialog();
+    this.menu1 = [];
+    // logout() ya limpia el almacenamiento, vacia el cache y navega al login.
+    // Antes aqui se llamaba a ngOnInit() a mano, que volvia a montar el menu y
+    // a pedir datos con la sesion ya cerrada.
+    this.authService.logout();
   }
 
   abrirEditarPerfil() {
     this.loadUserData();
     this.Dialog2 = true;
     this.usuarioCopy = { ...this.usuario };
+  }
+
+  /** Pide el menu vigente y lo aplica si difiere del guardado. */
+  private refrescarMenu(): void {
+    this.userService.obtenerMenuActual().subscribe({
+      next: (respuesta) => {
+        const datos = respuesta?.data ?? respuesta;
+        const menu = datos?.menu;
+        if (!Array.isArray(menu)) {
+          return;
+        }
+        const guardado = localStorage.getItem('menu');
+        const fresco = JSON.stringify(menu);
+        if (guardado === fresco) {
+          return;
+        }
+        localStorage.setItem('menu', fresco);
+        this.privateMenu = createMenu(JSON.parse(fresco)) as any;
+        this.menu1 = this.privateMenu;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        // Si falla se sigue con el menu guardado: no vale la pena bloquear
+        console.warn('No se pudo refrescar el menu:', error?.status);
+      }
+    });
   }
 
   public verificar() {
@@ -230,6 +444,9 @@ export class PrivateLayoutComponent implements OnInit {
       this.nombre = userObjeto.name;
       this.isLoggedIn = true
       this.setLogin(true)
+      // El menu guardado puede estar desfasado si cambiaron los permisos o
+      // las opciones del sistema: se refresca contra el servidor.
+      this.refrescarMenu();
     } else {
       this.isLoggedIn = false
       this.setLogin(false)
@@ -261,14 +478,30 @@ export class PrivateLayoutComponent implements OnInit {
     if (!this.user.consentimiento) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Debe aceptar el consentimiento informado para continuar.'
+        summary: 'Falta el consentimiento',
+        detail: 'Debes aceptar el consentimiento informado para continuar.'
       });
+      // Sin esto los botones quedaban deshabilitados para siempre
       this.isGuardando = false;
+      this.botonesDesactivados = false;
       return;
     }
 
     // Validación extra para evitar duplicados
-    this.userService.getPeopleByUserId(this.usuarioId!).subscribe(personas => {
+    this.userService.getPeopleByUserId(this.usuarioId!).subscribe({
+      error: (error) => {
+        // Sin este manejador, un fallo aqui dejaba el dialogo bloqueado
+        // sin ningun aviso: los botones no volvian a habilitarse.
+        console.error('Error verificando la persona del usuario:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'No se pudo validar tu perfil',
+          detail: 'Revisa tu conexion e intentalo de nuevo.'
+        });
+        this.isGuardando = false;
+        this.botonesDesactivados = false;
+      },
+      next: (personas) => {
       if (personas.length > 1) {
         this.messageService.add({
           severity: 'error',
@@ -324,12 +557,40 @@ export class PrivateLayoutComponent implements OnInit {
         },
         (error) => {
           console.error('Error al guardar los datos del usuario', error);
-          this.messageService.add({ severity: 'error', summary: 'Error al actualizar los datos basicos', detail: 'Todos los campos son requeridos' });
+          // Se muestra el motivo real en vez de suponer que faltan campos
+          const detalle = this.describirError(error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'No se pudieron guardar los datos',
+            detail: detalle
+          });
           this.isGuardando = false;
           this.botonesDesactivados = false;
         }
       );
+      }
     });
+  }
+
+  /** Extrae del error de la API un mensaje util para el usuario. */
+  private describirError(error: any): string {
+    const cuerpo = error?.error;
+    if (typeof cuerpo === 'string' && cuerpo.trim()) {
+      return cuerpo;
+    }
+    if (cuerpo && typeof cuerpo === 'object') {
+      // DRF devuelve { campo: ["mensaje", ...] }
+      const partes: string[] = [];
+      for (const campo of Object.keys(cuerpo)) {
+        const valor = (cuerpo as any)[campo];
+        const texto = Array.isArray(valor) ? valor.join(' ') : String(valor);
+        partes.push(campo === 'detail' ? texto : `${campo}: ${texto}`);
+      }
+      if (partes.length) {
+        return partes.join(' · ');
+      }
+    }
+    return `Error ${error?.status ?? 'desconocido'} al contactar el servidor.`;
   }
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

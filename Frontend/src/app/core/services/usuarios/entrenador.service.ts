@@ -37,6 +37,10 @@ export class EntrenadorService {
     return this.http.delete<any>(`${this.base_entrenamiento}${id}/`);
   }
 
+  activarEntrenamiento(id: number): Observable<any> {
+    return this.http.post<any>(`${this.base_entrenamiento}${id}/activar/`, {});
+  }
+
   editarSugerencia(tipo: string, dia: string) {
     return this.http.post<{ sugerencias: string[] }>(`
       ${this.API_URI}/ia/sugerencia/editar/`, { tipo, dia });
@@ -68,6 +72,10 @@ export class EntrenadorService {
 
   deleteAlimentacion(id: number): Observable<any> {
     return this.http.delete<any>(`${this.base_alimentacion}${id}/`);
+  }
+
+  activarAlimentacion(id: number): Observable<any> {
+    return this.http.post<any>(`${this.base_alimentacion}${id}/activar/`, {});
   }
 
 }

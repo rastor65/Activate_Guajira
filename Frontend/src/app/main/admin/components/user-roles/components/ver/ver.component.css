@@ -1,162 +1,224 @@
-/* Estilos globales */
-:root {
-    --primary-color: #0056b3;
-    --primary-hover: #003d80;
-    --background-light: #f8f9fa;
-    --text-dark: #333;
-    --border-color: #ddd;
-    --shadow-light: rgba(0, 0, 0, 0.1);
-    --shadow-medium: rgba(0, 0, 0, 0.15);
+/* Matriz de usuarios y roles. */
+
+/* --------------------------------------------------------------------------
+   Buscador
+   -------------------------------------------------------------------------- */
+.filtros { margin-bottom: var(--ag-space-5); }
+
+.filtros__search {
+  position: relative;
+  max-width: 26rem;
 }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: var(--background-light);
-    color: var(--text-dark);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.filtros__search i {
+  position: absolute;
+  top: 50%;
+  left: var(--ag-space-4);
+  transform: translateY(-50%);
+  color: var(--ag-text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
 }
 
-/* Contenedor principal */
-.container {
-    max-width: 500px;
-    margin: 30px auto;
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 6px 12px var(--shadow-light);
-    transition: transform 0.2s ease-in-out;
+.filtros__search input {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--ag-space-3) var(--ag-space-4) var(--ag-space-3) var(--ag-space-10);
+  border: 1px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  color: var(--ag-text-primary);
+  font-size: var(--ag-text-body);
 }
 
-.container:hover {
-    transform: translateY(-2px);
+.filtros__search input:focus {
+  outline: none;
+  border-color: var(--ag-border-focus);
+  box-shadow: 0 0 0 4px rgba(47, 90, 143, 0.16);
 }
 
-/* Título */
-.roles-title {
-    text-align: center;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 20px;
+/* --------------------------------------------------------------------------
+   Matriz
+   -------------------------------------------------------------------------- */
+.matriz {
+  min-width: 38rem;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-/* Formulario */
-.form-group {
-    margin-bottom: 20px;
+/* La celda debe seguir siendo celda de tabla: el flex va en su contenido */
+.matriz__usuario {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  width: 20rem;
+  padding: var(--ag-space-2) var(--ag-space-4);
+  text-align: left;
+  font-weight: 500;
+  background: var(--ag-bg-surface);
+  border-right: 1px solid var(--ag-border-subtle);
 }
 
-/* Etiquetas */
-label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 6px;
-    color: var(--text-dark);
+.matriz thead .matriz__usuario {
+  background: var(--ag-bg-sunken);
+  z-index: 3;
 }
 
-/* Lista de roles */
-.roles-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+.matriz tbody tr:hover .matriz__usuario { background: var(--ag-bg-tinted); }
+
+.persona {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  min-width: 0;
 }
 
-/* Elementos de roles */
-.role-item {
-    background: var(--primary-color);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
+.persona__inicial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-bg-tinted);
+  border: 1px solid var(--ag-navy-200);
+  color: var(--ag-text-brand);
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-sm);
+  font-weight: 700;
 }
 
-.role-item:hover {
-    background: var(--primary-hover);
-    transform: scale(1.05);
+.persona__datos {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
 }
 
-/* Lista de usuarios */
-.user-list {
-    max-width: 700px;
-    margin: 30px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px var(--shadow-light);
+.persona__datos strong {
+  font-size: var(--ag-text-sm);
+  font-weight: 600;
+  color: var(--ag-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Tabla */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 6px 12px var(--shadow-medium);
-    border-radius: 8px;
-    overflow: hidden;
+.persona__datos em {
+  font-style: normal;
+  font-size: var(--ag-text-xs);
+  color: var(--ag-text-muted);
 }
 
-/* Cabecera de la tabla */
-th {
-    background: var(--primary-color);
-    color: white;
-    padding: 14px;
-    font-size: 16px;
-    text-align: left;
+/* Sin ningun rol el usuario no ve nada del menu: conviene avisarlo */
+.persona__aviso {
+  flex: none;
+  margin-left: auto;
+  color: var(--ag-warning);
+  font-size: 0.8rem;
 }
 
-/* Filas de la tabla */
-td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border-color);
+/* --------------------------------------------------------------------------
+   Cabecera de roles
+   -------------------------------------------------------------------------- */
+.matriz thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-/* Alternar colores en filas */
-tbody tr:nth-child(odd) {
-    background: #f2f2f2;
+.matriz__rol {
+  padding: var(--ag-space-3) var(--ag-space-2);
+  text-align: center;
+  white-space: nowrap;
 }
 
-/* Efecto hover en filas */
-tbody tr:hover {
-    background: #e0e0e0;
-    transition: background 0.3s ease-in-out;
+.matriz__rol-nombre {
+  display: block;
+  font-size: var(--ag-text-xs);
+  letter-spacing: 0.08em;
 }
 
-/* Botón estilizado */
-button {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    background: var(--primary-color);
-    color: white;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
+.matriz__rol-cuenta {
+  display: inline-block;
+  margin-top: var(--ag-space-1);
+  min-width: 22px;
+  padding: 1px var(--ag-space-2);
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+  font-family: var(--ag-font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
-button:hover {
-    background: var(--primary-hover);
+/* --------------------------------------------------------------------------
+   Filas y casillas
+   -------------------------------------------------------------------------- */
+.matriz tbody td,
+.matriz tbody th { padding: var(--ag-space-2) var(--ag-space-4); }
+
+.matriz tbody tr:nth-child(even) td { background: var(--ag-bg-canvas); }
+
+.matriz tbody tr:hover td { background: var(--ag-bg-tinted); }
+
+.matriz__celda { text-align: center; }
+
+.permiso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1.5px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-bg-surface);
+  color: transparent;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
+              border-color var(--ag-dur-fast) var(--ag-ease-standard),
+              color var(--ag-dur-fast) var(--ag-ease-standard),
+              transform var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
-/* Diseño responsivo */
+/* Sin el rol: casilla vacia. El icono aparece al pasar, como anticipo. */
+.permiso:hover:not(:disabled) {
+  border-color: var(--ag-navy-500);
+  background: var(--ag-bg-tinted);
+  color: var(--ag-navy-400);
+  transform: scale(1.1);
+}
+
+/* Asignado: relleno solido mas icono, nunca solo color */
+.permiso.is-activo {
+  background: var(--ag-action-primary);
+  border-color: var(--ag-action-primary);
+  color: var(--ag-action-accent);
+}
+
+/* Al pasar sobre uno asignado se avisa en rojo: el clic lo va a retirar */
+.permiso.is-activo:hover:not(:disabled) {
+  background: var(--ag-danger);
+  border-color: var(--ag-danger);
+  color: var(--ag-text-inverse);
+}
+
+.permiso:disabled {
+  cursor: progress;
+  color: var(--ag-navy-400);
+  transform: none;
+}
+
+.permiso:focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
+}
+
 @media (max-width: 768px) {
-    .container, .user-list {
-        width: 90%;
-        max-width: 100%;
-    }
-
-    table {
-        display: block;
-        overflow-x: auto;
-    }
-
-    th, td {
-        white-space: nowrap;
-    }
+  .matriz { min-width: 30rem; }
+  .matriz__usuario { width: 13rem; padding-inline: var(--ag-space-3); }
+  .persona__inicial { display: none; }
 }

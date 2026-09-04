@@ -1,160 +1,696 @@
-.titleCard2 {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-content: center;
+/* =============================================================================
+   ACTIVATE GUAJIRA — Capa global de estilos
+   -----------------------------------------------------------------------------
+   Estetica "deportivo energetico": azul profundo (navy) + acento lima.
+   Tema claro unicamente.
+
+   Fuente de verdad de las reglas: .claude/skills/design-system-activate-guajira/SKILL.md
+   Los colores de marca coinciden con src/theme/activate-guajira-preset.ts (PrimeNG).
+
+   Regla dura: ningun estilo de componente puede escribir un color literal.
+   Todo pasa por los tokens semanticos de esta hoja.
+   ========================================================================== */
+
+/* -----------------------------------------------------------------------------
+   1. TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  /* --- Rampas de marca --- */
+  --ag-navy-50: #f2f6fb;
+  --ag-navy-100: #e1eaf5;
+  --ag-navy-200: #c3d5ea;
+  --ag-navy-300: #93afd0;
+  --ag-navy-400: #5c82b0;
+  --ag-navy-500: #2f5a8f;
+  --ag-navy-600: #1b3f6d;
+  --ag-navy-700: #12305a;
+  --ag-navy-800: #0b1f3a;
+  --ag-navy-900: #071427;
+
+  --ag-lime-50: #f7fde8;
+  --ag-lime-100: #edfac7;
+  --ag-lime-200: #ddf694;
+  --ag-lime-300: #c6f24e;
+  --ag-lime-400: #ade02f;
+  --ag-lime-500: #8fbf1e;
+  --ag-lime-600: #6e9615;
+  --ag-lime-700: #4f6b10;
+
+  --ag-coral-100: #ffded9;
+  --ag-coral-400: #ff5a47;
+  --ag-coral-600: #d93a29;
+
+  /* --- Neutros --- */
+  --ag-neutral-0: #ffffff;
+  --ag-neutral-50: #f7f9fc;
+  --ag-neutral-100: #eff3f8;
+  --ag-neutral-200: #e2e8f0;
+  --ag-neutral-300: #cbd5e1;
+  --ag-neutral-400: #94a3b8;
+  --ag-neutral-500: #64748b;
+  --ag-neutral-600: #475569;
+  --ag-neutral-700: #334155;
+  --ag-neutral-800: #1e293b;
+  --ag-neutral-900: #0f172a;
+
+  /* --- Estado --- */
+  --ag-success: #16a34a;
+  --ag-success-soft: #dcfce7;
+  --ag-warning: #b45309;
+  --ag-warning-soft: #fef3c7;
+  --ag-danger: #dc2626;
+  --ag-danger-soft: #fee2e2;
+  --ag-info: #0369a1;
+  --ag-info-soft: #e0f2fe;
+
+  /* --- Alias semanticos: esto es lo que consumen los componentes --- */
+  --ag-bg-canvas: var(--ag-neutral-50);
+  --ag-bg-surface: var(--ag-neutral-0);
+  --ag-bg-raised: var(--ag-neutral-0);
+  --ag-bg-sunken: var(--ag-neutral-100);
+  --ag-bg-inverse: var(--ag-navy-800);
+  --ag-bg-tinted: var(--ag-navy-50);
+
+  --ag-text-primary: var(--ag-neutral-900);
+  --ag-text-secondary: var(--ag-neutral-600);
+  --ag-text-muted: var(--ag-neutral-500);
+  --ag-text-inverse: var(--ag-neutral-0);
+  --ag-text-accent: var(--ag-lime-700);
+  --ag-text-brand: var(--ag-navy-800);
+
+  --ag-border-subtle: var(--ag-neutral-200);
+  --ag-border-default: var(--ag-neutral-300);
+  --ag-border-strong: var(--ag-neutral-400);
+  --ag-border-focus: var(--ag-navy-500);
+
+  --ag-action-primary: var(--ag-navy-800);
+  --ag-action-primary-hover: var(--ag-navy-700);
+  --ag-action-primary-active: var(--ag-navy-900);
+  --ag-action-accent: var(--ag-lime-300);
+  --ag-action-accent-hover: var(--ag-lime-400);
+  --ag-action-accent-active: var(--ag-lime-500);
+  --ag-on-accent: var(--ag-navy-900);
+
+  /* --- Tipografia --- */
+  --ag-font-display: 'Barlow Condensed', 'Arial Narrow', system-ui, sans-serif;
+  --ag-font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --ag-text-display: clamp(2rem, 1.4rem + 2.6vw, 3rem);
+  --ag-text-h1: clamp(1.65rem, 1.3rem + 1.4vw, 2.125rem);
+  --ag-text-h2: clamp(1.35rem, 1.15rem + 0.8vw, 1.625rem);
+  --ag-text-h3: 1.25rem;
+  --ag-text-body-lg: 1.0625rem;
+  --ag-text-body: 0.9375rem;
+  --ag-text-sm: 0.8125rem;
+  --ag-text-xs: 0.6875rem;
+  --ag-text-stat: clamp(2rem, 1.6rem + 1.6vw, 2.5rem);
+
+  /* --- Espaciado (base 4px) --- */
+  --ag-space-1: 4px;
+  --ag-space-2: 8px;
+  --ag-space-3: 12px;
+  --ag-space-4: 16px;
+  --ag-space-5: 20px;
+  --ag-space-6: 24px;
+  --ag-space-8: 32px;
+  --ag-space-10: 40px;
+  --ag-space-12: 48px;
+  --ag-space-16: 64px;
+  --ag-space-20: 80px;
+
+  /* --- Radios --- */
+  --ag-radius-sm: 6px;
+  --ag-radius-md: 10px;
+  --ag-radius-lg: 16px;
+  --ag-radius-xl: 24px;
+  --ag-radius-full: 999px;
+
+  /* --- Sombras (tintadas en navy, nunca negro neutro) --- */
+  --ag-shadow-xs: 0 1px 2px rgba(11, 31, 58, 0.06);
+  --ag-shadow-sm: 0 1px 2px rgba(11, 31, 58, 0.06), 0 4px 12px rgba(11, 31, 58, 0.05);
+  --ag-shadow-md: 0 2px 4px rgba(11, 31, 58, 0.07), 0 8px 24px rgba(11, 31, 58, 0.08);
+  --ag-shadow-lg: 0 4px 8px rgba(11, 31, 58, 0.08), 0 16px 40px rgba(11, 31, 58, 0.12);
+  --ag-shadow-xl: 0 24px 64px rgba(11, 31, 58, 0.22);
+  --ag-shadow-accent: 0 4px 16px rgba(198, 242, 78, 0.45);
+
+  /* --- Movimiento --- */
+  --ag-dur-fast: 120ms;
+  --ag-dur-base: 200ms;
+  --ag-dur-slow: 320ms;
+  --ag-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ag-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Layout --- */
+  --ag-sidebar-w: 264px;
+  --ag-sidebar-w-collapsed: 76px;
+  --ag-topbar-h: 64px;
+  --ag-content-max: 1440px;
+
+  color-scheme: light;
+}
+
+/* -----------------------------------------------------------------------------
+   2. BASE
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html,
 body {
   height: 100%;
-  overflow-x: hidden;
 }
 
 body {
   margin: 0;
-  background-color: #fafafa;
-  color: #090909;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--ag-bg-canvas);
+  color: var(--ag-text-primary);
+  font-family: var(--ag-font-body);
+  font-size: var(--ag-text-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-@media only screen and (max-width: 600px) {
-  body {
-    overflow-x: auto;
-  }
+h1, h2, h3, h4 {
+  font-family: var(--ag-font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ag-text-brand);
+  margin: 0 0 var(--ag-space-3) 0;
+  line-height: 1.15;
 }
 
-body::-webkit-scrollbar {
-  width: 8px;
-  /* Tamaño del scroll en vertical */
-  height: 8px;
-  /* Tamaño del scroll en horizontal */
-  background: #222222;
-}
+h1 { font-size: var(--ag-text-h1); text-transform: uppercase; }
+h2 { font-size: var(--ag-text-h2); text-transform: uppercase; }
+h3 { font-size: var(--ag-text-h3); }
+h4 { font-size: var(--ag-text-body-lg); }
 
-body::-webkit-scrollbar-thumb {
-  background: #0076df;
-  border-radius: 4px;
-}
+p { margin: 0 0 var(--ag-space-4) 0; }
 
-.p-dialog-content::-webkit-scrollbar {
-  width: 8px;
-  /* Tamaño del scroll en vertical */
-  height: 8px;
-  /* Tamaño del scroll en horizontal */
-  background: #ccc;
-}
-
-.p-dialog-content::-webkit-scrollbar-thumb {
-  background: #0076df;
-  border-radius: 4px;
-}
-
-.p-datatable-wrapper::-webkit-scrollbar {
-  width: 8px;
-  /* Tamaño del scroll en vertical */
-  height: 8px;
-  /* Tamaño del scroll en horizontal */
-  background: #ccc;
-}
-
-.p-datatable-wrapper::-webkit-scrollbar-thumb {
-  background: #0076df;
-  border-radius: 4px;
-}
-
-.p-sidebar-content::-webkit-scrollbar {
-  width: 8px;
-  /* Tamaño del scroll en vertical */
-  height: 8px;
-  /* Tamaño del scroll en horizontal */
-  background: #ccc;
-}
-
-.p-sidebar-content::-webkit-scrollbar-thumb {
-  background: #0076df;
-  border-radius: 4px;
-}
-
-.logo {
-  display: flex;
-
-  padding: 10px 10px 0 10px;
-  background-color: transparent;
+a {
+  color: var(--ag-navy-600);
   text-decoration: none;
-  font-size: 16px;
-  font-weight: 500;
-  z-index: 1;
-  width: 200px;
+  transition: color var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
-.logo img {
-  margin-top: -27px;
-  width: 75%;
-  height: 75%;
-  object-fit: cover;
+a:hover { color: var(--ag-navy-800); text-decoration: underline; }
+
+img { max-width: 100%; }
+
+/* Numeros siempre tabulares: las columnas deben alinearse */
+table, .ag-num, .ag-stat__value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Foco visible: obligatorio y uniforme --- */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--ag-radius-sm);
+}
+
+/* --- Barras de desplazamiento --- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ag-navy-300) transparent;
+}
+
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: var(--ag-navy-300);
+  border-radius: var(--ag-radius-full);
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--ag-navy-400); }
+
+/* -----------------------------------------------------------------------------
+   3. PRIMITIVAS COMPARTIDAS
+   -------------------------------------------------------------------------- */
+
+/* --- Contenedor de pagina --- */
+.ag-page {
+  width: 100%;
+  max-width: var(--ag-content-max);
+  margin: 0 auto;
+  padding: var(--ag-space-6);
+}
+
+@media (max-width: 640px) {
+  .ag-page { padding: var(--ag-space-4); }
+}
+
+.ag-page__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--ag-space-4);
+  margin-bottom: var(--ag-space-6);
+}
+
+.ag-page__title { margin: 0; }
+
+.ag-page__subtitle {
+  margin: var(--ag-space-1) 0 0 0;
+  color: var(--ag-text-secondary);
+  font-size: var(--ag-text-sm);
+}
+
+.ag-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ag-space-2);
+}
+
+/* --- Etiqueta superior --- */
+.ag-overline {
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+}
+
+/* --- Tarjeta --- */
+.ag-card {
+  background: var(--ag-bg-surface);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  box-shadow: var(--ag-shadow-sm);
+  padding: var(--ag-space-6);
+}
+
+@media (max-width: 640px) {
+  .ag-card { padding: var(--ag-space-4); }
+}
+
+.ag-card--interactive {
+  cursor: pointer;
+  transition: transform var(--ag-dur-base) var(--ag-ease-standard),
+              box-shadow var(--ag-dur-base) var(--ag-ease-standard);
+}
+
+.ag-card--interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ag-shadow-md);
+}
+
+.ag-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ag-space-3);
+  margin-bottom: var(--ag-space-4);
+}
+
+.ag-card__title {
+  margin: 0;
+  font-size: var(--ag-text-h3);
+}
+
+/* --- Rejilla fluida --- */
+.ag-grid {
+  display: grid;
+  gap: var(--ag-space-4);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.ag-grid--wide {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+/* --- Ficha de estadistica --- */
+.ag-stat {
+  position: relative;
   overflow: hidden;
-
+  background: var(--ag-bg-surface);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  box-shadow: var(--ag-shadow-sm);
+  padding: var(--ag-space-5);
 }
 
-.p-sidebar-header {
-  display: none;
+.ag-stat::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--ag-action-accent);
+}
+
+.ag-stat__label {
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+  margin: 0 0 var(--ag-space-2) 0;
+}
+
+.ag-stat__value {
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-stat);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--ag-text-brand);
+  margin: 0;
+}
+
+.ag-stat__unit {
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  color: var(--ag-text-muted);
+  margin-left: var(--ag-space-1);
+}
+
+.ag-stat__caption {
+  margin: var(--ag-space-2) 0 0 0;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-secondary);
+}
+
+/* --- Insignia de estado (color + texto, nunca solo color) --- */
+.ag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ag-space-1);
+  padding: var(--ag-space-1) var(--ag-space-3);
+  border-radius: var(--ag-radius-full);
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.ag-badge--success { background: var(--ag-success-soft); color: var(--ag-success); }
+.ag-badge--warning { background: var(--ag-warning-soft); color: var(--ag-warning); }
+.ag-badge--danger  { background: var(--ag-danger-soft);  color: var(--ag-danger); }
+.ag-badge--info    { background: var(--ag-info-soft);    color: var(--ag-info); }
+.ag-badge--neutral { background: var(--ag-bg-sunken);    color: var(--ag-text-secondary); }
+.ag-badge--accent  { background: var(--ag-lime-100);     color: var(--ag-lime-700); }
+
+/* --- Estado vacio --- */
+.ag-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ag-space-3);
+  padding: var(--ag-space-12) var(--ag-space-6);
+  text-align: center;
+  color: var(--ag-text-secondary);
+}
+
+.ag-empty__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-bg-tinted);
+  color: var(--ag-navy-400);
+  font-size: 1.75rem;
+}
+
+.ag-empty__title {
+  margin: 0;
+  font-size: var(--ag-text-h3);
+  color: var(--ag-text-primary);
+}
+
+.ag-empty__text {
+  margin: 0;
+  max-width: 42ch;
+  font-size: var(--ag-text-sm);
+}
+
+/* --- Esqueleto de carga --- */
+.ag-skeleton {
+  border-radius: var(--ag-radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--ag-bg-sunken) 25%,
+    var(--ag-neutral-200) 37%,
+    var(--ag-bg-sunken) 63%
+  );
+  background-size: 400% 100%;
+  animation: ag-shimmer 1.4s ease infinite;
+}
+
+@keyframes ag-shimmer {
+  from { background-position: 100% 50%; }
+  to   { background-position: 0 50%; }
+}
+
+/* --- Tabla: nunca debe hacer scroll horizontal a la pagina --- */
+.ag-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: var(--ag-radius-lg);
+  border: 1px solid var(--ag-border-subtle);
+  background: var(--ag-bg-surface);
+}
+
+.ag-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--ag-text-sm);
+}
+
+.ag-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--ag-bg-sunken);
+  color: var(--ag-text-secondary);
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: var(--ag-space-3) var(--ag-space-4);
+  border-bottom: 1px solid var(--ag-border-subtle);
+  white-space: nowrap;
+}
+
+.ag-table tbody td {
+  padding: var(--ag-space-3) var(--ag-space-4);
+  border-bottom: 1px solid var(--ag-border-subtle);
+  color: var(--ag-text-primary);
+}
+
+.ag-table tbody tr:last-child td { border-bottom: 0; }
+
+.ag-table tbody tr {
+  transition: background-color var(--ag-dur-fast) var(--ag-ease-standard);
+}
+
+.ag-table tbody tr:hover { background: var(--ag-bg-tinted); }
+
+.ag-table .ag-num { text-align: right; }
+
+/* --- Barra de acciones en fila --- */
+.ag-row-actions {
+  display: flex;
+  gap: var(--ag-space-1);
+  justify-content: flex-end;
+}
+
+/* --- Capa de carga --- */
+.ag-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ag-space-4);
+  background: rgba(247, 249, 252, 0.82);
+  backdrop-filter: blur(3px);
+}
+
+.ag-overlay__text {
+  font-family: var(--ag-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ag-text-brand);
+}
+
+/* --- Utilidades minimas --- */
+.ag-stack { display: flex; flex-direction: column; gap: var(--ag-space-4); }
+.ag-row { display: flex; align-items: center; gap: var(--ag-space-3); }
+.ag-row--between { justify-content: space-between; }
+.ag-row--center { justify-content: center; }
+.ag-wrap { flex-wrap: wrap; }
+.ag-grow { flex: 1 1 auto; }
+.ag-muted { color: var(--ag-text-muted); }
+.ag-center { text-align: center; }
+
+.ag-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* -----------------------------------------------------------------------------
+   4. AJUSTES GLOBALES DE PRIMENG
+   -------------------------------------------------------------------------- */
+.p-component { font-family: var(--ag-font-body); }
+
+.p-button {
+  font-family: var(--ag-font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.p-button:focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
+}
+
+/* Variante de acento: lima con texto navy (el lima nunca lleva texto encima
+   sobre fondo claro, aqui es relleno). */
+.p-button.ag-accent {
+  background: var(--ag-action-accent);
+  border-color: var(--ag-action-accent);
+  color: var(--ag-on-accent);
+  box-shadow: var(--ag-shadow-accent);
+}
+
+.p-button.ag-accent:enabled:hover {
+  background: var(--ag-action-accent-hover);
+  border-color: var(--ag-action-accent-hover);
+  color: var(--ag-on-accent);
+}
+
+.p-button.ag-accent:enabled:active {
+  background: var(--ag-action-accent-active);
+  border-color: var(--ag-action-accent-active);
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  font-size: var(--ag-text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.p-dialog .p-dialog-title {
+  font-family: var(--ag-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.p-toast { font-size: var(--ag-text-body); }
+
+/* --- Menu de cuenta (colgado del avatar de la barra superior).
+   Se monta en <body> con appendTo, asi que se estila aqui y no en el
+   componente, donde la encapsulacion no lo alcanzaria. --- */
+.menu-cuenta.p-menu {
+  min-width: 15rem;
+  padding: var(--ag-space-2);
+  border-radius: var(--ag-radius-lg);
+  box-shadow: var(--ag-shadow-lg);
+}
+
+.menu-cuenta .p-menu-submenu-label {
+  padding: var(--ag-space-2) var(--ag-space-3);
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
+  background: transparent;
+}
+
+.menu-cuenta .p-menu-item-link {
+  gap: var(--ag-space-3);
+  padding: var(--ag-space-3);
+  border-radius: var(--ag-radius-sm);
+  font-size: var(--ag-text-sm);
+}
+
+.menu-cuenta .p-menu-item-icon {
+  color: var(--ag-navy-500);
+  font-size: 0.95rem;
+}
+
+.menu-cuenta .p-menu-item-content:hover {
+  background: var(--ag-bg-tinted);
+}
+
+.menu-cuenta .p-menu-separator {
+  margin: var(--ag-space-2) 0;
+  border-color: var(--ag-border-subtle);
+}
+
+/* Salir es destructivo: se marca en rojo y separado del resto */
+.menu-cuenta .menu-cuenta__salir .p-menu-item-link,
+.menu-cuenta .menu-cuenta__salir .p-menu-item-icon {
+  color: var(--ag-danger);
+}
+
+.menu-cuenta .menu-cuenta__salir .p-menu-item-content:hover {
+  background: var(--ag-danger-soft);
+}
+
+/* -----------------------------------------------------------------------------
+   5. COMPATIBILIDAD — clases heredadas, ahora expresadas en tokens
+   -------------------------------------------------------------------------- */
+.btn,
+.btn2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ag-space-2);
+  width: 100%;
+  min-height: 44px;
+  padding: var(--ag-space-3) var(--ag-space-4);
+  background: transparent;
+  border-radius: var(--ag-radius-md);
+  font-family: var(--ag-font-display);
+  font-size: var(--ag-text-body);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color var(--ag-dur-base) var(--ag-ease-standard),
+              color var(--ag-dur-base) var(--ag-ease-standard);
 }
 
 .btn {
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  background: transparent;
-  color: #090909;
-  border: 2px solid #090909;
-  padding: 10px 15px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: all 0.3s ease-in-out;
+  color: var(--ag-text-brand);
+  border: 2px solid var(--ag-text-brand);
 }
 
 .btn:hover {
-  background: #090909;
-  color: #fafafa;
-}
-
-.header-container {
-  padding: 15px;
-  text-align: center;
-  border-bottom: 2px solid #0076df;
+  background: var(--ag-text-brand);
+  color: var(--ag-text-inverse);
 }
 
 .btn2 {
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  background: transparent;
-  color: #007ad9;
-  border: 2px solid #007ad9;
-  padding: 10px 15px;
-  font-size: 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  transition: all 0.3s ease-in-out;
+  color: var(--ag-navy-600);
+  border: 2px solid var(--ag-navy-600);
 }
 
 .btn2:hover {
-  background: #007ad9;
-  color: #fafafa;
+  background: var(--ag-navy-600);
+  color: var(--ag-text-inverse);
 }
 
-.button-container {
-  display: flex;
-  justify-content: center;
-}
+.button-container { display: flex; justify-content: center; }
 
 .centrado {
   display: flex;
@@ -163,3 +699,155 @@ body::-webkit-scrollbar-thumb {
   width: 100%;
 }
 
+.header-container {
+  padding: var(--ag-space-4);
+  text-align: center;
+  border-bottom: 2px solid var(--ag-navy-600);
+}
+
+.titleCard2 {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+/* -----------------------------------------------------------------------------
+   6. MOVIL PRIMERO
+   -----------------------------------------------------------------------------
+   Reglas transversales para que cualquier vista aguante una pantalla estrecha
+   sin que haya que tocarla una por una. Van aqui, y no en cada componente,
+   porque el fallo es siempre el mismo: un ancho minimo mayor que la pantalla.
+   -------------------------------------------------------------------------- */
+
+/* --- Rejillas: ninguna puede exigir mas ancho del que hay ---
+   minmax(240px, 1fr) desborda en cuanto la pantalla baja de 240px mas el
+   relleno. min() cede ese minimo cuando no cabe, que es justo lo que falta. */
+.ag-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+}
+
+.ag-grid--wide {
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+}
+
+/* --- Nada empuja la pagina a lo ancho ---
+   Correos, codigos y nombres largos no llevan espacios donde partir, asi que
+   estiran su contenedor hasta sacarlo de la pantalla. */
+.ag-table td,
+.ag-badge,
+.ag-stat__value {
+  overflow-wrap: break-word;
+}
+
+/* Una insignia nunca es mas ancha que su celda: se recorta antes que desbordar */
+.ag-badge { max-width: 100%; }
+
+/* Grupos de insignias que se apilan en lugar de salirse en una sola linea */
+.ag-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ag-space-2);
+  min-width: 0;
+}
+
+/* --- Dialogos ---
+   Declaran anchos comodos para escritorio (hasta 80rem). En una pantalla
+   pequena manda la pantalla, y lo que no quepa se desplaza dentro del cuerpo
+   del dialogo, nunca por debajo de la pagina. */
+.p-dialog {
+  max-width: calc(100vw - var(--ag-space-6));
+  max-height: calc(100dvh - var(--ag-space-6));
+}
+
+.p-dialog .p-dialog-content {
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* Una tabla dentro de un dialogo se desplaza sola, no estira el dialogo */
+.p-dialog table {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  /* --- Sin zoom al enfocar en iOS ---
+     Safari amplia la pagina cuando el campo enfocado mide menos de 16px, y
+     luego no la devuelve. El cuerpo del texto es de 15px, justo por debajo. */
+  input,
+  select,
+  textarea,
+  .p-inputtext,
+  .p-select-label,
+  .p-textarea {
+    font-size: 16px;
+  }
+
+  /* Las acciones de cabecera ocupan el ancho completo: en una fila estrecha
+     quedan dos botones diminutos y mal repartidos. */
+  .ag-page__actions {
+    width: 100%;
+  }
+
+  .ag-page__actions > * {
+    flex: 1 1 auto;
+  }
+
+  /* Los dialogos pegados a los bordes ganan pantalla util */
+  .p-dialog {
+    max-width: calc(100vw - var(--ag-space-4));
+  }
+}
+
+/* --- Objetivos tactiles ---
+   Con el dedo no se acierta a 32px. Se aplica por tipo de puntero para no
+   engordar la interfaz de escritorio, donde el raton si acierta. */
+@media (max-width: 768px), (pointer: coarse) {
+  .p-button {
+    min-height: 44px;
+  }
+
+  .p-button.p-button-sm {
+    min-height: 40px;
+    min-width: 40px;
+  }
+
+  .p-button.p-button-icon-only {
+    min-width: 44px;
+  }
+
+  /* Separacion entre acciones de fila: pegados se pulsa el que no es */
+  .ag-row-actions {
+    gap: var(--ag-space-2);
+  }
+
+  /* Los dialogos se montan en <body>, fuera del alcance de la encapsulacion
+     de cada componente: sus botones hay que dimensionarlos desde aqui. */
+  .p-dialog-header button,
+  .p-dialog .p-dialog-close-button,
+  .p-dialog .p-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Enlaces sueltos dentro de texto: se les da altura sin moverlos de sitio */
+  .ag-tap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   7. MOVIMIENTO REDUCIDO
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

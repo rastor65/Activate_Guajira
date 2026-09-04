@@ -1,201 +1,123 @@
-.mediciones-title {
-    font-size: 28px;
-    font-weight: bold;
-    text-align: center;
-    color: #2c3e50;
-    text-transform: uppercase;
-    margin-bottom: 20px;
+/* Planes de alimentacion del usuario. */
+
+/* --------------------------------------------------------------------------
+   Cabecera de perfil
+   -------------------------------------------------------------------------- */
+.perfil-head {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-5);
+  margin-bottom: var(--ag-space-8);
+  padding: var(--ag-space-6);
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-surface);
+  box-shadow: var(--ag-shadow-sm);
 }
 
-.mediciones-title {
-    font-size: 28px;
-    font-weight: bold;
-    text-align: center;
-    color: #2c3e50;
-    text-transform: uppercase;
-    margin-bottom: 20px;
+.perfil-head__avatar {
+  width: 76px;
+  height: 76px;
+  flex: none;
+  border-radius: var(--ag-radius-full);
+  object-fit: cover;
+  border: 3px solid var(--ag-action-accent);
+  background: var(--ag-bg-sunken);
 }
 
-.container {
-    max-width: 900px;
-    margin: auto;
+.perfil-head__name {
+  margin: var(--ag-space-1) 0 0 0;
+  font-size: var(--ag-text-h1);
 }
 
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 15px;
+.perfil-head__user {
+  margin: var(--ag-space-1) 0 0 0;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-muted);
 }
 
-.profile-img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #007bff;
+/* --------------------------------------------------------------------------
+   Planes
+   -------------------------------------------------------------------------- */
+.planes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--ag-space-4);
 }
 
-.profile-info h2 {
-    font-size: 1.5rem;
-    margin: 0;
+.plan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-4);
+  padding: var(--ag-space-6);
+  border: 1px solid var(--ag-border-subtle);
+  border-top: 4px solid var(--ag-action-accent);
+  border-radius: var(--ag-radius-lg);
+  background: var(--ag-bg-surface);
+  box-shadow: var(--ag-shadow-sm);
+  transition: transform var(--ag-dur-base) var(--ag-ease-standard),
+              box-shadow var(--ag-dur-base) var(--ag-ease-standard);
 }
 
-.profile-info p {
-    margin: 0;
-    color: #777;
-    font-size: 1rem;
+.plan:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--ag-shadow-md);
 }
 
-.section-title {
-    font-size: 1.4rem;
-    margin-bottom: 15px;
-    color: #333;
-    border-left: 4px solid #007bff;
-    padding-left: 10px;
+.plan__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ag-space-3);
 }
 
-.entrenamiento-card {
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
+.plan__title {
+  margin: 0;
+  font-size: var(--ag-text-h3);
+  line-height: 1.2;
 }
 
-.entrenamiento-card:hover {
-    transform: translateY(-5px);
+.plan__desc {
+  margin: 0;
+  flex: 1 1 auto;
+  font-size: var(--ag-text-sm);
+  line-height: 1.6;
+  color: var(--ag-text-secondary);
 }
 
-.card-title {
-    color: #007bff;
-    font-weight: bold;
+.plan__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ag-space-3);
+  padding-top: var(--ag-space-4);
+  border-top: 1px solid var(--ag-border-subtle);
 }
 
-.card-text {
-    font-size: 0.95rem;
-    color: #555;
+.plan__label {
+  font-size: var(--ag-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
 }
 
-.duracion,
-.entrenador {
-    font-size: 0.9rem;
-    color: #333;
-    margin-top: 8px;
+.plan__value {
+  font-size: var(--ag-text-sm);
+  font-weight: 600;
+  color: var(--ag-text-primary);
 }
 
-.text-muted {
-    font-size: 1rem;
-    margin-top: 20px;
-}
-
-/* Contenedor */
-.container {
-    max-width: 1000px;
-    margin: auto;
-    padding: 20px;
-}
-
-/* Encabezado del perfil */
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    border-radius: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    margin-bottom: 30px;
-}
-
-.profile-img {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #0d6efd;
-}
-
-.profile-info h2 {
-    font-size: 1.6rem;
-    margin: 0;
-    color: #2c3e50;
-}
-
-.profile-info p {
-    margin: 4px 0 0;
-    font-size: 1rem;
-    color: #6c757d;
-}
-
-/* Título de sección */
-.section-title {
-    font-size: 1.6rem;
-    font-weight: 600;
-    color: #0d6efd;
-    margin-bottom: 25px;
-    border-left: 4px solid #0d6efd;
-    padding-left: 12px;
-}
-
-/* Tarjeta de alimentación */
-.alimento-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease;
-    height: 100%;
-    display: flex;
+/* --------------------------------------------------------------------------
+   Adaptativo
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .perfil-head {
     flex-direction: column;
-    justify-content: space-between;
-}
+    align-items: flex-start;
+  }
 
-.alimento-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-}
+  .planes { grid-template-columns: 1fr; }
 
-.card-title {
-    font-size: 1.2rem;
-    color: #0d6efd;
-    font-weight: 600;
-    margin-bottom: 10px;
-}
-
-.card-text {
-    font-size: 0.95rem;
-    color: #495057;
-    margin-bottom: 15px;
-}
-
-.info-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-    font-size: 0.95rem;
-}
-
-.label {
-    font-weight: 600;
-    color: #343a40;
-}
-
-.value {
-    color: #0d6efd;
-}
-
-/* Mensaje cuando no hay datos */
-.no-alimentos-msg {
-    font-size: 1.1rem;
-    margin-top: 40px;
-    color: #999;
-}
-
-::ng-deep .custom-spinner {
-    display: block;
-    margin: 80px auto;
-    width: 60px;
-    height: 60px;
+  .plan { padding: var(--ag-space-4); }
 }

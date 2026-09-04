@@ -1,72 +1,230 @@
-<p-progressSpinner *ngIf="isLoading" styleClass="custom-spinner"></p-progressSpinner>
+<div class="ag-overlay" *ngIf="isLoading" role="status" aria-live="polite">
+  <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+  <p class="ag-overlay__text">Cargando entrenamientos...</p>
+</div>
 
+<div class="ag-page" *ngIf="!isLoading">
 
-<div class="container mt-4" *ngIf="!isLoading">
-    <div class="profile-header">
-        <img [src]="profileImage || 'assets/default-avatar.png'" alt="Avatar" class="profile-img">
-        <div class="profile-info">
-            <h2>{{ person?.nombres }} {{ person?.apellidos }}</h2>
-            <p>{{ user.username }}</p>
-        </div>
+  <!-- Cabecera de perfil del deportista -->
+  <header class="perfil-head">
+    <img [src]="profileImage || 'assets/default-avatar.png'" alt="Avatar del deportista" class="perfil-head__avatar">
+    <div class="perfil-head__info">
+      <div class="perfil-head__tag">Módulo Deportista • Mi Rutina Física</div>
+      <h1 class="perfil-head__name">{{ person?.nombres }} {{ person?.apellidos }}</h1>
+      <p class="perfil-head__user">@{{ user.username }}</p>
     </div>
 
-    <h3 class="section-title">Mis Entrenamientos</h3>
+    <!-- Indicador de estado del plan seleccionado -->
+    <div class="perfil-head__active-indicator" *ngIf="selectedEntrenamiento">
+      <div class="active-indicator-pill" [class.active-indicator-pill--active]="selectedEntrenamiento.activo">
+        <i [class]="selectedEntrenamiento.activo ? 'pi pi-bolt' : 'pi pi-history'"></i>
+        <span>{{ selectedEntrenamiento.activo ? 'Plan Activo en Curso' : 'Historial de Rutina' }}</span>
+      </div>
+    </div>
+  </header>
 
-    <div *ngIf="entrenamientos.length > 0; else noEntrenamientos">
-        <div class="row">
-            <div class="col-md-6 col-lg-4 mb-4" *ngFor="let entrenamiento of entrenamientos">
-                <div class="card entrenamiento-card">
-                    <div class="card-body">
-                        <h5 class="card-title d-flex justify-content-between align-items-center">
-                            {{ entrenamiento.nombre }}
-                            <button pButton icon="pi pi-chevron-down" class="p-button-text p-button-sm"
-                                (click)="expandedEntrenamientoId = (expandedEntrenamientoId === entrenamiento.id ? null : entrenamiento.id)">
-                            </button>
-                        </h5>
+  <!-- Si tiene planes de entrenamiento -->
+  <main *ngIf="entrenamientos.length > 0; else noEntrenamientos" class="workout-dashboard">
 
-                        <p class="card-text">{{ entrenamiento.descripcion }}</p>
-                        <p class="duracion"><strong>Duración:</strong> {{ entrenamiento.duracion_semanas }} semanas</p>
-                        <p class="entrenador"><strong>Entrenador:</strong> {{ entrenamiento.entrenador }}</p>
+    <!-- Selector de planes (cuando el deportista tiene más de 1 plan) -->
+    <div class="plans-switcher-bar" *ngIf="entrenamientos.length > 1">
+      <span class="plans-switcher-bar__label"><i class="pi pi-th-large"></i> Tus Planes:</span>
+      <div class="plans-switcher-bar__tabs">
+        <button *ngFor="let plan of entrenamientos" type="button" class="plan-tab-btn"
+          [class.plan-tab-btn--selected]="selectedEntrenamiento?.id === plan.id"
+          [class.plan-tab-btn--active-plan]="plan.activo"
+          (click)="seleccionarPlan(plan)">
+          <i [class]="plan.activo ? 'pi pi-bolt' : 'pi pi-history'"></i>
+          <span class="plan-tab-btn__name">{{ plan.nombre }}</span>
+          <span class="plan-tag-active" *ngIf="plan.activo">Activo</span>
+          <span class="plan-tag-hist" *ngIf="!plan.activo">Histórico</span>
+        </button>
+      </div>
+    </div>
 
-                        <!-- Mostrar solo si está expandido -->
-                        <div *ngIf="expandedEntrenamientoId === entrenamiento.id">
-                            <div class="resumen-dias mt-3" *ngIf="entrenamiento?.semanas?.length">
-                                <div class="dia-resumen" *ngFor="let dia of diasSemana">
-                                    <h6>{{ dia }}</h6>
-                                    <ng-container *ngFor="let semana of entrenamiento.semanas">
-                                        <div class="semana-dia" *ngFor="let ejercicio of semana.ejercicios">
-                                            <ng-container *ngIf="ejercicio.dias[diasSemana.indexOf(dia)]">
-                                                <div class="ejercicio-dia-card">
-                                                    <strong>{{ ejercicio.tipo }}</strong>
-                                                    <ul
-                                                        *ngIf="ejercicio.sugerencias?.[dia] && ejercicio.sugerencias[dia].length">
-                                                        <li *ngFor="let sug of ejercicio.sugerencias?.[dia]">
-                                                            <b>{{ sug.nombre }}: </b> {{ sug.descripcion }}
-                                                        </li>
+    <!-- TARJETA PRINCIPAL: DETALLE DEL PLAN DE ENTRENAMIENTO -->
+    <article class="workout-detailed-view" *ngIf="selectedEntrenamiento">
 
-                                                    </ul>
-                                                    <p *ngIf="!ejercicio.sugerencias?.[dia]?.length"
-                                                        class="no-sugerencias">
-                                                        Sin sugerencias disponibles
-                                                    </p>
-                                                </div>
-                                            </ng-container>
-                                        </div>
-                                    </ng-container>
+      <!-- Header del plan idéntico a dialogVerEntrenamiento -->
+      <header class="dialog-header-custom">
+        <div class="dialog-header-custom__icon dialog-header-custom__icon--workout">
+          <i class="pi pi-bolt" aria-hidden="true"></i>
+        </div>
+        <div class="dialog-header-custom__title-wrap">
+          <div class="dialog-header-custom__tag">Prescripción Física · Plan de Entrenamiento</div>
+          <div class="dialog-header-custom__heading">
+            <h2 class="dialog-header-custom__title">{{ selectedEntrenamiento.nombre }}</h2>
+            <span class="badge-status-pill badge-status-pill--active" *ngIf="selectedEntrenamiento.activo">
+              <i class="pi pi-check-circle"></i> PLAN ACTIVO
+            </span>
+            <span class="badge-status-pill badge-status-pill--inactive" *ngIf="!selectedEntrenamiento.activo">
+              <i class="pi pi-history"></i> Histórico
+            </span>
+          </div>
+        </div>
+      </header>
 
-                                    <p *ngIf="!hasEjerciciosParaDia(entrenamiento, dia)" class="no-ejercicios">
-                                        No hay ejercicios asignados para este día.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+      <!-- Fichas de metadata del plan en cuadrícula (4 tarjetas) -->
+      <div class="plan-detail-grid">
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-calendar" aria-hidden="true"></i> Duración</span>
+          <span class="plan-detail-card__value">{{ selectedEntrenamiento.duracion_semanas }} <small>semanas</small></span>
+        </div>
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-info-circle" aria-hidden="true"></i> Estado del Plan</span>
+          <span class="plan-detail-card__value plan-detail-card__value--status" [class.plan-detail-card__value--active]="selectedEntrenamiento.activo">
+            <i [class]="selectedEntrenamiento.activo ? 'pi pi-check-circle' : 'pi pi-history'"></i>
+            {{ selectedEntrenamiento.activo ? 'Vigente / Activo' : 'Histórico' }}
+          </span>
+        </div>
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-user" aria-hidden="true"></i> Entrenador</span>
+          <span class="plan-detail-card__value">{{ selectedEntrenamiento.entrenador }}</span>
+        </div>
+        <div class="plan-detail-card">
+          <span class="plan-detail-card__label"><i class="pi pi-id-card" aria-hidden="true"></i> Deportista</span>
+          <span class="plan-detail-card__value">{{ person?.nombres }} {{ person?.apellidos }}</span>
+        </div>
+      </div>
+
+      <!-- Descripción si existe -->
+      <div class="plan-detail-description" *ngIf="selectedEntrenamiento.descripcion">
+        <h4><i class="pi pi-align-left" aria-hidden="true"></i> Indicaciones del programa</h4>
+        <div class="plan-detail-description__body">
+          {{ selectedEntrenamiento.descripcion }}
+        </div>
+      </div>
+
+      <!-- Selector de Semana (si dura más de 1 semana) -->
+      <div class="workout-week-nav" *ngIf="getSemanasDetalle().length > 1">
+        <span class="workout-week-nav__label"><i class="pi pi-sliders-h"></i> Semana:</span>
+        <div class="workout-week-nav__tabs">
+          <button *ngFor="let sem of getSemanasDetalle(); let idx = index"
+            type="button" class="week-tab-btn"
+            [class.week-tab-btn--active]="selectedSemanaIndex === idx"
+            (click)="seleccionarSemana(idx)">
+            Semana {{ sem.numero || (idx + 1) }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Navegación de días estilo Athletic Chips -->
+      <div class="workout-days-nav" *ngIf="selectedEntrenamiento?.semanas?.length">
+        <button type="button" class="day-tab-btn"
+          [class.day-tab-btn--active]="selectedDiaDetalle === 'TODOS'"
+          (click)="seleccionarDia('TODOS')">
+          <i class="pi pi-th-large" aria-hidden="true"></i> Toda la semana
+        </button>
+        <button *ngFor="let dia of diasSemana" type="button" class="day-tab-btn"
+          [class.day-tab-btn--active]="selectedDiaDetalle === dia"
+          [class.day-tab-btn--has-workout]="hasEjerciciosParaDia(dia)"
+          (click)="seleccionarDia(dia)">
+          <span class="day-tab-btn__name">{{ dia }}</span>
+          <span class="day-tab-btn__badge" *ngIf="hasEjerciciosParaDia(dia)">{{ getTotalEjerciciosDia(dia) }}</span>
+          <span class="day-tab-btn__rest" *ngIf="!hasEjerciciosParaDia(dia)">Descanso</span>
+        </button>
+      </div>
+
+      <!-- Rutinas programadas por día (sin cajas vacías) -->
+      <div class="workout-routine-schedule" *ngIf="selectedEntrenamiento?.semanas?.length; else noSemanasTpl">
+        <ng-container *ngFor="let dia of diasSemana">
+          <section *ngIf="selectedDiaDetalle === 'TODOS' || selectedDiaDetalle === dia"
+            class="day-routine-block" [class.day-routine-block--active-day]="hasEjerciciosParaDia(dia)">
+
+            <!-- Cabecera del día -->
+            <header class="day-routine-block__header">
+              <div class="day-routine-block__title-wrap">
+                <span class="day-routine-block__icon" [class.day-routine-block__icon--rest]="!hasEjerciciosParaDia(dia)">
+                  <i [class]="hasEjerciciosParaDia(dia) ? 'pi pi-bolt' : 'pi pi-sun'"></i>
+                </span>
+                <div>
+                  <h3 class="day-routine-block__title">{{ dia }}</h3>
+                  <p class="day-routine-block__subtitle" *ngIf="hasEjerciciosParaDia(dia)">
+                    Sesión de entrenamiento programada
+                  </p>
+                  <p class="day-routine-block__subtitle" *ngIf="!hasEjerciciosParaDia(dia)">
+                    Día de recuperación muscular
+                  </p>
                 </div>
-            </div>
-        </div>
-    </div>
+              </div>
 
-    <ng-template #noEntrenamientos>
-        <p class="text-center text-muted">No tienes entrenamientos asignados.</p>
-    </ng-template>
+              <div class="day-routine-block__badge-wrap">
+                <span class="ag-badge ag-badge--accent" *ngIf="hasEjerciciosParaDia(dia)">
+                  {{ getTotalEjerciciosDia(dia) }} {{ getTotalEjerciciosDia(dia) === 1 ? 'categoría' : 'categorías' }}
+                </span>
+                <span class="ag-badge ag-badge--neutral" *ngIf="!hasEjerciciosParaDia(dia)">
+                  Descanso
+                </span>
+              </div>
+            </header>
+
+            <!-- Contenido si tiene ejercicios -->
+            <div class="day-routine-block__content" *ngIf="hasEjerciciosParaDia(dia)">
+              <div class="exercise-categories-list">
+                <article class="exercise-category-card" *ngFor="let ejercicio of getEjerciciosParaDia(dia)">
+                  <header class="exercise-category-card__header">
+                    <span class="exercise-category-badge" [ngClass]="getTipoEjercicioBadgeClass(ejercicio.tipo)">
+                      <i [ngClass]="getTipoEjercicioIcon(ejercicio.tipo)"></i>
+                      {{ ejercicio.tipo }}
+                    </span>
+                  </header>
+
+                  <div class="exercise-items-grid" *ngIf="getSugerenciasList(ejercicio, dia).length; else sinSugerenciasTpl">
+                    <div class="exercise-item-card" *ngFor="let sug of getSugerenciasList(ejercicio, dia); let i = index">
+                      <div class="exercise-item-card__index">{{ i + 1 }}</div>
+                      <div class="exercise-item-card__body">
+                        <h4 class="exercise-item-card__title" *ngIf="sug.nombre">{{ sug.nombre }}</h4>
+                        <p class="exercise-item-card__desc">{{ sug.descripcion }}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ng-template #sinSugerenciasTpl>
+                    <div class="exercise-item-card exercise-item-card--empty">
+                      <p class="exercise-item-card__desc">Sesión prescrita para {{ ejercicio.tipo }}.</p>
+                    </div>
+                  </ng-template>
+                </article>
+              </div>
+            </div>
+
+            <!-- Contenido si es día de descanso -->
+            <div class="day-routine-block__rest" *ngIf="!hasEjerciciosParaDia(dia)">
+              <div class="rest-card">
+                <div class="rest-card__illustration">
+                  <i class="pi pi-heart-fill"></i>
+                </div>
+                <div class="rest-card__info">
+                  <h4>Día libre de entrenamiento</h4>
+                  <p>No se han asignado rutinas para este día. El descanso es parte fundamental de la progresión y recuperación física del deportista.</p>
+                </div>
+              </div>
+            </div>
+
+          </section>
+        </ng-container>
+      </div>
+
+      <ng-template #noSemanasTpl>
+        <div class="ag-empty mediciones-empty">
+          <span class="ag-empty__icon"><i class="pi pi-calendar-times"></i></span>
+          <h3 class="ag-empty__title">Sin ejercicios configurados</h3>
+          <p class="ag-empty__text">Este plan aún no cuenta con ejercicios o días configurados en sus semanas.</p>
+        </div>
+      </ng-template>
+
+    </article>
+  </main>
+
+  <ng-template #noEntrenamientos>
+    <div class="ag-empty">
+      <span class="ag-empty__icon"><i class="pi pi-eject" aria-hidden="true"></i></span>
+      <h2 class="ag-empty__title">Sin entrenamientos asignados</h2>
+      <p class="ag-empty__text">
+        Cuando un entrenador te asigne un plan, aparecerán aquí tus rutinas
+        organizadas por semana y por día con el desglose detallado de cada ejercicio.
+      </p>
+    </div>
+  </ng-template>
+
 </div>

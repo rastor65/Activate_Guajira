@@ -3,6 +3,7 @@ import { UsuariosService } from 'src/app/core/services/dashboard/usuarios.servic
 import { Table } from 'primeng/table';
 
 @Component({
+  standalone: false,
   selector: 'app-ver',
   templateUrl: './ver.component.html',
   styleUrls: ['./ver.component.css']

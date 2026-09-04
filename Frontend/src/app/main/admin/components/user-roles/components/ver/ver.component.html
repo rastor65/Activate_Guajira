@@ -1,41 +1,99 @@
-<h2 class="roles-title">ASIGNAR ROLES</h2>
-<div class="container">
-    <form class="form" name="usuarioForm">
-        <div class="form-group">
-            <label for="usuario">Usuario:</label>
-            <p-autoComplete name="usuario" [(ngModel)]="usuarioSeleccionado" [suggestions]="filteredUsuarios"
-                (completeMethod)="searchUsuarios($event)" field="username" [minLength]="1"
-                placeholder="Seleccionar usuario" (onSelect)="onUsuarioSelect($event)">
-            </p-autoComplete>
-        </div>
-        <div class="form-group">
-            <label for="rol">Roles:</label>
-            <div *ngIf="usuarioSeleccionado.username">
-                <div *ngFor="let rol of roles">
-                    <p-checkbox [inputId]="'rol_' + rol.id" [value]="rol.id" [binary]="true" [label]="rol.name"
-                        [(ngModel)]="rolesSeleccionados" [name]="'rol_' + rol.id">
-                    </p-checkbox>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
+<div class="ag-page">
 
-<div class="user-list">
-    <table>
+  <header class="ag-page__header">
+    <div>
+      <p class="ag-overline">Administracion</p>
+      <h1 class="ag-page__title">Usuarios y roles</h1>
+      <p class="ag-page__subtitle">
+        Marca una casilla para asignar el rol y desmarcala para retirarlo. Los
+        cambios se guardan al instante.
+      </p>
+    </div>
+  </header>
+
+  <section class="ag-card">
+    <div class="ag-card__header">
+      <h2 class="ag-card__title">Roles por usuario</h2>
+      <button pButton pRipple type="button"
+        class="p-button-text p-button-sm" (click)="recargar()" [disabled]="cargando">
+        <i class="pi pi-refresh" pButtonIcon aria-hidden="true"></i>
+        <span pButtonLabel>Recargar</span>
+      </button>
+    </div>
+
+    <div class="filtros">
+      <div class="filtros__search">
+        <i class="pi pi-search" aria-hidden="true"></i>
+        <input type="text" pInputText [(ngModel)]="busqueda"
+          placeholder="Buscar por usuario o correo" aria-label="Buscar usuario">
+      </div>
+    </div>
+
+    <div class="ag-empty" *ngIf="cargando" role="status" aria-live="polite">
+      <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+      <p class="ag-empty__text">Cargando asignaciones...</p>
+    </div>
+
+    <div class="ag-table-wrap" *ngIf="!cargando && usuariosFiltrados.length && roles.length">
+      <table class="ag-table matriz">
+        <caption class="ag-visually-hidden">
+          Usuarios del sistema y los roles que tiene asignados cada uno
+        </caption>
         <thead>
-            <tr>
-                <th>Usuario</th>
-                <th>Rol (roles)</th>
-            </tr>
+          <tr>
+            <th scope="col" class="matriz__usuario">Usuario</th>
+            <th *ngFor="let rol of roles" scope="col" class="matriz__rol">
+              <span class="matriz__rol-nombre">{{ rol.name }}</span>
+              <span class="matriz__rol-cuenta">{{ totalDeRol(rol.id) }}</span>
+            </th>
+          </tr>
         </thead>
         <tbody>
-            <ng-container *ngFor="let item of usuarioRolesMap | keyvalue">
-                <tr>
-                    <td>{{ item.key }}</td>
-                    <td>{{ item.value.join(', ') }}</td>
-                </tr>
-            </ng-container>
+          <tr *ngFor="let usuario of usuariosFiltrados">
+            <th scope="row" class="matriz__usuario">
+              <span class="persona">
+                <span class="persona__inicial">{{ inicialesDe(usuario) }}</span>
+                <span class="persona__datos">
+                  <strong>{{ nombreCompleto(usuario) }}</strong>
+                  <em>&#64;{{ usuario.username }}</em>
+                </span>
+                <span class="persona__aviso" *ngIf="!totalDeUsuario(usuario.id)"
+                  pTooltip="Sin ningun rol no vera ninguna opcion del menu">
+                  <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+                </span>
+              </span>
+            </th>
+
+            <td *ngFor="let rol of roles" class="matriz__celda">
+              <button type="button" class="permiso"
+                [class.is-activo]="tieneRol(usuario.id, rol.id)"
+                [disabled]="ocupada(usuario.id, rol.id)"
+                [attr.aria-pressed]="tieneRol(usuario.id, rol.id)"
+                [attr.aria-label]="(tieneRol(usuario.id, rol.id) ? 'Retirar' : 'Asignar') +
+                  ' el rol ' + rol.name + ' a ' + usuario.username"
+                (click)="alternar(usuario, rol)">
+                <i class="pi" aria-hidden="true"
+                  [ngClass]="ocupada(usuario.id, rol.id) ? 'pi-spin pi-spinner'
+                    : (tieneRol(usuario.id, rol.id) ? 'pi-check' : 'pi-minus')"></i>
+              </button>
+            </td>
+          </tr>
         </tbody>
-    </table>
+      </table>
+    </div>
+
+    <div class="ag-empty" *ngIf="!cargando && !usuariosFiltrados.length && usuarios.length">
+      <span class="ag-empty__icon"><i class="pi pi-search" aria-hidden="true"></i></span>
+      <h3 class="ag-empty__title">Sin usuarios que coincidan</h3>
+      <p class="ag-empty__text">Ajusta la busqueda para ver mas resultados.</p>
+    </div>
+
+    <div class="ag-empty" *ngIf="!cargando && (!usuarios.length || !roles.length)">
+      <span class="ag-empty__icon"><i class="pi pi-user-edit" aria-hidden="true"></i></span>
+      <h3 class="ag-empty__title">Faltan datos para la matriz</h3>
+      <p class="ag-empty__text">
+        Necesitas al menos un usuario y un rol. Crea los roles en la pestana de Roles.
+      </p>
+    </div>
+  </section>
 </div>

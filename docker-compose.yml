@@ -1,0 +1,106 @@
+# Pila completa para desarrollo local: base de datos, backend y frontend.
+#
+# Sirve para probar las mismas imagenes que se despliegan en Railway antes de
+# subirlas. En Railway no se usa este archivo: alli cada servicio construye su
+# propio Dockerfile.
+#
+#   docker compose up --build
+#
+#   frontend  ->  http://localhost:4200
+#   backend   ->  http://localhost:8000
+#   MySQL     ->  localhost:3307  (3307 para no chocar con un MySQL del equipo)
+
+services:
+  bd:
+    image: mysql:8.0
+    container_name: aguajira-bd
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-desarrollo}
+      MYSQL_DATABASE: ${MYSQLDATABASE:-peakfit}
+      # utf8mb4 desde el principio: la base guarda nombres con tilde y la
+      # colacion por defecto de MySQL los corrompe.
+      MYSQL_INITDB_SKIP_TZINFO: "1"
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --sql-mode=STRICT_ALL_TABLES
+    ports:
+      - "3307:3306"
+    volumes:
+      - datos_bd:/var/lib/mysql
+    healthcheck:
+      # El backend no debe arrancar hasta que MySQL acepte conexiones, o la
+      # primera migracion falla y el contenedor se reinicia en bucle.
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p${MYSQL_ROOT_PASSWORD:-desarrollo}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: aguajira-backend
+    restart: unless-stopped
+    depends_on:
+      bd:
+        condition: service_healthy
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-clave-de-desarrollo-no-usar-en-produccion}
+      DEBUG: ${DEBUG:-True}
+      ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      CSRF_TRUSTED_ORIGINS: http://localhost:4200,http://localhost:8000
+      CORS_ALLOWED_ORIGINS: http://localhost:4200
+      # Nombres tal como los publica Railway, para que el contenedor se
+      # comporte igual aqui y alli.
+      MYSQLHOST: bd
+      MYSQLPORT: "3306"
+      MYSQLDATABASE: ${MYSQLDATABASE:-peakfit}
+      MYSQLUSER: root
+      MYSQLPASSWORD: ${MYSQL_ROOT_PASSWORD:-desarrollo}
+      MEDIA_ROOT: /datos/media
+      RUN_MIGRATIONS: "true"
+      PORT: "8000"
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      EMAIL_HOST_USER: ${EMAIL_HOST_USER:-}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      # Las imagenes subidas sobreviven a un rebuild
+      - archivos_subidos:/datos/media
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        # Se hornea al compilar: el navegador del usuario llama a este puerto
+        # de la maquina anfitriona, no al nombre del servicio de compose.
+        API_URI: ${API_URI:-http://localhost:8000}
+    container_name: aguajira-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      PORT: "8080"
+    ports:
+      - "4200:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+volumes:
+  datos_bd:
+  archivos_subidos:

@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TooltipModule } from 'primeng/tooltip';
+import { SelectModule } from 'primeng/select';
 import { VerComponent } from './components/ver/ver.component';
 
 
@@ -20,6 +22,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 import { CardModule } from 'primeng/card';
 import { RecursosComponent } from './recursos.component';
+import { RippleModule } from 'primeng/ripple';
 
 
 @NgModule({
@@ -27,7 +30,11 @@ import { RecursosComponent } from './recursos.component';
     VerComponent,
     RecursosComponent
   ],
+  exports: [VerComponent],
   imports: [
+    RippleModule,
+    SelectModule,
+    TooltipModule,
     CommonModule,
     RecursosRoutingModule,
 

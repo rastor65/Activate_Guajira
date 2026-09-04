@@ -1,0 +1,56 @@
+# El repositorio no tenia .gitignore, y por eso arrastra cosas que no deberia
+# estar versionadas (ver el aviso al final).
+
+# --- Secretos ---------------------------------------------------------------
+.env
+*.env
+!.env.example
+Backend/config/.env
+
+# --- Python -----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+Backend/backend/
+
+# --- Node y Angular ---------------------------------------------------------
+node_modules/
+Frontend/dist/
+Frontend/.angular/
+npm-debug.log*
+yarn-error.log
+
+# --- Base de datos y archivos subidos ---------------------------------------
+*.sqlite3
+*.db
+*.sql
+*.dump
+Backend/config/config/archivos/
+Backend/config/avatars/
+Backend/config/static/
+
+# --- Editores y sistema -----------------------------------------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# AVISO: estas rutas ya estan versionadas de antes y .gitignore no las saca por
+# si solo. Para dejar de subirlas en cada despliegue (son ~100 MB de un
+# entorno virtual de otra maquina, mas la compilacion del frontend):
+#
+#   git rm -r --cached Backend/backend Frontend/dist Backend/config/static
+#   git commit -m "Deja de versionar el entorno virtual y los artefactos"
+#
+# Los archivos siguen en tu disco; solo dejan de viajar en el repositorio.

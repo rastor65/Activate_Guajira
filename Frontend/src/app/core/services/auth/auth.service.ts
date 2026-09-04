@@ -6,9 +6,10 @@ import { catchError, retry, tap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs';
 import { MenuResponseI, UserI, UserLoginI, UserLoginResponseI } from 'src/app/models/authorization/usr_User';
 import { environment } from 'src/environments/environment';
-import *as moment from 'moment';
+import moment from 'moment';
 import { Router } from '@angular/router';
 import { Usuario } from 'src/app/models/user/person';
+import { HttpCacheService } from 'src/app/core/cache/http-cache.service';
 
 const KEY_TOKEN = 'token';
 const KEY_USER = 'user';
@@ -42,7 +43,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-
+    private cache: HttpCacheService,
   ) {
     // this.getToken()
   }
@@ -143,6 +144,9 @@ export class AuthService {
   }
 
   private setLoginData(loginData: UserLoginResponseI): void {
+    // Cada sesion parte con el cache vacio: lo guardado pertenecia a quien
+    // estaba antes y no tiene por que ser visible para quien entra ahora.
+    this.cache.limpiar();
     localStorage.setItem(KEY_TOKEN, loginData.token.access);
     this._KEY_CODE_TOKEN = loginData.token;
     this._KEY_MENU = loginData.menu
@@ -156,6 +160,7 @@ export class AuthService {
   }
 
   public logout(): void {
+    this.cache.limpiar();
     localStorage.removeItem(KEY_TOKEN);
     this._KEY_CODE_TOKEN = '';
     this._KEY_MENU = '';

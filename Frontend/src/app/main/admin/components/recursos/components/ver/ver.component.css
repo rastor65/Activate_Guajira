@@ -1,304 +1,277 @@
-/* ============================= */
-/*          GENERAL              */
-/* ============================= */
+/* Gestion de recursos del sistema. */
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f4f7fc;
-    color: #333;
+.ruta {
+  padding: var(--ag-space-1) var(--ag-space-2);
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-bg-sunken);
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-size: var(--ag-text-xs);
+  color: var(--ag-text-secondary);
 }
 
-/* Contenedor principal */
-.resource-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.icono-recurso {
+  font-size: 1.15rem;
+  color: var(--ag-text-brand);
 }
 
-/* ============================= */
-/*          TITULOS              */
-/* ============================= */
-
-.recursos-title {
-    font-size: 32px;
-    font-weight: bold;
-    text-align: center;
-    color: #004085;
-    text-transform: uppercase;
-    margin-bottom: 20px;
+.enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ag-space-1);
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  color: var(--ag-navy-600);
 }
 
-.resources-header {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+.enlace:hover { color: var(--ag-navy-800); }
+
+/* La tabla nunca debe desbordar la pagina */
+:host ::ng-deep .p-datatable-table-container { overflow-x: auto; }
+
+/* --------------------------------------------------------------------------
+   Dialogo
+   -------------------------------------------------------------------------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-4);
 }
 
-/* ============================= */
-/*           TABLA               */
-/* ============================= */
-
-.p-table {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-    background-color: #ffffff;
+.form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ag-space-4);
 }
 
-.p-table th {
-    background-color: #007bff;
-    color: #ffffff;
-    text-align: left;
-    padding: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: uppercase;
+.form__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ag-space-2);
+  min-width: 0;
 }
 
-.p-table td {
-    padding: 12px;
-    border-bottom: 1px solid #e1e4ea;
-    font-size: 14px;
+.form__field label {
+  font-size: var(--ag-text-sm);
+  font-weight: 500;
+  color: var(--ag-text-secondary);
 }
 
-.p-table tr:nth-child(even) {
-    background-color: #f8f9fc;
+.form__field input { width: 100%; }
+
+.form__hint {
+  font-size: var(--ag-text-xs);
+  color: var(--ag-text-muted);
 }
 
-.p-table tr:hover {
-    background-color: #e9f2ff;
-    transition: 0.3s ease-in-out;
+.confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ag-space-4);
 }
 
-/* Iconos en la tabla */
-.p-table i {
-    font-size: 18px;
-    color: #495057;
+.confirm__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--ag-radius-full);
+  background: var(--ag-danger-soft);
+  color: var(--ag-danger);
+  font-size: 1.25rem;
 }
 
-/* ============================= */
-/*         BOTONES               */
-/* ============================= */
-
-.p-button {
-    font-size: 14px;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: all 0.3s ease-in-out;
+.confirm__text {
+  margin: 0;
+  font-size: var(--ag-text-body);
+  line-height: 1.6;
+  color: var(--ag-text-secondary);
 }
 
-/* Botones personalizados */
-.p-button-success {
-    background-color: #28a745 !important;
-    border-color: #218838 !important;
-    color: #ffffff !important;
+@media (max-width: 640px) {
+  .form__row { grid-template-columns: 1fr; }
 }
 
-.p-button-success:hover {
-    background-color: #218838 !important;
+
+/* ==========================================================================
+   SELECTOR DE ICONO
+   ========================================================================== */
+.selector-icono {
+  display: flex;
+  align-items: center;
+  gap: var(--ag-space-3);
+  width: 100%;
+  height: 44px;
+  padding: 0 var(--ag-space-3) 0 var(--ag-space-2);
+  border: 1px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  cursor: pointer;
+  transition: border-color var(--ag-dur-fast) var(--ag-ease-standard),
+              box-shadow var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
-.p-button-warning {
-    background-color: #ffc107 !important;
-    border-color: #e0a800 !important;
-    color: #ffffff !important;
+.selector-icono:hover { border-color: var(--ag-navy-400); }
+
+.selector-icono:focus-visible {
+  outline: none;
+  border-color: var(--ag-border-focus);
+  box-shadow: 0 0 0 4px rgba(47, 90, 143, 0.16);
 }
 
-.p-button-warning:hover {
-    background-color: #e0a800 !important;
+.selector-icono__muestra {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ag-radius-sm);
+  background: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+  font-size: 1rem;
 }
 
-.p-button-danger {
-    background-color: #dc3545 !important;
-    border-color: #c82333 !important;
-    color: #ffffff !important;
+/* Sin icono elegido el hueco se ve como una invitacion, no como un error */
+.selector-icono__muestra.is-vacia {
+  background: var(--ag-bg-sunken);
+  border: 1px dashed var(--ag-border-default);
+  color: var(--ag-text-muted);
+  font-size: 0.75rem;
 }
 
-.p-button-danger:hover {
-    background-color: #c82333 !important;
+.selector-icono__texto {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+  font-size: var(--ag-text-sm);
+  color: var(--ag-text-primary);
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* ============================= */
-/*        DIALOGOS (MODAL)       */
-/* ============================= */
-
-.p-dialog {
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-    background-color: #ffffff;
-    animation: fadeIn 0.3s ease-in-out;
+.selector-icono__flecha {
+  flex: none;
+  font-size: 0.65rem;
+  color: var(--ag-text-muted);
 }
 
-/* Animación de apertura */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+.form__enlace {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ag-navy-600);
+  font-family: inherit;
+  font-size: var(--ag-text-xs);
+  cursor: pointer;
+  text-decoration: underline;
 }
 
-/* Encabezado del diálogo */
-.p-dialog .dialog-header {
-    font-size: 22px;
-    font-weight: bold;
-    text-align: center;
-    padding: 15px;
-    background-color: #007bff;
-    color: #ffffff;
-    border-radius: 12px 12px 0 0;
+.form__enlace:hover { color: var(--ag-danger); }
+
+:host ::ng-deep .form__select.p-select { width: 100%; height: 44px; }
+
+:host ::ng-deep .form__select .p-select-label {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--ag-space-4);
 }
 
-/* Contenido del diálogo */
-.p-dialog .dialog-content {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+/* ==========================================================================
+   CATALOGO DE ICONOS
+   ========================================================================== */
+.iconos__buscador {
+  position: relative;
+  margin-bottom: var(--ag-space-4);
 }
 
-/* Etiquetas de los formularios */
-.p-dialog label {
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: #495057;
+.iconos__buscador > i {
+  position: absolute;
+  top: 50%;
+  left: var(--ag-space-4);
+  transform: translateY(-50%);
+  color: var(--ag-text-muted);
+  font-size: 0.9rem;
+  pointer-events: none;
 }
 
-/* Inputs dentro del modal */
-.p-inputtext {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ced4da;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: 0.3s ease-in-out;
+.iconos__buscador input {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--ag-space-3) var(--ag-space-4) var(--ag-space-3) var(--ag-space-10);
+  border: 1px solid var(--ag-border-default);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  font-size: var(--ag-text-body);
 }
 
-.p-inputtext:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+.iconos__buscador input:focus {
+  outline: none;
+  border-color: var(--ag-border-focus);
+  box-shadow: 0 0 0 4px rgba(47, 90, 143, 0.16);
 }
 
-/* Pie del diálogo */
-.dialog-footer {
-    display: flex;
-    justify-content: flex-end;
-    padding: 15px;
-    gap: 10px;
-    border-top: 1px solid #dee2e6;
-    background-color: #f8f9fa;
-    border-radius: 0 0 12px 12px;
+.iconos__cuerpo {
+  max-height: 24rem;
+  overflow-y: auto;
+  padding-right: var(--ag-space-1);
 }
 
-/* Estilo del fondo del modal */
-.p-dialog-mask {
-    background-color: rgba(0, 0, 0, 0.6);
+.iconos__grupo + .iconos__grupo { margin-top: var(--ag-space-5); }
+
+.iconos__titulo {
+  margin: 0 0 var(--ag-space-3) 0;
+  padding-bottom: var(--ag-space-2);
+  border-bottom: 1px solid var(--ag-border-subtle);
+  font-size: var(--ag-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ag-text-muted);
 }
 
-/* ============================= */
-/*       EFECTOS EXTRAS          */
-/* ============================= */
-
-/* Efecto de hover en inputs */
-.p-inputtext:hover {
-    border-color: #0056b3;
+.iconos__rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(46px, 1fr));
+  gap: var(--ag-space-2);
 }
 
-/* Efecto de hover en botones */
-.p-button:hover {
-    transform: scale(1.05);
+.icono {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1px solid var(--ag-border-subtle);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-bg-surface);
+  color: var(--ag-text-secondary);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background-color var(--ag-dur-fast) var(--ag-ease-standard),
+              border-color var(--ag-dur-fast) var(--ag-ease-standard),
+              color var(--ag-dur-fast) var(--ag-ease-standard),
+              transform var(--ag-dur-fast) var(--ag-ease-standard);
 }
 
-/* Transición suave */
-.p-dialog, .p-table, .p-button, .p-inputtext {
-    transition: all 0.3s ease-in-out;
+.icono:hover {
+  background: var(--ag-bg-tinted);
+  border-color: var(--ag-navy-300);
+  color: var(--ag-text-brand);
+  transform: translateY(-1px);
 }
 
-/* ============================= */
-/*    RESPONSIVE MEJORADO       */
-/* ============================= */
+/* El elegido se marca con relleno y borde, no solo con color */
+.icono.is-elegido {
+  background: var(--ag-navy-800);
+  border-color: var(--ag-navy-800);
+  color: var(--ag-action-accent);
+}
 
-/* Responsive para tabla */
-@media screen and (max-width: 768px) {
-    .recursos-title {
-      font-size: 24px;
-      text-align: center;
-    }
-  
-    .resources-header {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .p-table {
-      overflow-x: auto;
-      display: block;
-      width: 100%;
-    }
-  
-    .p-table table {
-      min-width: 800px;
-    }
-  
-    .p-table th,
-    .p-table td {
-      white-space: nowrap;
-      font-size: 13px;
-      padding: 10px;
-    }
-  
-    .action-buttons {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      gap: 6px;
-    }
-  
-    .p-button {
-      font-size: 12px;
-      padding: 6px 10px;
-    }
-  
-    .p-button-rounded {
-      width: 32px;
-      height: 32px;
-    }
-  
-    .p-dialog {
-      width: 90vw !important;
-      max-width: 95vw !important;
-    }
-  
-    .dialog-content {
-      padding: 10px !important;
-    }
-  
-    .p-dialog label {
-      font-size: 13px;
-    }
-  
-    .p-inputtext {
-      font-size: 13px;
-      padding: 10px;
-    }
-  
-    .dialog-footer {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-      padding: 10px;
-    }
-  }
-  
+.icono:focus-visible {
+  outline: 2px solid var(--ag-border-focus);
+  outline-offset: 2px;
+}

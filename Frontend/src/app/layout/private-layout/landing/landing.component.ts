@@ -7,6 +7,7 @@ import { listaMenuI } from 'src/app/models/menu';
 import { createMenu } from 'src/app/consts/menu';
 
 @Component({
+  standalone: false,
   selector: 'app-landing',
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.css'],
@@ -56,17 +57,6 @@ export class LandingComponent implements OnInit {
       this.router.navigateByUrl('/login');
     }
   }
-
-  getBgColor(index: number): string {
-    const shades = ['bg-blue-500', 'bg-purple-500'];
-    return shades[index % shades.length];
-  }
-  
-  getIconBgColor(index: number): string {
-    const shades = ['bg-blue-600', 'bg-purple-600'];
-    return shades[index % shades.length];
-  }  
-
 
   navigateWithDelay(link: string, event: Event) {
     event.stopPropagation(); // Evita eventos inesperados

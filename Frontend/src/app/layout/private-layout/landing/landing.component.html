@@ -1,18 +1,47 @@
-<div class="container">
-    <div class="grid">
-        <div *ngFor="let item of menu1; let i = index" class="col-12 md:col-6 lg:col-3 p-3">
-            <div class="menu-item p-3 text-center transition-transform duration-300 ease-in-out"
-                 [ngClass]="getBgColor(i)"
-                 tabindex="0"
-                 (click)="navigateWithDelay(item.link, $event)">
-                 
-                <span class="inline-flex justify-content-center align-items-center border-circle mb-3 p-3 transition-all duration-300 ease-in-out"
-                      [ngClass]="getIconBgColor(i)">
-                    <i [ngClass]="item.icono" class="text-xl text-white"></i>
-                </span>
-                <div class="text-2xl font-medium text-white mb-2">{{ item.titulo }}</div>
-                <br>
-            </div>
-        </div>
+<div class="ag-page landing">
+
+  <!-- Saludo -->
+  <section class="landing__hero">
+    <div class="landing__hero-copy">
+      <p class="landing__eyebrow">Panel principal</p>
+      <h1 class="landing__title">
+        Hola<span *ngIf="nombre">, {{ nombre }}</span>.
+      </h1>
+      <p class="landing__lede">
+        Elige un modulo para continuar. Tu progreso se construye con cada medicion que registras.
+      </p>
     </div>
+    <div class="landing__hero-art" aria-hidden="true">
+      <i class="pi pi-bolt"></i>
+    </div>
+  </section>
+
+  <!-- Modulos -->
+  <section aria-labelledby="landing-modulos">
+    <h2 id="landing-modulos" class="ag-visually-hidden">Modulos disponibles</h2>
+
+    <div class="landing__grid" *ngIf="menu1.length; else sinModulos">
+      <button *ngFor="let item of menu1; let i = index" type="button" class="module"
+        [attr.data-tone]="i % 4" (click)="navigateWithDelay(item.link, $event)">
+        <span class="module__icon">
+          <i [ngClass]="item.icono" aria-hidden="true"></i>
+        </span>
+        <span class="module__title">{{ item.titulo }}</span>
+        <span class="module__go" aria-hidden="true">
+          <i class="pi pi-arrow-right"></i>
+        </span>
+      </button>
+    </div>
+
+    <ng-template #sinModulos>
+      <div class="ag-empty">
+        <span class="ag-empty__icon"><i class="pi pi-inbox" aria-hidden="true"></i></span>
+        <h3 class="ag-empty__title">Sin modulos asignados</h3>
+        <p class="ag-empty__text">
+          Tu cuenta todavia no tiene permisos sobre ningun modulo. Comunicate con un
+          administrador para que te asignen un rol.
+        </p>
+      </div>
+    </ng-template>
+  </section>
 </div>

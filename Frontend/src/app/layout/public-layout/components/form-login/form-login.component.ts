@@ -12,18 +12,16 @@ import { HttpHeaders } from '@angular/common/http';
 import { Person } from 'src/app/models/user/person';
 
 @Component({
+  standalone: false,
   selector: 'app-form-login',
   templateUrl: './form-login.component.html',
   styleUrls: ['./form-login.component.css']
 })
 export class FormLoginComponent implements OnInit {
   displayMaximizable: boolean = true
-  public formLogin: FormGroup = this.formBuilder.group({
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required]],
-  });
+  public formLogin: FormGroup;
   public motrar: boolean = false
-  public formRegister: FormGroup = this.formBuilder.group({});
+  public formRegister: FormGroup;
   public mostrar: boolean = false;
   selectedCities3: any[] = [];
   cities: RoleI[] = [];
@@ -43,7 +41,13 @@ export class FormLoginComponent implements OnInit {
     private http: HttpClient,
     private userService: UserService,
     private usuariosService: UsuariosService,
-  ) { }
+  ) {
+    this.formLogin = this.formBuilder.group({
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+    });
+    this.formRegister = this.formBuilder.group({});
+  }
 
   ngOnInit(): void {
     this.activarFormulario('login');
@@ -55,18 +59,6 @@ export class FormLoginComponent implements OnInit {
       this.router.navigateByUrl('/login');
     }
 
-    const signUpButton: HTMLElement | null = document.getElementById('signUp');
-    const signInButton: HTMLElement | null = document.getElementById('signIn');
-    const container: HTMLElement | null = document.getElementById('container');
-
-    if (signUpButton && signInButton && container) {
-      signUpButton.addEventListener('click', () => {
-        container.classList.add("right-panel-active");
-      });
-      signInButton.addEventListener('click', () => {
-        container.classList.remove("right-panel-active");
-      });
-    }
     // var menu :string | null= localStorage.getItem('menu');
     if (token != null && user != null) {
       // this.showSuccess()
@@ -76,7 +68,9 @@ export class FormLoginComponent implements OnInit {
         user: userObjeto,
         token: token,
       }
-      this.router.navigateByUrl('/welcome');
+      // '/welcome' no existe en el enrutador: la sesion ya iniciada va al
+      // mismo destino que un login recien hecho.
+      this.router.navigateByUrl('/landing');
     } else { }
     this.buildForm();
   }
@@ -86,25 +80,24 @@ export class FormLoginComponent implements OnInit {
   }
 
   activarFormulario(formulario: 'login' | 'register') {
-    const container = document.getElementById('container');
-    if (!container) return;
-  
     this.formularioActivo = formulario;
-  
-    if (formulario === 'register') {
-      container.classList.add('right-panel-active');
-    } else {
-      container.classList.remove('right-panel-active');
-    }
-  
-    // Actualiza clases activas para mostrar u ocultar botones
-    const btnLogin = document.querySelector('.btn-login') as HTMLElement;
-    const btnRegister = document.querySelector('.btn-register') as HTMLElement;
-  
-    if (btnLogin && btnRegister) {
-      btnLogin.style.display = formulario === 'login' ? 'none' : 'inline-flex';
-      btnRegister.style.display = formulario === 'register' ? 'none' : 'inline-flex';
-    }
+  }
+
+  /**
+   * Vista previa del usuario que se creara. El backend lo deriva de la parte
+   * local del correo (admin@gmail.com -> admin) con la misma normalizacion;
+   * si ese nombre ya existe le anadira un sufijo numerico.
+   */
+  get usernamePrevisto(): string {
+    const correo: string = this.formRegister?.value?.email1 ?? '';
+    return correo
+      .split('@')[0]
+      .normalize('NFKD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9._-]+/g, '')
+      .replace(/^[._-]+|[._-]+$/g, '')
+      .slice(0, 40);
   }
 
   onSubmitLogin() {
@@ -190,8 +183,10 @@ export class FormLoginComponent implements OnInit {
   onSubmitRegister() {
     this.showProgressBar = true;
     let email = this.formRegister.value.email1;
+    // El backend deriva el username del correo; aqui solo se envia la
+    // identificacion, que se guarda en la Person.
     let formValue = {
-      username: this.formRegister.value.identificación,
+      identificacion: this.formRegister.value.identificación,
       first_name: this.formRegister.value.first_name,
       last_name: this.formRegister.value.last_name,
       email: this.formRegister.value.email1,
@@ -202,7 +197,7 @@ export class FormLoginComponent implements OnInit {
       this.messageService.add({ severity: 'warn', summary: 'Alerta', detail: 'Las contraseñas no coinciden' });
       this.showProgressBar = false;
     } else {
-      if (formValue.username != "" && formValue.email != "" && formValue.password != "") {
+      if (formValue.identificacion != "" && formValue.email != "" && formValue.password != "") {
         this.bandera = true
         this.userService.createUser(formValue).subscribe(
           (user) => {
