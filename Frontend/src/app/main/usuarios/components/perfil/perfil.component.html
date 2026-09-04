@@ -79,6 +79,13 @@
             <strong>{{ estado }}</strong>
         </div>
 
+        <div class="med-error" *ngIf="errorMediciones" role="alert">
+            <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+            <span>{{ errorMediciones }}</span>
+            <button pButton pRipple type="button" label="Reintentar" icon="pi pi-refresh"
+                class="p-button-text p-button-sm" (click)="cargarMediciones()"></button>
+        </div>
+
         <div class="ag-table-wrap" *ngIf="mediciones.length; else sinMediciones">
             <table class="ag-table mediciones">
                 <caption class="ag-visually-hidden">
@@ -150,7 +157,7 @@
         </div>
 
         <ng-template #sinMediciones>
-            <div class="ag-empty">
+            <div class="ag-empty" *ngIf="!errorMediciones">
                 <span class="ag-empty__icon"><i class="pi pi-chart-line" aria-hidden="true"></i></span>
                 <h3 class="ag-empty__title">Todavia no hay mediciones</h3>
                 <p class="ag-empty__text">

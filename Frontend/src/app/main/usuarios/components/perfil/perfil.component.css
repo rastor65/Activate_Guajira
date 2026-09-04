@@ -576,3 +576,23 @@
 
   .mediciones td[data-label='Acciones']::before { display: none; }
 }
+
+/* --------------------------------------------------------------------------
+   Error al listar: debe distinguirse del estado vacio
+   -------------------------------------------------------------------------- */
+.med-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ag-space-3);
+  padding: var(--ag-space-4);
+  border-left: 4px solid var(--ag-danger);
+  border-radius: var(--ag-radius-md);
+  background: var(--ag-danger-soft);
+  color: var(--ag-danger);
+  font-size: var(--ag-text-sm);
+}
+
+.med-error > i { font-size: 1.1rem; }
+
+.med-error > span { flex: 1 1 auto; }

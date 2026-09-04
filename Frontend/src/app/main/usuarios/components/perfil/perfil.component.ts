@@ -270,23 +270,39 @@ export class PerfilComponent implements OnInit {
     }
   }
 
+  /** Mensaje de error al listar. Distingue "fallo" de "no hay registros". */
+  errorMediciones: string | null = null;
+
   cargarMediciones(): void {
     this.cargando = true;
-    if (this.usuarioId !== undefined) {
-      this.medicionService.obtenerMedicionesPorUsuario(this.usuarioId).subscribe({
-        next: (data) => {
-          this.mediciones = data.results || [];
-          this.chartLabels = this.mediciones.map(m => m.fecha ?? 'Sin fecha');
-          this.cargando = false;
-          console.log(this.mediciones)
-          this.cd.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error al cargar mediciones:', err);
-          this.cargando = false;
-        }
-      });
+    this.errorMediciones = null;
+
+    if (this.usuarioId === undefined) {
+      this.cargando = false;
+      this.errorMediciones = 'No se pudo identificar tu sesion. Vuelve a iniciar sesion.';
+      return;
     }
+
+    this.medicionService.obtenerMedicionesPorUsuario(this.usuarioId).subscribe({
+      next: (data) => {
+        // La API pagina, pero se tolera que devuelva un array plano
+        this.mediciones = data?.results ?? (Array.isArray(data) ? data : []);
+        this.chartLabels = this.mediciones.map(m => m.fecha ?? 'Sin fecha');
+        this.cargando = false;
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        // Antes esto se tragaba el error y la vista quedaba igual que si no
+        // hubiera mediciones, que es justo lo que impedia detectar el fallo.
+        console.error('Error al cargar mediciones:', err);
+        this.mediciones = [];
+        this.errorMediciones = err?.status === 0
+          ? 'No hay conexion con el servidor.'
+          : `No se pudieron cargar tus mediciones (error ${err?.status ?? "desconocido"}).`;
+        this.cargando = false;
+        this.cd.detectChanges();
+      }
+    });
   }
 
 

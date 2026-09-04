@@ -33,6 +33,7 @@ import { PublicLayoutModule } from './layout/public-layout/public-layout.module'
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { providePrimeNG } from 'primeng/config';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
 import { ActivateGuajiraPreset } from '../theme/activate-guajira-preset';
 import { ToastModule } from "primeng/toast";
 import { TreeModule } from 'primeng/tree';
@@ -138,6 +139,7 @@ import { PreventMultipleClicksDirective } from './shared/prevent-multiple-clicks
       },
       ripple: true,
     }),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     ConfirmationService, MessageService, CdkVirtualScrollViewport,
     { provide: LOCALE_ID, useValue: 'es' },
     { provide: LocationStrategy, useClass: HashLocationStrategy },
