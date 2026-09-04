@@ -11,6 +11,7 @@ import { UserRolesModule } from './components/user-roles/user-roles.module';
 import { RolesRecursosComponent } from './components/roles-recursos/roles-recursos.component';
 import { UserRolesComponent } from './components/user-roles/user-roles.component';
 import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
 import { TablaMaestraComponent } from './components/tabla-maestra/tabla-maestra.component';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
@@ -40,6 +41,7 @@ import { ToggleSwitchModule } from 'primeng/toggleswitch';
   ]
   ,
   imports: [
+    DatePickerModule,
     RolesModule,
     RecursosModule,
     RolesRecursosModule,

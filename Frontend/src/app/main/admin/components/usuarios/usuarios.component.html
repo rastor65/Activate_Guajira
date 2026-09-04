@@ -278,76 +278,236 @@
 
 
 <!-- ============ EDITAR USUARIO ============ -->
-<p-dialog [(visible)]="dialogUsuario" header="Editar usuario" [modal]="true" [resizable]="false" [draggable]="false"
-    [style]="{ width: '42rem' }" [breakpoints]="{ '768px': '94vw' }">
+<p-dialog [(visible)]="dialogUsuario" [modal]="true" [resizable]="false" [draggable]="false"
+  [style]="{ width: '58rem' }" [breakpoints]="{ '900px': '95vw' }" [showHeader]="false"
+  styleClass="dialog-editor" contentStyleClass="dialog-editor__body">
 
-    <div class="ag-overlay" *ngIf="CargandoUsuario" role="status" aria-live="polite">
-        <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
-        <p class="ag-overlay__text">Cargando datos</p>
-    </div>
+  <div class="ed">
 
-    <form *ngIf="!CargandoUsuario" [formGroup]="formUsuario" class="form">
-        <div class="form__row">
-            <div class="form__field">
-                <label for="first_name">Nombres</label>
-                <input id="first_name" type="text" pInputText formControlName="first_name">
-            </div>
-            <div class="form__field">
-                <label for="last_name">Apellidos</label>
-                <input id="last_name" type="text" pInputText formControlName="last_name">
-            </div>
+    <!-- Columna de navegacion -->
+    <aside class="ed__rail">
+      <div class="ed__identidad">
+        <span class="ed__inicial">
+          {{ (formUsuario.value.username || usuarioSeleccionado?.username || '?').charAt(0).toUpperCase() }}
+        </span>
+        <p class="ed__nombre">{{ formUsuario.value.username || usuarioSeleccionado?.username }}</p>
+        <p class="ed__correo">{{ formUsuario.value.email }}</p>
+      </div>
+
+      <nav class="ed__nav" aria-label="Secciones del usuario">
+        <button *ngFor="let s of seccionesEditor" type="button" class="ed__nav-item"
+          [class.is-active]="seccionEditor === s.id" [attr.aria-current]="seccionEditor === s.id"
+          (click)="irASeccionEditor(s.id)">
+          <i [ngClass]="s.icono" aria-hidden="true"></i>
+          <span>{{ s.titulo }}</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Columna de campos -->
+    <section class="ed__panel">
+      <header class="ed__head">
+        <h2 class="ed__titulo">Editar usuario</h2>
+        <button type="button" class="ed__cerrar" (click)="cerrareditarUsuario()" aria-label="Cerrar">
+          <i class="pi pi-times" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <div class="ed__cuerpo">
+        <div class="ag-overlay" *ngIf="CargandoUsuario" role="status" aria-live="polite">
+          <p-progressSpinner strokeWidth="4" animationDuration=".5s"></p-progressSpinner>
+          <p class="ag-overlay__text">Cargando</p>
         </div>
 
-        <div class="form__field">
+        <!-- ---------- Cuenta ---------- -->
+        <form [formGroup]="formUsuario" class="ed__grid" *ngIf="seccionEditor === 'cuenta'">
+          <div class="campo">
+            <label for="first_name">Nombres</label>
+            <div class="campo__control">
+              <input type="text" id="first_name" pInputText formControlName="first_name">
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="last_name">Apellidos</label>
+            <div class="campo__control">
+              <input type="text" id="last_name" pInputText formControlName="last_name">
+            </div>
+          </div>
+
+          <div class="campo">
             <label for="username">Nombre de usuario</label>
-            <input id="username" type="text" pInputText formControlName="username">
-        </div>
+            <div class="campo__control">
+              <input type="text" id="username" pInputText formControlName="username">
+            </div>
+          </div>
 
-        <div class="form__field">
+          <div class="campo">
             <label for="email">Correo</label>
-            <input id="email" type="email" pInputText formControlName="email">
-        </div>
+            <div class="campo__control">
+              <input type="email" id="email" pInputText formControlName="email">
+            </div>
+          </div>
 
-        <div class="form__field">
+          <div class="campo">
             <label for="password">Nueva contrasena</label>
-            <div class="p-inputgroup">
-                <input id="password" [type]="verPassword ? 'text' : 'password'" pInputText formControlName="password">
-                <button pButton type="button" class="p-button-text p-button-plain"
-                    [icon]="verPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
-                    [attr.aria-label]="verPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'"
-                    (click)="verPassword = !verPassword"></button>
+            <div class="campo__control">
+              <input [type]="verPassword ? 'text' : 'password'" id="password" pInputText
+                formControlName="password" autocomplete="new-password">
+              <button type="button" class="campo__accion" (click)="verPassword = !verPassword"
+                [attr.aria-label]="verPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'">
+                <i class="pi" [ngClass]="verPassword ? 'pi-eye-slash' : 'pi-eye'" aria-hidden="true"></i>
+              </button>
             </div>
-            <small class="form__hint">Dejala vacia para conservar la contrasena actual.</small>
-        </div>
+            <small class="campo__nota">Dejala vacia para conservar la actual.</small>
+          </div>
 
-        <div class="form__row">
-            <div class="form__field">
-                <label for="last_login">Ultimo acceso</label>
-                <input id="last_login" type="text" pInputText formControlName="last_login" readonly>
-            </div>
-            <div class="form__field">
-                <label for="date_joined">Fecha de registro</label>
-                <input id="date_joined" type="text" pInputText formControlName="date_joined" readonly>
-            </div>
-        </div>
-
-        <div class="form__field form__field--inline">
-            <p-toggleSwitch inputId="consentimiento" formControlName="consentimiento"></p-toggleSwitch>
-            <label for="consentimiento">Consentimiento informado aceptado</label>
-        </div>
-
-        <div class="form__field">
+          <div class="campo">
             <label for="roles">Roles</label>
             <p-multiSelect inputId="roles" formControlName="roles" [options]="roles" optionLabel="name"
-                optionValue="id" defaultLabel="Sin roles asignados" [readonly]="true" appendTo="body"></p-multiSelect>
-            <small class="form__hint">Los roles se editan desde la pantalla de asignacion de roles.</small>
-        </div>
-    </form>
+              optionValue="id" defaultLabel="Sin roles" [readonly]="true" appendTo="body"></p-multiSelect>
+            <small class="campo__nota">Se editan en Control de acceso.</small>
+          </div>
 
-    <ng-template pTemplate="footer">
+          <div class="campo campo--ancho">
+            <div class="ed__switch">
+              <p-toggleSwitch inputId="consentimiento" formControlName="consentimiento"></p-toggleSwitch>
+              <label for="consentimiento">Consentimiento informado aceptado</label>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="last_login">Ultimo acceso</label>
+            <div class="campo__control campo__control--fijo">
+              <input type="text" id="last_login" pInputText formControlName="last_login" readonly>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="date_joined">Fecha de registro</label>
+            <div class="campo__control campo__control--fijo">
+              <input type="text" id="date_joined" pInputText formControlName="date_joined" readonly>
+            </div>
+          </div>
+        </form>
+
+        <!-- ---------- Identificacion ---------- -->
+        <div class="ed__grid" *ngIf="seccionEditor === 'identificacion' && personaEditada">
+            <div class="campo">
+              <label for="document_type">Tipo de documento</label>
+              <p-select inputId="document_type" [options]="tiposDocumento" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.document_type" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+            <div class="campo">
+              <label for="identificacion">Numero de documento</label>
+              <div class="campo__control">
+                <input type="text" id="identificacion" placeholder="Sin puntos ni comas" pInputText [(ngModel)]="personaEditada.identificacion"
+                  [ngModelOptions]="{ standalone: true }">
+              </div>
+            </div>
+          <div class="campo">
+            <label for="fecha_nacimiento">Fecha de nacimiento</label>
+            <p-datePicker inputId="fecha_nacimiento" [(ngModel)]="personaEditada.fecha_nacimiento"
+              [ngModelOptions]="{ standalone: true }" dateFormat="yy-mm-dd" placeholder="Selecciona la fecha"
+              [showIcon]="true" appendTo="body" styleClass="campo__fecha"></p-datePicker>
+          </div>
+            <div class="campo">
+              <label for="genero_ed">Genero</label>
+              <p-select inputId="genero_ed" [options]="generos" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.genero" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+            <div class="campo">
+              <label for="telefono_ed">Telefono</label>
+              <div class="campo__control">
+                <input type="text" id="telefono_ed" inputmode="tel" placeholder="300 000 0000" pInputText [(ngModel)]="personaEditada.telefono"
+                  [ngModelOptions]="{ standalone: true }">
+              </div>
+            </div>
+        </div>
+
+        <!-- ---------- Residencia ---------- -->
+        <div class="ed__grid" *ngIf="seccionEditor === 'residencia' && personaEditada">
+            <div class="campo">
+              <label for="departamento_ed">Departamento</label>
+              <p-select inputId="departamento_ed" [options]="departamentos" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.departamento" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select" (onChange)="onDepartamentoEditor()"></p-select>
+            </div>
+            <div class="campo">
+              <label for="ciudad_res_ed">Ciudad de residencia</label>
+              <p-select inputId="ciudad_res_ed" [options]="ciudadesDelDepartamento" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.ciudad_residencia" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select" (onChange)="onCiudadEditor()"></p-select>
+            </div>
+            <div class="campo">
+              <label for="barrio_ed">Barrio</label>
+              <p-select inputId="barrio_ed" [options]="barriosDeLaCiudad" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.barrio" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+            <div class="campo">
+              <label for="ciudad_nac_ed">Ciudad de nacimiento</label>
+              <p-select inputId="ciudad_nac_ed" [options]="ciudades" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.ciudad_nacimiento" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+        </div>
+
+        <!-- ---------- Perfil ---------- -->
+        <div class="ed__grid" *ngIf="seccionEditor === 'perfil' && personaEditada">
+            <div class="campo">
+              <label for="nivel_ed">Nivel de formacion</label>
+              <p-select inputId="nivel_ed" [options]="nivelesFormacion" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.nivelFormacion" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+            <div class="campo">
+              <label for="situacion_ed">Situacion laboral</label>
+              <p-select inputId="situacion_ed" [options]="situacionesLaborales" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.situacion_laboral" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+            <div class="campo">
+              <label for="estrato_ed">Estrato</label>
+              <p-select inputId="estrato_ed" [options]="estratos" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.estrato" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+            <div class="campo">
+              <label for="civil_ed">Estado civil</label>
+              <p-select inputId="civil_ed" [options]="estadosCiviles" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.estado_civil" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+            <div class="campo">
+              <label for="etnico_ed">Grupo etnico</label>
+              <p-select inputId="etnico_ed" [options]="gruposEtnicos" optionLabel="nombre" optionValue="id"
+                [(ngModel)]="personaEditada.grupoEtnico" [ngModelOptions]="{ standalone: true }"
+                placeholder="Selecciona" [filter]="true" [showClear]="true" appendTo="body"
+                styleClass="campo__select"></p-select>
+            </div>
+        </div>
+      </div>
+
+      <footer class="ed__pie">
         <button pButton pRipple type="button" label="Cancelar" class="p-button-text"
-            (click)="cerrareditarUsuario()"></button>
-        <button pButton pRipple type="button" label="Guardar cambios" icon="pi pi-check"
-            (click)="guardarUsuario()"></button>
-    </ng-template>
+          (click)="cerrareditarUsuario()" [disabled]="guardandoUsuario"></button>
+        <button pButton pRipple type="button" label="Guardar cambios" (click)="guardarUsuario()"
+          [disabled]="guardandoUsuario"
+          [icon]="guardandoUsuario ? 'pi pi-spin pi-spinner' : 'pi pi-check'"></button>
+      </footer>
+    </section>
+  </div>
 </p-dialog>
