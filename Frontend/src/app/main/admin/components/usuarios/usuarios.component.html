@@ -117,14 +117,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let usuario of usuariosFiltrados">
-                        <td data-label="Usuario">{{ usuario.username }}</td>
+                    <tr *ngFor="let usuario of usuariosFiltrados" class="fila-usuario">
+                        <td data-label="Usuario">
+                            <button type="button" class="enlace-usuario" (click)="verDetalle(usuario)"
+                                [attr.aria-label]="'Ver ficha de ' + usuario.username">
+                                {{ usuario.username }}
+                            </button>
+                        </td>
                         <td data-label="Correo">{{ usuario.email }}</td>
                         <td data-label="Roles">
                             <span class="ag-badge ag-badge--neutral" *ngFor="let rol of usuario.roles">{{ rol }}</span>
                         </td>
                         <td data-label="Acciones">
                             <div class="ag-row-actions">
+                                <button pButton pRipple type="button" icon="pi pi-eye"
+                                    class="p-button-text p-button-sm" pTooltip="Ver ficha"
+                                    [attr.aria-label]="'Ver ficha de ' + usuario.username"
+                                    (click)="verDetalle(usuario)"></button>
                                 <button pButton pRipple type="button" icon="pi pi-pencil"
                                     class="p-button-text p-button-sm" pTooltip="Editar"
                                     [attr.aria-label]="'Editar a ' + usuario.username"
@@ -147,6 +156,115 @@
         </div>
     </section>
 </div>
+
+
+<!-- ============ FICHA DEL USUARIO ============ -->
+<p-dialog [(visible)]="dialogDetalle" [modal]="true" [resizable]="false" [draggable]="false"
+    [style]="{ width: '48rem' }" [breakpoints]="{ '768px': '95vw' }" [showHeader]="false"
+    styleClass="dialog-ficha" contentStyleClass="dialog-ficha__body" (onHide)="cerrarDetalle()">
+
+    <div class="ficha" *ngIf="usuarioDetalle">
+
+        <header class="ficha__head">
+            <span class="ficha__inicial">{{ (usuarioDetalle.username || '?').charAt(0).toUpperCase() }}</span>
+
+            <div class="ficha__identidad">
+                <p class="ficha__eyebrow">Ficha de usuario</p>
+                <h2 class="ficha__nombre">
+                    {{ valor(usuarioDetalle.first_name) === '—' ? usuarioDetalle.username
+                       : usuarioDetalle.first_name + ' ' + valor(usuarioDetalle.last_name) }}
+                </h2>
+                <p class="ficha__correo">{{ usuarioDetalle.email }}</p>
+                <div class="ficha__roles">
+                    <span class="ag-badge ag-badge--accent" *ngFor="let r of rolesDe(usuarioDetalle)">{{ r }}</span>
+                    <span class="ag-badge ag-badge--neutral" *ngIf="!rolesDe(usuarioDetalle).length">Sin rol</span>
+                </div>
+            </div>
+
+            <button type="button" class="ficha__cerrar" (click)="cerrarDetalle()" aria-label="Cerrar">
+                <i class="pi pi-times" aria-hidden="true"></i>
+            </button>
+        </header>
+
+        <div class="ficha__cuerpo">
+            <p-progressBar *ngIf="cargandoDetalle" mode="indeterminate" [style]="{ height: '3px' }"
+                aria-label="Cargando datos"></p-progressBar>
+
+            <p class="ficha__error" *ngIf="errorDetalle" role="alert">
+                <i class="pi pi-exclamation-triangle" aria-hidden="true"></i> {{ errorDetalle }}
+            </p>
+
+            <!-- Cuenta -->
+            <section class="ficha__seccion">
+                <h3 class="ficha__titulo"><i class="pi pi-user" aria-hidden="true"></i> Cuenta</h3>
+                <dl class="ficha__datos">
+                    <div><dt>Usuario</dt><dd>{{ valor(usuarioDetalle.username) }}</dd></div>
+                    <div><dt>Correo</dt><dd>{{ valor(usuarioDetalle.email) }}</dd></div>
+                    <div><dt>Nombres</dt><dd>{{ valor(usuarioDetalle.first_name) }}</dd></div>
+                    <div><dt>Apellidos</dt><dd>{{ valor(usuarioDetalle.last_name) }}</dd></div>
+                    <div>
+                        <dt>Consentimiento</dt>
+                        <dd>
+                            <span class="ag-badge" [ngClass]="usuarioDetalle.consentimiento
+                                ? 'ag-badge--success' : 'ag-badge--warning'">
+                                {{ usuarioDetalle.consentimiento ? 'Aceptado' : 'Pendiente' }}
+                            </span>
+                        </dd>
+                    </div>
+                </dl>
+            </section>
+
+            <!-- Persona -->
+            <ng-container *ngIf="!cargandoDetalle">
+                <section class="ficha__seccion" *ngIf="personaDetalle; else sinPersona">
+                    <h3 class="ficha__titulo"><i class="pi pi-id-card" aria-hidden="true"></i> Identificacion</h3>
+                    <dl class="ficha__datos">
+                        <div><dt>Tipo de documento</dt><dd>{{ nombreDe(personaDetalle.document_type) }}</dd></div>
+                        <div><dt>Numero</dt><dd>{{ valor(personaDetalle.identificacion) }}</dd></div>
+                        <div><dt>Fecha de nacimiento</dt><dd>{{ valor(personaDetalle.fecha_nacimiento) }}</dd></div>
+                        <div><dt>Edad</dt><dd>{{ valor(personaDetalle.edad) }}</dd></div>
+                        <div><dt>Genero</dt><dd>{{ nombreDe(personaDetalle.genero) }}</dd></div>
+                        <div><dt>Telefono</dt><dd>{{ valor(personaDetalle.telefono) }}</dd></div>
+                    </dl>
+
+                    <h3 class="ficha__titulo"><i class="pi pi-map-marker" aria-hidden="true"></i> Residencia</h3>
+                    <dl class="ficha__datos">
+                        <div><dt>Departamento</dt><dd>{{ nombreDe(personaDetalle.departamento) }}</dd></div>
+                        <div><dt>Ciudad</dt><dd>{{ nombreDe(personaDetalle.ciudad_residencia) }}</dd></div>
+                        <div><dt>Barrio</dt><dd>{{ nombreDe(personaDetalle.barrio) }}</dd></div>
+                        <div><dt>Ciudad de nacimiento</dt><dd>{{ nombreDe(personaDetalle.ciudad_nacimiento) }}</dd></div>
+                    </dl>
+
+                    <h3 class="ficha__titulo"><i class="pi pi-briefcase" aria-hidden="true"></i> Perfil</h3>
+                    <dl class="ficha__datos">
+                        <div><dt>Nivel de formacion</dt><dd>{{ nombreDe(personaDetalle.nivelFormacion) }}</dd></div>
+                        <div><dt>Situacion laboral</dt><dd>{{ nombreDe(personaDetalle.situacion_laboral) }}</dd></div>
+                        <div><dt>Estrato</dt><dd>{{ nombreDe(personaDetalle.estrato) }}</dd></div>
+                        <div><dt>Estado civil</dt><dd>{{ nombreDe(personaDetalle.estado_civil) }}</dd></div>
+                        <div><dt>Grupo etnico</dt><dd>{{ nombreDe(personaDetalle.grupoEtnico) }}</dd></div>
+                    </dl>
+                </section>
+
+                <ng-template #sinPersona>
+                    <div class="ag-empty" *ngIf="!errorDetalle">
+                        <span class="ag-empty__icon"><i class="pi pi-id-card" aria-hidden="true"></i></span>
+                        <h3 class="ag-empty__title">Sin datos personales</h3>
+                        <p class="ag-empty__text">
+                            Este usuario todavia no tiene una ficha de persona asociada.
+                        </p>
+                    </div>
+                </ng-template>
+            </ng-container>
+        </div>
+
+        <footer class="ficha__pie">
+            <button pButton pRipple type="button" label="Cerrar" class="p-button-text"
+                (click)="cerrarDetalle()"></button>
+            <button pButton pRipple type="button" label="Editar usuario" icon="pi pi-pencil"
+                (click)="editarDesdeDetalle()"></button>
+        </footer>
+    </div>
+</p-dialog>
 
 
 <!-- ============ PROCESANDO ============ -->

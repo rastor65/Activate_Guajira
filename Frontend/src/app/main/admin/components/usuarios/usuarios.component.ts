@@ -44,6 +44,19 @@ export class UsuariosComponent implements OnInit {
   CargandoUsuario: boolean = false;
   verPassword: boolean = false;
 
+  // --- Detalle del usuario -------------------------------------------------
+  // La pantalla de Personas mostraba estos mismos datos por separado. Se
+  // unifican aqui: al pulsar un usuario se ve su ficha completa, tanto la
+  // parte de cuenta como la de persona.
+  dialogDetalle: boolean = false;
+  cargandoDetalle: boolean = false;
+  usuarioDetalle: any = null;
+  personaDetalle: any = null;
+  errorDetalle: string | null = null;
+
+  /** id de tablaMaestra -> nombre, para resolver los campos parametricos. */
+  private catalogo = new Map<number, string>();
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -56,6 +69,10 @@ export class UsuariosComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // Los campos de persona se guardan como ids de tabla maestra: hace falta
+    // el catalogo para mostrar nombres en la ficha.
+    this.cargarCatalogo();
+
     this.formUsuario = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       username: ['', Validators.required],
@@ -91,6 +108,80 @@ export class UsuariosComponent implements OnInit {
       this.cargando = false;
     });
 
+  }
+
+  /** Carga la tabla maestra una vez, para poder mostrar nombres y no ids. */
+  private cargarCatalogo(): void {
+    this.userService.obtenerTipo().subscribe({
+      next: (tipos: any[]) => {
+        this.catalogo.clear();
+        for (const t of tipos ?? []) {
+          this.catalogo.set(t.id, t.nombre);
+        }
+        this.cdRef.detectChanges();
+      },
+      error: (e) => console.error('No se pudo cargar la tabla maestra:', e),
+    });
+  }
+
+  /** Nombre de un valor parametrico, o un guion si no hay dato. */
+  nombreDe(id: any): string {
+    if (id === null || id === undefined || id === '') {
+      return '—';
+    }
+    return this.catalogo.get(Number(id)) ?? String(id);
+  }
+
+  /** Muestra un valor simple, con guion cuando falta. */
+  valor(v: any): string {
+    return v === null || v === undefined || v === '' ? '—' : String(v);
+  }
+
+  /** Nombres de los roles de un usuario. */
+  rolesDe(usuario: any): string[] {
+    const ids: any[] = usuario?.roles ?? [];
+    return ids
+      .map(r => (typeof r === 'object' ? r?.name : this.roles.find(x => x.id === r)?.name ?? r))
+      .filter(Boolean);
+  }
+
+  /** Abre la ficha completa: datos de cuenta y de persona. */
+  verDetalle(usuario: any): void {
+    this.usuarioDetalle = usuario;
+    this.personaDetalle = null;
+    this.errorDetalle = null;
+    this.dialogDetalle = true;
+    this.cargandoDetalle = true;
+
+    this.userService.getPeopleByUserId(usuario.id).subscribe({
+      next: (personas) => {
+        // Sin persona asociada no es un error: el registro puede ser antiguo
+        this.personaDetalle = personas?.length ? personas[0] : null;
+        this.cargandoDetalle = false;
+        this.cdRef.detectChanges();
+      },
+      error: (e) => {
+        console.error('Error cargando la persona del usuario:', e);
+        this.errorDetalle = 'No se pudieron cargar los datos personales.';
+        this.cargandoDetalle = false;
+        this.cdRef.detectChanges();
+      },
+    });
+  }
+
+  cerrarDetalle(): void {
+    this.dialogDetalle = false;
+    this.usuarioDetalle = null;
+    this.personaDetalle = null;
+  }
+
+  /** Desde la ficha se pasa a editar sin tener que cerrarla y buscar de nuevo. */
+  editarDesdeDetalle(): void {
+    const usuario = this.usuarioDetalle;
+    this.cerrarDetalle();
+    if (usuario) {
+      this.vereditarUsuario(usuario);
+    }
   }
 
   vereditarUsuario(usuario: any) {

@@ -49,10 +49,8 @@ RECURSOS = [
     (4, 0, "Mediciones", "/mediciones/entrenador", "pi pi-chart-line", "/mediciones/entrenador", "GET"),
 
     (5, 0, "Administracion", "/administrador/usuarios", "pi pi-cog", "/administrador", "GET"),
+    # Usuarios incluye la ficha de persona: no hay entrada aparte para ello
     (6, 5, "Usuarios", "/administrador/usuarios", "pi pi-users", "/administrador/usuarios", "GET"),
-    # Los contenedores de estas rutas solo tienen un router-outlet y sus hijos
-    # cuelgan de /ver o /crear: apuntar al padre mostraba una pagina en blanco.
-    (7, 5, "Personas", "/usuarios/personas/ver", "pi pi-id-card", "/usuarios/personas/ver", "GET"),
     # Roles, recursos, permisos y asignaciones viven ahora en una sola vista
     (8, 5, "Control de acceso", "/administrador/accesos", "pi pi-shield", "/administrador/accesos", "GET"),
     (12, 5, "Tabla maestra", "/administrador/tabla_maestra", "pi pi-database", "/administrador/tabla_maestra", "GET"),
@@ -62,7 +60,7 @@ RECURSOS = [
 PERMISOS = {
     ROL_ESTUDIANTE: [1, 2, 3],
     ROL_ENTRENADOR: [1, 2, 3, 4],
-    ROL_ADMIN: [1, 2, 3, 4, 5, 6, 7, 8, 12],
+    ROL_ADMIN: [1, 2, 3, 4, 5, 6, 8, 12],
 }
 
 # ---------------------------------------------------------------------------
