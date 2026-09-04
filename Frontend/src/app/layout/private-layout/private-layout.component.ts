@@ -141,7 +141,13 @@ export class PrivateLayoutComponent implements OnInit {
 
     this.obtenerTipos();
     this.verificar();
-    // Menu de cuenta, colgado del avatar de la barra superior
+    // Menu de cuenta, colgado del avatar de la barra superior.
+    //
+    // OJO: p-menu solo admite un modelo de un tipo. En cuanto hay una entrada
+    // con `items` (un grupo), las entradas sueltas del primer nivel dejan de
+    // dibujarse. "Cerrar sesion" estaba suelta y por eso no aparecia en el
+    // menu: no es que el clic fallara, es que la opcion no existia. Va dentro
+    // de su propio grupo, sin titulo.
     this.items = [
       {
         label: 'Mi cuenta',
@@ -151,12 +157,16 @@ export class PrivateLayoutComponent implements OnInit {
           { label: 'Cambiar contraseña', icon: 'pi pi-key', command: () => { this.abrirEditarContra(); } },
         ]
       },
-      { separator: true },
       {
-        label: 'Cerrar sesión',
-        icon: 'pi pi-sign-out',
-        styleClass: 'menu-cuenta__salir',
-        command: () => { this.showConfirm(); }
+        separator: true,
+        items: [
+          {
+            label: 'Cerrar sesión',
+            icon: 'pi pi-sign-out',
+            styleClass: 'menu-cuenta__salir',
+            command: () => { this.showConfirm(); }
+          },
+        ]
       },
     ];
   }
@@ -380,10 +390,14 @@ export class PrivateLayoutComponent implements OnInit {
   }
 
   cerrarSesion() {
-    this.setLogin(false)
-    this.authService.logout()
-    this.ngOnInit()
-    this.router.navigateByUrl('/login')
+    // Cerrar el dialogo primero: si se navega con el abierto, el velo modal se
+    // queda encima del login y la pantalla parece congelada.
+    this.hideDialog();
+    this.menu1 = [];
+    // logout() ya limpia el almacenamiento, vacia el cache y navega al login.
+    // Antes aqui se llamaba a ngOnInit() a mano, que volvia a montar el menu y
+    // a pedir datos con la sesion ya cerrada.
+    this.authService.logout();
   }
 
   abrirEditarPerfil() {
