@@ -392,6 +392,32 @@ export class PrivateLayoutComponent implements OnInit {
     this.usuarioCopy = { ...this.usuario };
   }
 
+  /** Pide el menu vigente y lo aplica si difiere del guardado. */
+  private refrescarMenu(): void {
+    this.userService.obtenerMenuActual().subscribe({
+      next: (respuesta) => {
+        const datos = respuesta?.data ?? respuesta;
+        const menu = datos?.menu;
+        if (!Array.isArray(menu)) {
+          return;
+        }
+        const guardado = localStorage.getItem('menu');
+        const fresco = JSON.stringify(menu);
+        if (guardado === fresco) {
+          return;
+        }
+        localStorage.setItem('menu', fresco);
+        this.privateMenu = createMenu(JSON.parse(fresco)) as any;
+        this.menu1 = this.privateMenu;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        // Si falla se sigue con el menu guardado: no vale la pena bloquear
+        console.warn('No se pudo refrescar el menu:', error?.status);
+      }
+    });
+  }
+
   public verificar() {
     var user: string | null = localStorage.getItem('user');
     var menu: string | null = localStorage.getItem('menu');
@@ -404,6 +430,9 @@ export class PrivateLayoutComponent implements OnInit {
       this.nombre = userObjeto.name;
       this.isLoggedIn = true
       this.setLogin(true)
+      // El menu guardado puede estar desfasado si cambiaron los permisos o
+      // las opciones del sistema: se refresca contra el servidor.
+      this.refrescarMenu();
     } else {
       this.isLoggedIn = false
       this.setLogin(false)

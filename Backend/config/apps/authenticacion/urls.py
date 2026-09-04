@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 from .api.view.models_view.users.auth import (CustomUserList,UserDetail,UserPublic,
                     UserCreate,UserUpdate,ProfileView,  
-                    RegistroView,AuthLogin, LogoutView,UserChangePasswordView, prueba_mensaje_telegram
+                    RegistroView,AuthLogin, LogoutView,UserChangePasswordView, prueba_mensaje_telegram, MenuActualView
                     ,descargar_archivo )
 
 from .api.view.models_view.notificaciones.view import save_subscription
@@ -20,6 +20,7 @@ urlpatterns = [
     path('user/createview/', UserCreate.as_view(), name='user_createview'),
     path('user/update/<int:pk>/', UserUpdate.as_view(), name='user_createview'),
     path('user/profile/', ProfileView.as_view(), name='user_profile'),
+    path('user/menu/', MenuActualView.as_view(), name='user_menu'),
     path('user/viewpublic/', UserPublic.as_view(), name='user_viewpublic'),
     path('<int:pk>/change/password/', UserChangePasswordView.as_view(), name='user_changepassword'),   
     path('auth/reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
